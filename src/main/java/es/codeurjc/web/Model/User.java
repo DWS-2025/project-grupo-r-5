@@ -19,6 +19,8 @@ public class User {
 
 
     //Constructor:
+    public User() {}
+
     public User(String name){
         this.name = name;
         userPost = new HashSet<>();
