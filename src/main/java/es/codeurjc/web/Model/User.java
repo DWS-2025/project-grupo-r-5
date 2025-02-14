@@ -1,23 +1,54 @@
 package es.codeurjc.web.Model;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonTypeId;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Component
+@SessionScope
 public class User {
     //Properties:
-    private Long userid;
+    @JsonTypeId
+    private Long userid; //More efficient
     private String name;
-    private List<Post> userPost = new ArrayList<>();
-    private List<GroupClass> userClass = new ArrayList<>();
+    private Set<Post> userPost = new HashSet<>(); //to avoid duplicates
+    private Set<GroupClass> userClass = new HashSet<>();
 
 
     //Constructor:
     public User(String name){
         this.name = name;
-        userPost = new ArrayList<>();
-        userClass = new ArrayList<>();
+        userPost = new HashSet<>();
+        userClass = new HashSet<>();
     }
 
+    //Methods:
+    public void addPost(Post post){
+        this.userPost.add(post);
+        post.setCreator(this);
+    }
+    public void removePost(Post post) {
+        userPost.remove(post);
+        post.setCreator(null);
+    }
+
+    public void addToClass (GroupClass groupClass){
+        this.userClass.add(groupClass);
+    }
+    public boolean joinClass(GroupClass groupClass) {
+        if (!groupClass.isFull()) {
+            userClass.add(groupClass);
+            return groupClass.addUser(this);
+        }
+        return false;
+    }
+    public void leaveClass(GroupClass groupClass) {
+        userClass.remove(groupClass);
+        groupClass.removeUser(this);
+    }
 
     //Getters & setters:
         //Id
@@ -37,25 +68,18 @@ public class User {
     }
 
         //UserPosts
-    public List<Post> getUserPost() {
+    public Set<Post> getUserPost() {
         return userPost;
     }
-    public void setUserPost(List<Post> userPost) {
+    public void setUserPost(Set<Post> userPost) {
         this.userPost = userPost;
-    }
-    public void addPost(Post post){
-        this.userPost.add(post);
     }
 
         //UserGroupClasses
-    public List<GroupClass> getUserClass() {
+    public Set<GroupClass> getUserClass() {
         return userClass;
     }
-    public void setUserClass(List<GroupClass> userClass) {
+    public void setUserClass(Set<GroupClass> userClass) {
         this.userClass = userClass;
     }
-    public void addToClass (GroupClass groupClass){
-        this.userClass.add(groupClass);
-    }
-
 }
