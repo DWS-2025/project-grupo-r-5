@@ -8,7 +8,7 @@ public class Post {
     //Properties:
     @JsonTypeId
     private UUID postid; //More secure
-    private User creator;
+    private ClassUser creator;
     private String title;
     private String description;
     private String imageName;
@@ -16,14 +16,14 @@ public class Post {
 
 
     //Constructor:
-    public Post(User user, String title, String text){
-        this.creator = user;
+    public Post(ClassUser classUser, String title, String text){
+        this.creator = classUser;
         this.title = title;
         this.description = text;
     }
 
-    public Post(User user, String title, String text, String image){
-        this.creator = user;
+    public Post(ClassUser classUser, String title, String text, String image){
+        this.creator = classUser;
         this.title = title;
         this.description = text;
         this.imageName = image;
@@ -42,10 +42,10 @@ public class Post {
     }
 
         //Creator
-    public User getCreator() {
+    public ClassUser getCreator() {
         return creator;
     }
-    public void setCreator(User creator) {
+    public void setCreator(ClassUser creator) {
         this.creator = creator;
     }
 

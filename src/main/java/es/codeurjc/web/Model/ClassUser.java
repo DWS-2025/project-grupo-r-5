@@ -1,34 +1,39 @@
 package es.codeurjc.web.Model;
 
 import com.fasterxml.jackson.annotation.JsonTypeId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Component
-@SessionScope
-public class User {
+@Entity
+public class ClassUser {
     //Properties:
-    @JsonTypeId
+    @Id @JsonTypeId
     private Long userid; //More efficient
     private String name;
-    private Set<Post> userPost = new HashSet<>(); //to avoid duplicates
-    private Set<GroupClass> userClass = new HashSet<>();
+
+    //In the future when needed this will be uncommented
+    //private Set<Post> userPost = new HashSet<>(); //to avoid duplicates
+    //private Set<GroupClass> userClass = new HashSet<>();
 
 
     //Constructor:
-    public User() {}
+    public ClassUser() {}
 
-    public User(String name){
+    public ClassUser(String name){
         this.name = name;
-        userPost = new HashSet<>();
-        userClass = new HashSet<>();
+        //In the future when needed this will be uncommented
+        //userPost = new HashSet<>();
+        //userClass = new HashSet<>();
     }
 
     //Methods:
-    public void addPost(Post post){
+    //In the future when needed this will be uncommented
+    /*public void addPost(Post post){
         this.userPost.add(post);
         post.setCreator(this);
     }
@@ -50,7 +55,7 @@ public class User {
     public void leaveClass(GroupClass groupClass) {
         userClass.remove(groupClass);
         groupClass.removeUser(this);
-    }
+    }*/
 
     //Getters & setters:
         //Id
@@ -68,7 +73,8 @@ public class User {
     public void setName(String name) {
         this.name = name;
     }
-
+    //In the future when needed this will be uncommented
+/*
         //UserPosts
     public Set<Post> getUserPost() {
         return userPost;
@@ -84,4 +90,6 @@ public class User {
     public void setUserClass(Set<GroupClass> userClass) {
         this.userClass = userClass;
     }
+    */
+
 }

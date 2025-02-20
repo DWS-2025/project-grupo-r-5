@@ -1,27 +1,34 @@
 package es.codeurjc.web.Model;
 
 import com.fasterxml.jackson.annotation.JsonTypeId;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 public class GroupClass {
     //Properties:
-    @JsonTypeId
+    @Id @JsonTypeId
     private Long classid; //More efficient
     private String classname;
     private String instructor;
+    @Column(name = "day_of_week") // It's a reservated name in H2.
     private DayOfWeek day;
     private LocalTime time;
     private int maxCapacity;
     private int currentCapacity;
     private boolean officialClass;
-    private Set<User> userInClass = new HashSet<>(); //to avoid duplicates
+    //In the future when needed this will be uncommented
+    //private Set<ClassUser> classUserInClasses = new HashSet<>(); //to avoid duplicates
 
 
     //Constructor:
+    public GroupClass() {}
     public GroupClass(String name, DayOfWeek day, LocalTime time, String instructor, int maxCapacity, boolean officialClass) {
         this.classname = name;
         this.day = day;
@@ -32,19 +39,22 @@ public class GroupClass {
     }
 
     //Methods:
+    //In the future when needed this will be uncommented
     public boolean isFull(){
         return this.currentCapacity == this.maxCapacity;
     }
-    public boolean addUser(User user) {
+    //In the future when needed this will be uncommented
+    /*
+    public boolean addUser(ClassUser classUser) {
         if(this.isFull()){
             return false;
         } else{
-            return userInClass.add(user);
+            return classUserInClasses.add(classUser);
         }
     }
-    public boolean removeUser(User user) {
-        return userInClass.remove(user);
-    }
+    public boolean removeUser(ClassUser classUser) {
+        return classUserInClasses.remove(classUser);
+    }*/
 
 
     //Getters & setters:
@@ -113,10 +123,13 @@ public class GroupClass {
     }
 
         //User
-    public Set<User> getUserInClass() {
-        return userInClass;
+        //In the future when needed this will be uncommented
+    /*
+    public Set<ClassUser> getUserInClass() {
+        return classUserInClasses;
     }
-    public void setUserInClass(Set<User> userInClass) {
-        this.userInClass = userInClass;
+    public void setUserInClass(Set<ClassUser> classUserInClasses) {
+        this.classUserInClasses = classUserInClasses;
     }
+     */
 }
