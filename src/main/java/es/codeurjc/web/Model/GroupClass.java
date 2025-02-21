@@ -7,9 +7,6 @@ import jakarta.persistence.Id;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 public class GroupClass {
@@ -20,7 +17,9 @@ public class GroupClass {
     private String instructor;
     @Column(name = "day_of_week") // It's a reservated name in H2.
     private DayOfWeek day;
-    private LocalTime time;
+    private LocalTime time_init;
+    private int duration;
+    private LocalTime time_fin;
     private int maxCapacity;
     private int currentCapacity;
     private boolean officialClass;
@@ -30,17 +29,18 @@ public class GroupClass {
 
     //Constructor:
     public GroupClass() {}
-    public GroupClass(String name, DayOfWeek day, LocalTime time, String instructor, int maxCapacity, boolean officialClass) {
+    public GroupClass(String name, DayOfWeek day, LocalTime time_init,int duration, String instructor, int maxCapacity, boolean officialClass) {
         this.classname = name;
         this.day = day;
-        this.time = time;
+        this.time_init = time_init;
+        this.duration = duration;
+        this.time_fin = this.getTimefin();
         this.instructor = instructor;
         this.maxCapacity = maxCapacity;
         this.officialClass = officialClass;
     }
 
     //Methods:
-    //In the future when needed this will be uncommented
     public boolean isFull(){
         return this.currentCapacity == this.maxCapacity;
     }
@@ -94,15 +94,30 @@ public class GroupClass {
         return this.day.toString();
     }
 
-        //Time
-    public LocalTime getTime() {
-        return time;
+        //Time_init
+    public LocalTime getTime_init() {
+        return time_init;
     }
-    public void setTime(LocalTime time) {
-        this.time = time;
+    public void setTime_init(LocalTime time) {
+        this.time_init = time;
     }
     public String getTimeAsString() {
-        return this.time.toString();
+        return this.time_init.toString();
+    }
+        //Duration
+    public int getDuration() {
+        return duration;
+    }
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+        //Time_fin
+    public LocalTime getTimefin() {
+        return time_init.plusMinutes(this.duration);
+    }
+    public String getTimefinAsString(){
+        return this.getTimefin().toString();
     }
 
         //MaxCapacity
@@ -120,6 +135,8 @@ public class GroupClass {
     public void setCurrentCapacity(int currentCapacity) {
         this.currentCapacity = currentCapacity;
     }
+    public void addUserCounter(){this.currentCapacity++;}
+    public void removeUserCounter(){this.currentCapacity--;}
 
         //OfficialClass
     public boolean isOfficialClass() {

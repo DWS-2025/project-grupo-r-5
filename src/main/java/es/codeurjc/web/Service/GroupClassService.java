@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
@@ -40,7 +37,7 @@ public class GroupClassService {
 
         // Ordenar por día de la semana y luego por hora
         query.select(root)
-                .orderBy(cb.asc(root.get("day")), cb.asc(root.get("time")));
+                .orderBy(cb.asc(root.get("day")), cb.asc(root.get("time_init")));
 
         TypedQuery<GroupClass> typedQuery = entityManager.createQuery(query);
         List<GroupClass> allClasses = typedQuery.getResultList();
@@ -59,8 +56,18 @@ public class GroupClassService {
         return new ArrayList<>(groupedClasses.entrySet());
     }
 
+    public GroupClass findGroupClassById(long id){
+        return groupClassRepository.findById(id).orElseThrow();
+    }
+    public boolean exist(long id){return groupClassRepository.existsById(id);}
+    public Optional<GroupClass> findById(long id) {
 
+        if(this.exist(id)){
+            return Optional.of(this.findGroupClassById(id));
+        }
+        return Optional.empty();
 
+    }
 
     public GroupClass save(GroupClass groupClass) {
         long id = nextId.getAndIncrement();

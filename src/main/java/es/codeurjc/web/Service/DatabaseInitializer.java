@@ -30,13 +30,13 @@ public class DatabaseInitializer {
         users.save(user2);
         users.save(user3);
 
-        GroupClass class1 = new GroupClass("Advanced yoga", DayOfWeek.MONDAY, LocalTime.parse("10:00"), "Professor A", 20, true);
-        GroupClass class2 = new GroupClass("Pilates", DayOfWeek.TUESDAY, LocalTime.parse("15:00"), "Professor B", 15, true);
-        GroupClass class3 = new GroupClass("CrossFit", DayOfWeek.WEDNESDAY, LocalTime.parse("18:00"), "Professor C", 25, true);
-        GroupClass class4 = new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"), "Professor D", 30, true);
-        GroupClass class5 = new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"), "Professor E", 20, true);
-        GroupClass class6 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"), "Professor F", 25, true);
-        GroupClass class7 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"), "Professor F", 25, true);
+        GroupClass class1 = new GroupClass("Advanced yoga", DayOfWeek.MONDAY, LocalTime.parse("10:00"),60, "Professor A", 20, true);
+        GroupClass class2 = new GroupClass("Pilates", DayOfWeek.TUESDAY, LocalTime.parse("15:00"),120, "Professor B", 15, true);
+        GroupClass class3 = new GroupClass("CrossFit", DayOfWeek.WEDNESDAY, LocalTime.parse("18:00"),45, "Professor C", 25, true);
+        GroupClass class4 = new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"),60, "Professor D", 30, true);
+        GroupClass class5 = new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"),60, "Professor E", 20, true);
+        GroupClass class6 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"),60, "Professor F", 25, true);
+        GroupClass class7 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"),60, "Professor F", 25, true);
 
 
         groupClass.save(class1);
