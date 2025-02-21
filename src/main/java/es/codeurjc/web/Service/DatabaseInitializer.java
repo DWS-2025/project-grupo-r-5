@@ -36,6 +36,8 @@ public class DatabaseInitializer {
         GroupClass class4 = new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"), "Professor D", 30, true);
         GroupClass class5 = new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"), "Professor E", 20, true);
         GroupClass class6 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"), "Professor F", 25, true);
+        GroupClass class7 = new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"), "Professor F", 25, true);
+
 
         groupClass.save(class1);
         groupClass.save(class2);
@@ -43,6 +45,8 @@ public class DatabaseInitializer {
         groupClass.save(class4);
         groupClass.save(class5);
         groupClass.save(class6);
+        groupClass.save(class7);
+
 
     }
 

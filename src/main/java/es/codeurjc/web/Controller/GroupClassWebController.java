@@ -1,11 +1,16 @@
 package es.codeurjc.web.Controller;
 
 
-import ch.qos.logback.core.model.Model;
+import org.springframework.ui.Model;
+import es.codeurjc.web.Model.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.time.DayOfWeek;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class GroupClassWebController {
@@ -15,10 +20,14 @@ public class GroupClassWebController {
 
     @GetMapping("/")
     public String showGroupClasses(Model model) {
-
-
+        List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();
+        model.addAttribute("groupedClasses", groupedClasses);
         return "index";
     }
+
+
+
+
 
 
 }

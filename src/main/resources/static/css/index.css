@@ -1,0 +1,116 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://w0.peakpx.com/wallpaper/920/459/HD-wallpaper-circles-blackout-abstract-black-black-n-grey-pattern-ring-zen.jpg');
+    background-size: cover;
+    opacity: 0.9;
+    z-index: -1;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container .cont-ul {
+    color: #f0f0f0;
+    list-style-type: none;
+    padding: 0;
+}
+
+.container .cont-li{
+    color: #f0f0f0;
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.container .post-text{
+    color: #f0f0f0;
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.main-container .post-text{
+    color: #000;
+    list-style-type: none;
+    padding: 0;
+}
+
+.main-container {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px;
+}
+
+h1 {
+    color: #fff;
+    text-align: center;
+    font-size: 36px;
+    margin-bottom: 20px;
+    font-family: 'Arial Black', sans-serif;
+}
+
+.main-container .main-ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.main-container .main-li {
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #0056b3;
+}
+
+.btn {
+    background-color: #03488f;
+    color: white;
+    border: 2px solid #007bff;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #007bff;
+    color: white;
+    border-color: #0056b3;
+}

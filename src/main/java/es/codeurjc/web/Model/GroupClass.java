@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -89,6 +90,9 @@ public class GroupClass {
     public void setDay(DayOfWeek day) {
         this.day = day;
     }
+    public String getDayAsString() {
+        return this.day.toString();
+    }
 
         //Time
     public LocalTime getTime() {
@@ -96,6 +100,9 @@ public class GroupClass {
     }
     public void setTime(LocalTime time) {
         this.time = time;
+    }
+    public String getTimeAsString() {
+        return this.time.toString();
     }
 
         //MaxCapacity

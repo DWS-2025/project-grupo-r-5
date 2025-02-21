@@ -33,7 +33,7 @@ public class GroupClassService {
 
     public List<GroupClass> findAll() {return groupClassRepository.findAll();}
 
-    public Map<DayOfWeek, List<GroupClass>> getClassesGroupedByDayAndSortedByTime() {
+    public List<Map.Entry<String, List<GroupClass>>> getClassesGroupedByDayAndSortedByTime() {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<GroupClass> query = cb.createQuery(GroupClass.class);
         Root<GroupClass> root = query.from(GroupClass.class);
@@ -45,17 +45,22 @@ public class GroupClassService {
         TypedQuery<GroupClass> typedQuery = entityManager.createQuery(query);
         List<GroupClass> allClasses = typedQuery.getResultList();
 
-        // Agrupar en un mapa donde la clave es el DayOfWeek
-        Map<DayOfWeek, List<GroupClass>> groupedClasses = new LinkedHashMap<>();
+        // Agrupar en un mapa con String como clave
+        Map<String, List<GroupClass>> groupedClasses = new LinkedHashMap<>();
 
         for (GroupClass groupClass : allClasses) {
+            String dayAsString = groupClass.getDay().toString();
             groupedClasses
-                    .computeIfAbsent(groupClass.getDay(), k -> new ArrayList<>()) // Crea la lista si no existe
+                    .computeIfAbsent(dayAsString, k -> new ArrayList<>())
                     .add(groupClass);
         }
 
-        return groupedClasses;
+        // Convertimos el mapa a una lista de entradas
+        return new ArrayList<>(groupedClasses.entrySet());
     }
+
+
+
 
     public GroupClass save(GroupClass groupClass) {
         long id = nextId.getAndIncrement();
