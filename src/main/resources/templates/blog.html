@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog Index</title>
+    <link rel="stylesheet" type="text/css" href="/css/blog_index.css">
+</head>
+<body>
+<div class="container">
+    {{#Posts}}
+    <div>
+        {{#creator}}
+        <a href="/blog/{{id}}">{{creator.name}}, {{title}}</a><br>
+        {{/creator}}
+        {{^creator}}
+        <a href="/blog/{{id}}">{{title}}</a><br>
+        {{/creator}}
+    </div>
+    {{/Posts}}
+    {{^Posts}}
+    <p>No posts yet.</p>
+    {{/Posts}}
+    <br>
+    <a href="/blog/new" class="new-post-button">New Post</a>
+    <a href="/" class="new-post-button">Back</a>
+</div>
+</body>
+</html>

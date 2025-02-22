@@ -6,19 +6,22 @@ import jakarta.persistence.Id;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class ClassUser {
     //Properties:
-    @Id @JsonTypeId
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userid; //More efficient
     private String name;
 
     //In the future when needed this will be uncommented
-    //private Set<Post> userPost = new HashSet<>(); //to avoid duplicates
-    //private Set<GroupClass> userClass = new HashSet<>();
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<Post> userPost = new ArrayList<>();
+
+    //private List<GroupClass> userClass = new ArrayList<>();
 
 
     //Constructor:
@@ -27,8 +30,8 @@ public class ClassUser {
     public ClassUser(String name){
         this.name = name;
         //In the future when needed this will be uncommented
-        //userPost = new HashSet<>();
-        //userClass = new HashSet<>();
+        userPost = new ArrayList<>();
+        //userClass = new ArrayList<>();
     }
 
     //Methods:
@@ -76,18 +79,18 @@ public class ClassUser {
     //In the future when needed this will be uncommented
 /*
         //UserPosts
-    public Set<Post> getUserPost() {
+    public List<Post> getUserPost() {
         return userPost;
     }
-    public void setUserPost(Set<Post> userPost) {
+    public void setUserPost(List<Post> userPost) {
         this.userPost = userPost;
     }
 
         //UserGroupClasses
-    public Set<GroupClass> getUserClass() {
+    public List<GroupClass> getUserClass() {
         return userClass;
     }
-    public void setUserClass(Set<GroupClass> userClass) {
+    public void setUserClass(List<GroupClass> userClass) {
         this.userClass = userClass;
     }
     */

@@ -1,18 +1,24 @@
 package es.codeurjc.web.Model;
 
 import com.fasterxml.jackson.annotation.JsonTypeId;
+import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
 import java.util.UUID;
 
+@Entity
 public class Post {
     //Properties:
-    @JsonTypeId
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID postid; //More secure
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id", nullable = false)
     private ClassUser creator;
     private String title;
     private String description;
     private String imageName;
-    private MultipartFile imageFile;
+    @Lob
+    private byte[] imageFile;
+    //private MultipartFile imageFile;
 
 
     //Constructor:
@@ -28,6 +34,8 @@ public class Post {
         this.description = text;
         this.imageName = image;
     }
+
+    public Post() {}
 
     //Methods:
 
@@ -74,10 +82,11 @@ public class Post {
     }
 
         //ImageFile
+    /*
     public MultipartFile getImageFile() {
         return imageFile;
     }
     public void setImageFile(MultipartFile imageFile) {
         this.imageFile = imageFile;
-    }
+    }*/
 }

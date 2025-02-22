@@ -9,7 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <!--packaging>jar</packaging-->
     <name>Phase1</name>
-    <url>https://localhost:8080</url>
+    <url>http://localhost:8080</url>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
