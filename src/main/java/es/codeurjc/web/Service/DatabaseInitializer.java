@@ -59,6 +59,15 @@ public class DatabaseInitializer {
         Post post5 = new Post(user1, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa. \uD83D\uDE05\uD83D\uDD25 Saltos, movimientos rápidos y mucha coordinación… ¡pero qué bien se siente después! La música te motiva a seguir y el instructor hace que no quieras rendirte. Definitivamente es una de las mejores maneras de quemar calorías sin aburrirse. \uD83D\uDE03 #AerobicsPower #EnergíaPura");
         Post post6 = new Post(user2, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser. \uD83E\uDD2F\uD83D\uDCAA Pensé que sería solo estiramientos, pero trabajamos fuerza, control y respiración de una forma increíble. Me encantó cómo al final todo el cuerpo se siente más ligero y fuerte al mismo tiempo. ¡Definitivamente seguiré viniendo! \uD83E\uDDD8\u200D♀\uFE0F #PilatesLovers #FuerzaYFlexibilidad");
 
+        try {
+            post2.setImageName("example2.jpg");
+            post6.setImageName("example3.jpg");
+            post5.setImageName("example1.jpg");
+            post3.setImageName("example4.jpg");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         post.save(post1);
         post.save(post2);
         post.save(post3);

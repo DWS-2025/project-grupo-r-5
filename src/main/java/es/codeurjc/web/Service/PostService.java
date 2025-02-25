@@ -1,5 +1,6 @@
 package es.codeurjc.web.Service;
 
+import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.Post;
 
 import java.io.IOException;
@@ -8,8 +9,10 @@ import java.util.*;
 import es.codeurjc.web.repository.ClassUserRepository;
 import es.codeurjc.web.repository.PostRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,8 +46,7 @@ public class PostService {
         return posts;
     }
 
-    //In the future this won't be commented
-    /*public List<Post> findAll(ClassUser user) {
+    public List<Post> findAll(ClassUser user) {
         StringBuilder queryBuilder = new StringBuilder("SELECT p.*, u.name AS user_name FROM post p");
 
         if (user != null) {
@@ -63,7 +65,7 @@ public class PostService {
     public Optional<Post> findByExample(Post postExample) {
         Example<Post> example = Example.of(postExample);
         return postRepository.findOne(example);
-    }*/
+    }
 
     public Post save(Post post){
         if (post.getPostid() == null) {
@@ -77,7 +79,7 @@ public class PostService {
         return postRepository.save(post);
     }
 
-    /*
+
     public Post save(Post post, MultipartFile imageField) throws IOException {
 
         if (imageField != null && !imageField.isEmpty()) {
@@ -93,14 +95,13 @@ public class PostService {
         post.setPostid(UUID.randomUUID());
         return postRepository.save(post);
     }
-    */
 
     public void delete(UUID id){
         postRepository.deleteById(id);
     }
 
-    /*
-    public void editPost(Post post, MultipartFile imageField, long id) throws IOException{
+
+    public void editPost(Post post, MultipartFile imageField, UUID id) throws IOException{
 
         if (imageField != null && !imageField.isEmpty()) {
             post.setImageName(imageField.getOriginalFilename());
@@ -115,7 +116,5 @@ public class PostService {
 
         postRepository.save(post);
     }
-
-    */
 
 }

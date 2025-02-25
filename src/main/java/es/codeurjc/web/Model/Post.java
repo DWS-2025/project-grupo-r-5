@@ -3,6 +3,8 @@ package es.codeurjc.web.Model;
 import com.fasterxml.jackson.annotation.JsonTypeId;
 import jakarta.persistence.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.sql.Blob;
 import java.util.UUID;
 
 @Entity
@@ -17,7 +19,7 @@ public class Post {
     private String description;
     private String imageName;
     @Lob
-    private byte[] imageFile;
+    private Blob imageFile;
     //private MultipartFile imageFile;
 
 
@@ -53,9 +55,13 @@ public class Post {
     public ClassUser getCreator() {
         return creator;
     }
+    public String getCreatorName() {
+        return creator.getName();
+    }
     public void setCreator(ClassUser creator) {
         this.creator = creator;
     }
+    public void setCreatorName(String username) {this.creator.setName(username);}
 
         //Title
     public String getTitle() {
@@ -82,11 +88,11 @@ public class Post {
     }
 
         //ImageFile
-    /*
-    public MultipartFile getImageFile() {
+
+    public Blob getImageFile() {
         return imageFile;
     }
-    public void setImageFile(MultipartFile imageFile) {
+    public void setImageFile(Blob imageFile) {
         this.imageFile = imageFile;
-    }*/
+    }
 }

@@ -1,10 +1,7 @@
 package es.codeurjc.web.Model;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import com.fasterxml.jackson.annotation.JsonView;
+import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +15,9 @@ public class ClassUser {
     private String name;
 
     //In the future when needed this will be uncommented
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Post> userPost = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonView(Post.class)
+    private List<Post> listOfPosts = new ArrayList<>();
 
     //private List<GroupClass> userClass = new ArrayList<>();
 
@@ -30,7 +28,7 @@ public class ClassUser {
     public ClassUser(String name){
         this.name = name;
         //In the future when needed this will be uncommented
-        userPost = new ArrayList<>();
+        listOfPosts = new ArrayList<>();
         //userClass = new ArrayList<>();
     }
 
@@ -76,16 +74,19 @@ public class ClassUser {
     public void setName(String name) {
         this.name = name;
     }
-    //In the future when needed this will be uncommented
-/*
+
+    public void addPost(Post post) {this.listOfPosts.add(post);}
+
         //UserPosts
-    public List<Post> getUserPost() {
-        return userPost;
+    public List<Post> getListOfPosts() {
+        return listOfPosts;
     }
-    public void setUserPost(List<Post> userPost) {
-        this.userPost = userPost;
+    public void setListOfPosts(List<Post> userPost) {
+        this.listOfPosts = userPost;
     }
 
+    //In the future when needed this will be uncommented
+    /*
         //UserGroupClasses
     public List<GroupClass> getUserClass() {
         return userClass;
