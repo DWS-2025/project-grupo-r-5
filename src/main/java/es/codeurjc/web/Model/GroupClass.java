@@ -1,21 +1,15 @@
 package es.codeurjc.web.Model;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
 public class GroupClass {
     //Properties:
-    @Id @JsonTypeId
     private Long classid; //More efficient
     private String classname;
     private String instructor;
-    @Column(name = "day_of_week") // It's a reservated name in H2.
     private DayOfWeek day;
     private LocalTime time_init;
     private int duration;
@@ -23,8 +17,7 @@ public class GroupClass {
     private int maxCapacity;
     private int currentCapacity;
     private boolean officialClass;
-    //In the future when needed this will be uncommented
-    //private Set<ClassUser> classUserInClasses = new HashSet<>(); //to avoid duplicates
+    private List<ClassUser> usersList = new ArrayList<>();
 
 
     //Constructor:
@@ -37,29 +30,35 @@ public class GroupClass {
         this.time_fin = this.getTimefin();
         this.instructor = instructor;
         this.maxCapacity = maxCapacity;
+        this.currentCapacity = 0;
         this.officialClass = officialClass;
+        this.usersList = new ArrayList<>();
     }
 
     //Methods:
     public boolean isFull(){
         return this.currentCapacity == this.maxCapacity;
     }
-    //In the future when needed this will be uncommented
-    /*
     public boolean addUser(ClassUser classUser) {
         if(this.isFull()){
             return false;
         } else{
-            return classUserInClasses.add(classUser);
+            this.currentCapacity++;
+            return this.usersList.add(classUser);
         }
     }
     public boolean removeUser(ClassUser classUser) {
-        return classUserInClasses.remove(classUser);
-    }*/
+        if(this.currentCapacity > 0){
+            this.currentCapacity--;
+            return this.usersList.remove(classUser);
+        }
+        return false;
+    }
 
 
     //Getters & setters:
-        //Id
+
+    //Id
     public Long getClassid() {
         return classid;
     }
@@ -67,7 +66,7 @@ public class GroupClass {
         this.classid = classid;
     }
 
-        //Name
+    //Name
     public String getClassname() {
         return classname;
     }
@@ -75,7 +74,7 @@ public class GroupClass {
         this.classname = classname;
     }
 
-        //Instructor
+    //Instructor
     public String getInstructor() {
         return instructor;
     }
@@ -83,7 +82,7 @@ public class GroupClass {
         this.instructor = instructor;
     }
 
-        //Day
+    //Day
     public DayOfWeek getDay() {
         return day;
     }
@@ -94,7 +93,7 @@ public class GroupClass {
         return this.day.toString();
     }
 
-        //Time_init
+    //Time_init
     public LocalTime getTime_init() {
         return time_init;
     }
@@ -104,7 +103,8 @@ public class GroupClass {
     public String getTimeAsString() {
         return this.time_init.toString();
     }
-        //Duration
+
+    //Duration
     public int getDuration() {
         return duration;
     }
@@ -112,7 +112,7 @@ public class GroupClass {
         this.duration = duration;
     }
 
-        //Time_fin
+    //Time_fin
     public LocalTime getTimefin() {
         return time_init.plusMinutes(this.duration);
     }
@@ -120,7 +120,7 @@ public class GroupClass {
         return this.getTimefin().toString();
     }
 
-        //MaxCapacity
+    //MaxCapacity
     public int getMaxCapacity() {
         return maxCapacity;
     }
@@ -128,17 +128,15 @@ public class GroupClass {
         this.maxCapacity = maxCapacity;
     }
 
-        //CurrentCapacity
+    //CurrentCapacity
     public int getCurrentCapacity() {
         return currentCapacity;
     }
     public void setCurrentCapacity(int currentCapacity) {
         this.currentCapacity = currentCapacity;
     }
-    public void addUserCounter(){this.currentCapacity++;}
-    public void removeUserCounter(){this.currentCapacity--;}
 
-        //OfficialClass
+    //OfficialClass
     public boolean isOfficialClass() {
         return officialClass;
     }
@@ -146,14 +144,13 @@ public class GroupClass {
         this.officialClass = officialClass;
     }
 
-        //User
-        //In the future when needed this will be uncommented
-    /*
-    public Set<ClassUser> getUserInClass() {
-        return classUserInClasses;
+    //User
+    public List<ClassUser> getUsersList() {
+        return this.usersList;
     }
-    public void setUserInClass(Set<ClassUser> classUserInClasses) {
-        this.classUserInClasses = classUserInClasses;
+    public void setUsersList(List<ClassUser>usersList) {
+        this.usersList = usersList;
     }
-     */
+
+
 }

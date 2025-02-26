@@ -1,62 +1,44 @@
 package es.codeurjc.web.Model;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 public class ClassUser {
     //Properties:
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userid; //More efficient
     private String name;
-
-    //In the future when needed this will be uncommented
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonView(Post.class)
+    private List<GroupClass> listOfClasses = new ArrayList<>();
     private List<Post> listOfPosts = new ArrayList<>();
-
-    //private List<GroupClass> userClass = new ArrayList<>();
-
 
     //Constructor:
     public ClassUser() {}
-
     public ClassUser(String name){
         this.name = name;
-        //In the future when needed this will be uncommented
         listOfPosts = new ArrayList<>();
-        //userClass = new ArrayList<>();
+        listOfClasses = new ArrayList<>();
     }
 
     //Methods:
-    //In the future when needed this will be uncommented
-    /*public void addPost(Post post){
-        this.userPost.add(post);
-        post.setCreator(this);
-    }
-    public void removePost(Post post) {
-        userPost.remove(post);
-        post.setCreator(null);
-    }
-
-    public void addToClass (GroupClass groupClass){
-        this.userClass.add(groupClass);
-    }
-    public boolean joinClass(GroupClass groupClass) {
-        if (!groupClass.isFull()) {
-            userClass.add(groupClass);
-            return groupClass.addUser(this);
+    public boolean addPost(Post post){
+        if(this.listOfPosts.add(post)){
+            post.setCreator(this);
+            return true;
         }
         return false;
     }
-    public void leaveClass(GroupClass groupClass) {
-        userClass.remove(groupClass);
-        groupClass.removeUser(this);
-    }*/
+    public boolean removePost(Post post) {
+        if(this.listOfPosts.contains(post) && this.listOfPosts.remove(post)){
+            post.setCreator(null);
+            return true;
+        }
+        return false;
+    }
+    public boolean addClass(GroupClass groupClass){
+        return this.listOfClasses.add(groupClass);
+    }
+    public boolean removeClass(GroupClass groupClass) {
+        return this.listOfClasses.remove(groupClass);
+    }
 
     //Getters & setters:
         //Id
@@ -66,7 +48,6 @@ public class ClassUser {
     public void setUserid(Long userid) {
         this.userid = userid;
     }
-
         //Name
     public String getName() {
         return name;
@@ -74,26 +55,19 @@ public class ClassUser {
     public void setName(String name) {
         this.name = name;
     }
-
-    public void addPost(Post post) {this.listOfPosts.add(post);}
-
         //UserPosts
     public List<Post> getListOfPosts() {
-        return listOfPosts;
+        return this.listOfPosts;
     }
     public void setListOfPosts(List<Post> userPost) {
         this.listOfPosts = userPost;
     }
-
-    //In the future when needed this will be uncommented
-    /*
         //UserGroupClasses
     public List<GroupClass> getUserClass() {
-        return userClass;
+        return this.listOfClasses;
     }
     public void setUserClass(List<GroupClass> userClass) {
-        this.userClass = userClass;
+        this.listOfClasses = userClass;
     }
-    */
 
 }

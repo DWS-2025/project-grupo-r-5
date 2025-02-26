@@ -7,7 +7,6 @@ import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
-import es.codeurjc.web.repository.ClassUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,7 +53,7 @@ public class BlogWebController {
         return "post_form";
     }
 
-    @GetMapping("/blog/changePost/{id}")
+    /*@GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") UUID id) {
         Optional<Post> optionalPost = postService.findById(id);
         if (optionalPost.isPresent()) {
@@ -64,9 +63,9 @@ public class BlogWebController {
             return "redirect:/blog";
         }
         return "post_form";
-    }
+    }*/
 
-    @GetMapping("/blog/deletePost/{id}")
+    /*@GetMapping("/blog/deletePost/{id}")
     public String deletePost(Model model,@PathVariable UUID id){
         try {
             postService.delete(id);
@@ -76,9 +75,9 @@ public class BlogWebController {
             return "redirect:/error?message=" + URLEncoder.encode("Error deleting post", StandardCharsets.UTF_8);
         }
     }
-
+*/
     //Post
-    @PostMapping("/blog/new")
+    /*@PostMapping("/blog/new")
     public String newPostProcess(Model model, Post post, MultipartFile imagefile, String user) throws IOException {
         ClassUser classUser = userService.findByName(user).orElseGet(() -> {
             ClassUser newUser = new ClassUser(user);
@@ -101,9 +100,9 @@ public class BlogWebController {
         }
 
         return "redirect:/blog/" + post.getPostid(); //Redirect to created post
-    }
+    }*/
 
-    @PostMapping("/blog/changePost/{id}")
+   /* @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable UUID id, Model model, Post post, MultipartFile imagefile, String user,
                                   @RequestParam boolean deleteImage) throws IOException {
 
@@ -125,7 +124,7 @@ public class BlogWebController {
 
         return "redirect:/blog/" + post.getPostid(); //Redirect to edited post
     }
-
+*/
     /*Redirection to error Controller:
     * return "redirect:/error?message=" + URLEncoder.encode("Error deleting post", StandardCharsets.UTF_8);
      */

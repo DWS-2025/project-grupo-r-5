@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Blog Index</title>
-    <link rel="stylesheet" type="text/css" href="/css/blog_index.css">
+    <link rel="stylesheet" type="text/css" href="/css/blog.css">
 </head>
 <body>
 <div class="container">
     {{#Posts}}
     <div>
         {{#creator}}
-        <a href="/blog/{{id}}">{{creator.name}}, {{title}}</a><br>
+        <a href="/blog/{{postid}}">{{creator.name}}, {{title}}</a><br>
         {{/creator}}
         {{^creator}}
-        <a href="/blog/{{id}}">{{title}}</a><br>
+        <a href="/blog/{{postid}}">{{title}}</a><br>
         {{/creator}}
     </div>
     {{/Posts}}

@@ -1,26 +1,14 @@
 package es.codeurjc.web.Model;
 
-import com.fasterxml.jackson.annotation.JsonTypeId;
-import jakarta.persistence.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.sql.Blob;
-import java.util.UUID;
-
-@Entity
 public class Post {
     //Properties:
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID postid; //More secure
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id", nullable = false)
+    private long postid;
     private ClassUser creator;
     private String title;
     private String description;
     private String imageName;
-    @Lob
-    private Blob imageFile;
-    //private MultipartFile imageFile;
+    private String imagePath;
 
 
     //Constructor:
@@ -29,25 +17,21 @@ public class Post {
         this.title = title;
         this.description = text;
     }
-
     public Post(ClassUser classUser, String title, String text, String image){
         this.creator = classUser;
         this.title = title;
         this.description = text;
         this.imageName = image;
     }
-
     public Post() {}
 
     //Methods:
-
-
     //Getters & setters:
         //Id
-    public UUID getPostid() {
+    public long getPostid() {
         return postid;
     }
-    public void setPostid(UUID postid) {
+    public void setPostid(long postid) {
         this.postid = postid;
     }
 
@@ -87,12 +71,7 @@ public class Post {
         this.imageName = imageName;
     }
 
-        //ImageFile
-
-    public Blob getImageFile() {
-        return imageFile;
-    }
-    public void setImageFile(Blob imageFile) {
-        this.imageFile = imageFile;
-    }
+        //ImagePath
+    public String getImagePath() {return imagePath;}
+    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
 }

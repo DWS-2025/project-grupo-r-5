@@ -26,16 +26,7 @@ public class GroupClassWebController {
         model.addAttribute("groupedClasses", groupedClasses);
         return "index";
     }
-    @GetMapping("/GroupClasses/Join-{id}")
-    public String joinClass(Model model , @PathVariable long id) {
-        Optional<GroupClass> optionalGroupClass = groupClassService.findById(id);
-        if (optionalGroupClass.isPresent()) {
-            model.addAttribute("GroupClass", optionalGroupClass.get());
-            return "joinClass";
-        } else{
-            return "index";
-        }
-    }
+
 
 
 

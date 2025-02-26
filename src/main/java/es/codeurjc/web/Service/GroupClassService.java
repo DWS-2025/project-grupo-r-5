@@ -1,46 +1,95 @@
 package es.codeurjc.web.Service;
 
 
+import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.GroupClass;
-import es.codeurjc.web.repository.GroupClassRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class GroupClassService {
 
     @Autowired
-    private GroupClassRepository groupClassRepository;
-    @Autowired
-    private EntityManager entityManager;
-    @Autowired
     private UserService userService;
 
 
+    private ConcurrentHashMap<Long, GroupClass> groupClasses = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);
 
-    public List<GroupClass> findAll() {return groupClassRepository.findAll();}
+
+
+    public GroupClassService() {}
+
+    @PostConstruct
+    public void init() {
+        save(new GroupClass("Advanced yoga", DayOfWeek.MONDAY, LocalTime.parse("10:00"), 60, "Professor A", 20, true));
+        save(new GroupClass("Pilates", DayOfWeek.TUESDAY, LocalTime.parse("15:00"), 120, "Professor B", 15, true));
+        save(new GroupClass("CrossFit", DayOfWeek.WEDNESDAY, LocalTime.parse("18:00"), 45, "Professor C", 25, true));
+        save(new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"), 60, "Professor D", 30, true));
+        save(new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"), 60, "Professor E", 20, true));
+        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"), 60, "Professor F", 25, true));
+        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"), 60, "Professor F", 25, true));
+
+        userService.addGroupClass(1,1);
+        userService.addGroupClass(1,2);
+        userService.addGroupClass(2,1);
+        userService.addGroupClass(3,3);
+        userService.addGroupClass(4,1);
+        userService.addGroupClass(4,2);
+        userService.addGroupClass(4,3);
+        userService.addGroupClass(5,1);
+        userService.addGroupClass(6,3);
+
+    }
+
+    public Collection<GroupClass> findAll() {return groupClasses.values();}
+
+    public GroupClass findById(long id) {
+        return groupClasses.get(id);
+    }
+
+    public void save(GroupClass groupClass) {
+        long id = nextId.getAndIncrement();
+        groupClass.setClassid(id);
+        this.groupClasses.put(id, groupClass);
+    }
+
+    public void delete(long id) {
+        this.groupClasses.remove(id);
+    }
+
+    public boolean addUser(long groupId, long userId) {
+        GroupClass groupClass = this.groupClasses.get(groupId);
+        ClassUser classUser = userService.findById(userId);
+        if (groupClass != null) {
+            return groupClass.addUser(classUser);
+        }
+        return false;
+    }
+
+    public boolean removeUser(long groupId, long userId) {
+        GroupClass groupClass = this.groupClasses.get(groupId);
+        ClassUser classUser = userService.findById(userId);
+        if (groupClass != null && classUser != null) {
+            return groupClass.removeUser(classUser);
+        }
+        return false;
+    }
 
     public List<Map.Entry<String, List<GroupClass>>> getClassesGroupedByDayAndSortedByTime() {
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<GroupClass> query = cb.createQuery(GroupClass.class);
-        Root<GroupClass> root = query.from(GroupClass.class);
+        List<GroupClass> allClasses = new ArrayList<>(groupClasses.values());
 
         // Ordenar por día de la semana y luego por hora
-        query.select(root)
-                .orderBy(cb.asc(root.get("day")), cb.asc(root.get("time_init")));
-
-        TypedQuery<GroupClass> typedQuery = entityManager.createQuery(query);
-        List<GroupClass> allClasses = typedQuery.getResultList();
+        allClasses.sort(Comparator
+                .comparing(GroupClass::getDay)
+                .thenComparing(GroupClass::getTime_init));
 
         // Agrupar en un mapa con String como clave
         Map<String, List<GroupClass>> groupedClasses = new LinkedHashMap<>();
@@ -55,25 +104,4 @@ public class GroupClassService {
         // Convertimos el mapa a una lista de entradas
         return new ArrayList<>(groupedClasses.entrySet());
     }
-
-    public GroupClass findGroupClassById(long id){
-        return groupClassRepository.findById(id).orElseThrow();
-    }
-    public boolean exist(long id){return groupClassRepository.existsById(id);}
-    public Optional<GroupClass> findById(long id) {
-
-        if(this.exist(id)){
-            return Optional.of(this.findGroupClassById(id));
-        }
-        return Optional.empty();
-
-    }
-
-    public GroupClass save(GroupClass groupClass) {
-        long id = nextId.getAndIncrement();
-        groupClass.setClassid(id);
-        groupClassRepository.save(groupClass);
-        return groupClass;
-    }
-
 }
