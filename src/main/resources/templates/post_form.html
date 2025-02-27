@@ -1,38 +1,39 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${isEdit} ? 'Edit Post' : 'Create Post'"></title>
+    <title>{{#isEdit}}Edit Post{{/isEdit}}{{^isEdit}}Create Post{{/isEdit}}</title>
     <link rel="stylesheet" type="text/css" href="/css/post_form.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body>
 
-<form th:action="@{${isEdit} ? '/blog/changePost/' + post.id : '/blog/new'}" method="post" enctype="multipart/form-data">
+<form action="{{#isEdit}}/blog/changePost/{{post.id}}{{/isEdit}}{{^isEdit}}/blog/new{{/isEdit}}" method="post" enctype="multipart/form-data">
 
     <p><label>User: </label></p>
     <p><input type="text" name="user" placeholder="Name"></p>
 
     <p><label>Title: </label></p>
-    <p><input type="text" name="title" placeholder="Title" th:value="${post.title}"></p>
+    <p><input type="text" name="title" placeholder="Title" value="{{post.title}}"></p>
 
     <p>Text:</p>
-    <div id="editor" style="height: 200px;" th:utext="${post.text}"></div>
-    <textarea id="description-textarea" name="text" rows="20" cols="40" style="display: none;" th:text="${post.text}"></textarea>
+    <div id="editor" style="height: 200px;">{{{post.text}}}</div>
+    <textarea id="description-textarea" name="text" rows="20" cols="40" style="display: none;">{{post.text}}</textarea>
 
     <p>Image file:</p>
     <input type='file' name='imagefile' accept=".jpg, .jpeg"/>
 
-    <div th:if="${isEdit}">
+    {{#isEdit}}
+    <div>
         <label for="deleteImage">Delete Image</label>
         <select id="deleteImage" name="deleteImage">
             <option value="true">Yes</option>
             <option value="false" selected>No</option>
         </select>
     </div>
+    {{/isEdit}}
 
     <input type='submit' value='Save'/>
-
 </form>
 
 <a href="/blog">Back</a>
@@ -48,3 +49,4 @@
 </script>
 </body>
 </html>
+

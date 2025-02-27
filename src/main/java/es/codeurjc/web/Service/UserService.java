@@ -57,6 +57,10 @@ public class UserService {
 
     public void delete(long id) {users.remove(id);}
 
+    public ClassUser findByName(String name){
+        return users.get(name);
+    }
+
     public boolean addGroupClass(long classId, long userId) {
         ClassUser classUser = users.get(userId);
         GroupClass groupClass = groupClassService.findById(classId);

@@ -46,13 +46,19 @@ public class BlogWebController {
         return "blog";
     }
 
-    @GetMapping("/blog/new")
+    @GetMapping("/blog/{id}")
+    public String showPost(@PathVariable long id, Model model) {
+        model.addAttribute("Post", postService.findById(id));
+        return "show_post";
+    }
+
+    /*@GetMapping("/blog/new")
     public String newPost(Model model) {
         model.addAttribute("post", new Post()); // Empty post
         model.addAttribute("isEdit", false);
         return "post_form";
     }
-
+    */
     /*@GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") UUID id) {
         Optional<Post> optionalPost = postService.findById(id);
@@ -65,8 +71,8 @@ public class BlogWebController {
         return "post_form";
     }*/
 
-    /*@GetMapping("/blog/deletePost/{id}")
-    public String deletePost(Model model,@PathVariable UUID id){
+    @GetMapping("/blog/deletePost/{id}")
+    public String deletePost(Model model,@PathVariable long id){
         try {
             postService.delete(id);
             return "deleted_post";
@@ -75,14 +81,15 @@ public class BlogWebController {
             return "redirect:/error?message=" + URLEncoder.encode("Error deleting post", StandardCharsets.UTF_8);
         }
     }
-*/
+
     //Post
     /*@PostMapping("/blog/new")
     public String newPostProcess(Model model, Post post, MultipartFile imagefile, String user) throws IOException {
-        ClassUser classUser = userService.findByName(user).orElseGet(() -> {
-            ClassUser newUser = new ClassUser(user);
-            return userService.save(newUser);
-        });
+        ClassUser classUser = userService.findByName(user);
+        if (classUser == null) {
+            userService.save(new ClassUser(user));
+        }
+
 
         post.setCreator(classUser);
         //post.setCreatorName(classUser.getName());
@@ -94,14 +101,14 @@ public class BlogWebController {
             return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8); //If error
         } else {
             postService.save(post, imagefile);
-            userService.addPost(post, classUser.getUserid());
+            userService.addPost(post.getPostid(), classUser.getUserid());
             classUser.addPost(post);
             userService.save(classUser);
         }
 
         return "redirect:/blog/" + post.getPostid(); //Redirect to created post
-    }*/
-
+    }
+    */
    /* @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable UUID id, Model model, Post post, MultipartFile imagefile, String user,
                                   @RequestParam boolean deleteImage) throws IOException {
