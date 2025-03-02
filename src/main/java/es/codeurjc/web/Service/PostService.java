@@ -3,15 +3,12 @@ package es.codeurjc.web.Service;
 import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.Post;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
 import jakarta.annotation.PostConstruct;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
-import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -37,26 +34,28 @@ public class PostService {
 
     @PostConstruct
     public void init() {
-        // Ahora los usuarios están disponibles para ser guardados
+        // Now the users are available to be saved
         ClassUser classUser = new ClassUser("Manolo");
         ClassUser classUser2 = new ClassUser("Julian");
         ClassUser classUser3 = new ClassUser("Rufusberto");
 
-        // Guarda los usuarios usando el userService
+        // Saves users using UserService
         userService.save(classUser);
         userService.save(classUser2);
         userService.save(classUser3);
 
         try {
-            save(new Post(classUser, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning! ..."), null);
-            save(new Post(classUser2, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga y ..."), null);
-            save(new Post(classUser3, "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal! ..."), null);
-            save(new Post(classUser2, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba ..."), null);
-            save(new Post(classUser, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa ..."), null);
-            save(new Post(classUser2, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates ..."), null);
+            save(new Post(classUser, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning! \\uD83D\\uDEB4\\u200D♀\\uFE0F\\uD83D\\uDCA8 La música y la energía del instructor hicieron que la hora pasara volando. Nos hizo subir la resistencia poco a poco hasta acabar con un sprint final que me dejó sin aliento. \\uD83D\\uDCA6\\uD83D\\uDD25 Ahora me duelen las piernas, pero la sensación de haberlo dado todo no tiene precio. ¡Repetiré seguro! \\uD83D\\uDCAA #SpinningVibes #CardioTotal"), null);
+            save(new Post(classUser2, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga y salí como nuevo. \uD83E\uDDD8\u200D♂\uFE0F\uD83D\uDC99 La instructora nos guió con mucha paciencia y nos ayudó a mejorar la postura en cada asana. Al principio me costó concentrarme, pero al final sentí una paz increíble. ¡Definitivamente volveré la próxima semana! \uD83D\uDE4C #YogaTime #Relajación #Bienestar"), null);
+            save(new Post(classUser3, "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal! \uD83D\uDCA5 Sentía que no iba a poder con tantas repeticiones, pero la motivación del grupo me empujó a seguir. Hicimos sentadillas con peso, burpees y sprints... ¡Acabé agotado pero feliz! \uD83D\uDCAA\uD83D\uDCAF Si alguien busca un reto de verdad, esta clase es la mejor opción. #CrossFitLovers #NoPainNoGain"), null);
+            save(new Post(classUser2, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó! \uD83D\uDE0D\uD83C\uDFB6 Al principio me sentí un poco perdido con los pasos, pero el ambiente era tan divertido que pronto me solté. Una hora bailando sin parar y sin darme cuenta de que estaba haciendo ejercicio. ¡Recomendado 100%! \uD83D\uDD25 #ZumbaLovers #EjercicioDivertido"), null);
+            save(new Post(classUser, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa. \uD83D\uDE05\uD83D\uDD25 Saltos, movimientos rápidos y mucha coordinación… ¡pero qué bien se siente después! La música te motiva a seguir y el instructor hace que no quieras rendirte. Definitivamente es una de las mejores maneras de quemar calorías sin aburrirse. \uD83D\uDE03 #AerobicsPower #EnergíaPura"), null);
+            save(new Post(classUser2, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser. \uD83E\uDD2F\uD83D\uDCAA Pensé que sería solo estiramientos, pero trabajamos fuerza, control y respiración de una forma increíble. Me encantó cómo al final todo el cuerpo se siente más ligero y fuerte al mismo tiempo. ¡Definitivamente seguiré viniendo! \uD83E\uDDD8\u200D♀\uFE0F #PilatesLovers #FuerzaYFlexibilidad"), null);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // post2->img2; post3->img4; post5->img1; post6->img3
 
         userService.addPost(1, classUser.getUserid());
         userService.addPost(2, classUser2.getUserid());
@@ -75,24 +74,69 @@ public class PostService {
     public boolean exist(long id){return posts.containsKey(id);}
 
     public void save(Post post, MultipartFile imageFile) throws IOException {
-        // Si el archivo de imagen no es null, usamos el ImageService para guardarlo
+        // If imageFile isn't null, we use ImageService to save it
         if (imageFile != null && !imageFile.isEmpty()) {
-            // Usamos el servicio de imágenes para guardar la imagen y obtener el nombre del archivo
+            // We use ImageService to save the image and to obtain the file's name
             String imageName = imageService.createImage(imageFile);
             post.setImageName(imageName);
-            post.setImagePath(imageService.getImage(imageName).getURI().toString()); // Puedes guardar la URL de la imagen
+            post.setImagePath(imageService.getImage(imageName).getURI().toString()); // You can save de image's URL
         }
 
-        // Asignamos un nuevo ID al post
+        // Assign new id to the post
         long postId = nextId.getAndIncrement();
         post.setPostid(postId);
 
-        // Guardamos el post en el mapa concurrente
+        // Save the post in the concurrent map
         posts.put(postId, post);
+
+        // We add the post to the user's posts:
+        userService.addPost(post.getPostid(), post.getCreator().getUserid());
     }
+
+    /*
+    public void save2(Post post, String imageName) throws IOException {
+        // If imageName isn't null or empty, we use ImageService to save it
+        if (imageName != null && !imageName.isEmpty()) {
+            // We assume that imageService.createImage(String) can handle imageName to save the image
+            String savedImageName = imageService.createImageFromFileName(imageName);  // Assuming this method can take a file name or path
+            post.setImageName(savedImageName);  // Store the name of the saved image
+            post.setImagePath(imageService.getImage(savedImageName).getURI().toString()); // Assuming the path is retrievable from ImageService
+        }
+
+        // Assign new id to the post
+        long postId = nextId.getAndIncrement();
+        post.setPostid(postId);
+
+        // Save the post in the concurrent map
+        posts.put(postId, post);
+
+        // We add the post to the user's posts
+        userService.addPost(post.getPostid(), post.getCreator().getUserid());
+    }
+    */
 
     public void delete(long id){
         posts.remove(id);
+    }
+
+    public void edit(Post post, MultipartFile imageFile, long id) throws IOException {
+        Post newP = posts.get(id);
+        if(newP == null){ //If the post is not valid
+            System.out.println("Post not found\n");
+        } else {
+            newP.setTitle(post.getTitle());
+            newP.setDescription(post.getDescription());
+            newP.setCreator(post.getCreator());
+
+            if (imageFile != null && !imageFile.isEmpty()){
+                String imageName = imageService.createImage(imageFile);
+                newP.setImageName(imageName);
+                newP.setImagePath(imageService.getImage(imageName).getURI().toString());
+            }
+            //We don't need to actualize the id
+            posts.put(id, newP);
+            userService.addPost(newP.getPostid(), newP.getCreator().getUserid());
+        }
     }
 
 }
