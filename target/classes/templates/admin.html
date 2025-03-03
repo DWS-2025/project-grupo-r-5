@@ -1,106 +1,21 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin.css"> <!-- Asegúrate de tener tu archivo CSS -->
 </head>
 <body>
-<header>
-    <h1>Dashboard de Admin</h1>
-</header>
+<div class="container">
+    <h1>Admin Dashboard</h1>
 
-<section class="section">
-    <h2>Usuarios</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Clases</th>
-            <th>Posts</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#users}}
-        <tr>
-            <td>{{userid}}</td>
-            <td>{{name}}</td>
-            <td>
-                {{#listOfClasses}}
-                <p>{{classname}} (ID: {{classid}})</p>
-                {{/listOfClasses}}
-            </td>
-            <td>
-                {{#listOfPosts}}
-                <p>{{title}} (ID: {{postid}})</p>
-                {{/listOfPosts}}
-            </td>
-        </tr>
-        {{/users}}
-        </tbody>
-    </table>
-</section>
-
-<section class="section">
-    <h2>Clases</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Instructor</th>
-            <th>Dia</th>
-            <th>Hora Inicio</th>
-            <th>Hora Fin</th>
-            <th>Duración (min)</th>
-            <th>Capacidad Max</th>
-            <th>Capacidad Actual</th>
-            <th>Oficial</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#classes}}
-        <tr>
-            <td>{{classid}}</td>
-            <td>{{classname}}</td>
-            <td>{{instructor}}</td>
-            <td>{{day}}</td>
-            <td>{{time_init}}</td>
-            <td>{{time_fin}}</td>
-            <td>{{duration}}</td>
-            <td>{{maxCapacity}}</td>
-            <td>{{currentCapacity}}</td>
-            <td>{{officialClass}}</td>
-        </tr>
-        {{/classes}}
-        </tbody>
-    </table>
-</section>
-
-<section class="section">
-    <h2>Posts</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Título</th>
-            <th>Creador</th>
-            <th>Descripción</th>
-        </tr>
-        </thead>
-        <tbody>
-        {{#posts}}
-        <tr>
-            <td>{{postid}}</td>
-            <td>{{title}}</td>
-            <td>{{creatorName}}</td>
-            <td>{{description}}</td>
-        </tr>
-        {{/posts}}
-        </tbody>
-    </table>
-</section>
+    <div class="btn-group">
+        <a href="/admin/posts" class="btn">Ver Posts</a>
+        <a href="/admin/users" class="btn">Ver Usuarios</a>
+        <a href="/admin/groupClasses" class="btn">Ver Clases Grupales</a>
+    </div>
+</div>
 </body>
 </html>
+
