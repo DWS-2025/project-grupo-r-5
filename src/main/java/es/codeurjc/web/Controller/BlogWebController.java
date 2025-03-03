@@ -10,18 +10,13 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -30,7 +25,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
+import java.util.UUID;
+//import static es.codeurjc.web.Service.ImageService.IMAGES_FOLDER;
 
 
 @Controller
@@ -57,7 +53,7 @@ public class BlogWebController {
 
     @GetMapping("/blog/new")
     public String newPost(Model model) {
-        model.addAttribute("Posts", new Post()); // Empty post
+        model.addAttribute("Post", new Post()); // Empty post
         model.addAttribute("isEdit", false);
         return "post_form";
     }
@@ -66,10 +62,10 @@ public class BlogWebController {
     public String showPost(@PathVariable Long id, Model model) {
         Post post = postService.findById(id);
         if(postService.exist(id)){
-            model.addAttribute("Posts", post);
+            model.addAttribute("Post", post);
             model.addAttribute("CreatorName", post.getCreatorName());
             model.addAttribute("title", post.getTitle());
-            model.addAttribute("text", post.getDescription());
+            model.addAttribute("description", post.getDescription());
             String imagefile = post.getImageName();
             if(imagefile != null && !imagefile.isEmpty()){
                 model.addAttribute("ImagePresented", imagefile);
@@ -90,7 +86,7 @@ public class BlogWebController {
             //
             model.addAttribute("title", post.getTitle());
             model.addAttribute("description", post.getDescription());
-            model.addAttribute("user", post.getCreatorName());
+            model.addAttribute("creatorName", post.getCreatorName());
             //
 
             model.addAttribute("post", post);
@@ -115,34 +111,42 @@ public class BlogWebController {
     }
 
     @GetMapping("/blog/{id}/image")
-    public ResponseEntity<Resource> getImage(@PathVariable Long id) {
+    public String viewImage(@PathVariable Long id, Model model) {
+        Post post = postService.findById(id);
+
+        if (post == null || post.getImageName() == null || post.getImageName().isEmpty()) {
+            return "redirect:/error?message=" + URLEncoder.encode("Image not found", StandardCharsets.UTF_8); //Error
+        }
+
+        // Pass the image URL and download URL to the view
+        model.addAttribute("imageUrl", "/blog/" + id + "/image");
+        model.addAttribute("downloadUrl", "/blog/" + id + "/image/download_image");
+
+        return "view_image";
+    }
+
+    @GetMapping("/blog/{id}/image/download_image")
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long id) throws MalformedURLException {
         Post post = postService.findById(id);
 
         if (post == null || post.getImageName() == null || post.getImageName().isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        try {
-            Path imagePath = Paths.get("uploads").resolve(post.getImageName()).normalize().toAbsolutePath();
+        Path imagePath = Paths.get("images").resolve(post.getImageName()).normalize().toAbsolutePath();
 
-            if (!Files.exists(imagePath) || !Files.isReadable(imagePath)) {
-                return ResponseEntity.notFound().build();
-            }
-
-            Resource image = new UrlResource(imagePath.toUri());
-            String contentType = Files.probeContentType(imagePath);
-            if (contentType == null) {
-                contentType = "application/octet-stream";
-            }
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .body(image);
-
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (!Files.exists(imagePath) || !Files.isReadable(imagePath)) {
+            return ResponseEntity.notFound().build();
         }
+
+        Resource image = new UrlResource(imagePath.toUri());
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + post.getImageName() + "\"")
+                .header(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
+                .body(image);
     }
+
 
 
     //Post
@@ -167,8 +171,30 @@ public class BlogWebController {
         String validationError = validateService.validatePost(post);
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
-            model.addAttribute("post", post);
+            model.addAttribute("Post", post);
             return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8); //If error
+        }
+
+        //Validate image before uploading
+        if(imagefile != null && !imagefile.isEmpty()){
+            Path imagesDir = Paths.get("images");
+            if (!Files.exists(imagesDir)) {
+                Files.createDirectories(imagesDir);
+            }
+
+            // Generate unique name and save
+            String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
+            Path imagePath = imagesDir.resolve(imageName).normalize();
+
+            try {
+                imagefile.transferTo(imagePath.toFile());
+            } catch (IOException e) {
+                model.addAttribute("error", "Error al guardar la imagen. Por favor, intente de nuevo.");
+                return "redirect:/error?message=" + URLEncoder.encode("Error saving image", StandardCharsets.UTF_8); //If error
+            }
+
+            // Associate the image to the post
+            post.setImageName(imageName);
         }
 
         postService.save(post, imagefile);
@@ -187,14 +213,18 @@ public class BlogWebController {
                                   @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage) throws IOException {
 
         Post post = postService.findById(id);
-        if(!postService.exist(id)){
+        if(post == null){
             return "redirect:/error?message=" + URLEncoder.encode("Post does not exists", StandardCharsets.UTF_8); //If there's error
         }
 
         //
         ClassUser classUser = post.getCreator();
-        if(classUser == null){
-            classUser = new ClassUser(user);
+        if(classUser == null || !classUser.getName().equals(user)){
+            classUser = userService.findByName(user);
+            if(classUser == null){
+                classUser = new ClassUser(user);
+                userService.save(classUser);
+            }
         }
         post.setCreator(classUser);
         //
@@ -207,16 +237,53 @@ public class BlogWebController {
             model.addAttribute("error", validationError);
             model.addAttribute("post", post);
             return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8); //If there's error
+        }
+        if (deleteImage && post.getImageName()!=null) {
+            imageService.deleteImage(post.getImageName());
+            post.setImageName(null);
+            postService.edit(post, null, id);
+        }else if(imagefile != null && !imagefile.isEmpty()){
+            String newImageName = imageService.createImage(imagefile);
+            post.setImageName(newImageName);
+            postService.edit(post, imagefile, id);
         } else {
-            if (deleteImage) {
-                postService.edit(post, null, id);
-            } else {
-                postService.edit(post, imagefile, id);
-            }
+            postService.edit(post, imagefile, id);
         }
 
         return "redirect:/blog/" + post.getPostid(); //Redirect to edited post
     }
+
+    @PostMapping("/blog/{id}/image")
+    @ResponseBody
+    public ResponseEntity<Resource> viewImage(@PathVariable Long id) throws  MalformedURLException {
+        Post post = postService.findById(id);
+
+        if (post == null || post.getImageName() == null || post.getImageName().isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Path imagePath = Paths.get("uploads").resolve(post.getImageName()).normalize().toAbsolutePath();
+        if (!Files.exists(imagePath)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Resource image = new UrlResource(imagePath.toUri());
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG)
+                .body(image);
+    }
+
+    /*
+    @PostMapping("/blog/{id}/upload_image")
+    public String uploadImage(@RequestParam String imageName,
+                              @RequestParam MultipartFile image) throws IOException{
+        this.imageName = imageName;
+        Files.createDirectories(IMAGES_FOLDER);
+        Path imagePath = IMAGES_FOLDER.resolve("image.jpg");
+        image.transferTo(imagePath);
+        return "uploaded_image";
+    }
+    */
+
 
     /*New redirection to error Controller:
     return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8);
