@@ -19,9 +19,24 @@ public class AdminController {
 
     @GetMapping("/admin")
     public String showAdminDashboard(Model model) {
-        model.addAttribute("posts", postService.findAll());
-        model.addAttribute("users", classUserService.findAll());
-        model.addAttribute("classes", groupClassService.findAll());
         return "admin";
     }
+    @GetMapping("/admin/posts")
+    public String showPosts(Model model) {
+        model.addAttribute("posts", postService.findAll());
+        return "adminPosts";
+    }
+
+    @GetMapping("/admin/users")
+    public String showUsers(Model model) {
+        model.addAttribute("users", classUserService.findAll());
+        return "adminUsers";
+    }
+
+    @GetMapping("/admin/groupClasses")
+    public String showGroupClasses(Model model) {
+        model.addAttribute("GroupClasses", groupClassService.findAll());
+        return "adminGroupClasses";
+    }
+
 }

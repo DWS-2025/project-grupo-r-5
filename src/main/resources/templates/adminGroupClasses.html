@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Clases</title>
+    <link rel="stylesheet" href="/css/adminTables.css">
+</head>
+<body>
+<div class="container">
+    <h1>Gestión de Clases</h1>
+
+    <!-- Sección de clases -->
+    <section class="section">
+        <h2>Clases</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Instructor</th>
+                <th>Día</th>
+                <th>Hora Inicio</th>
+                <th>Hora Fin</th>
+                <th>Duración (min)</th>
+                <th>Capacidad Max</th>
+                <th>Capacidad Actual</th>
+                <th>Oficial</th>
+                <th>Usuarios Inscritos</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#GroupClasses}}
+            <tr>
+                <td>{{classid}}</td>
+                <td>{{classname}}</td>
+                <td>{{instructor}}</td>
+                <td>{{day}}</td>
+                <td>{{time_init}}</td>
+                <td>{{time_fin}}</td>
+                <td>{{duration}}</td>
+                <td>{{maxCapacity}}</td>
+                <td>{{currentCapacity}}</td>
+                <td>{{officialClass}}</td>
+                <td>
+                    <!-- Mostrar los usuarios inscritos -->
+                    <ul>
+                        {{#usersList}}
+                        <li>{{userid}} - {{name}}</li>
+                        {{/usersList}}
+                        {{^usersList}}
+                        <li>No hay usuarios inscritos.</li>
+                        {{/usersList}}
+                    </ul>
+                </td>
+                <td>
+                    <!-- Botón Eliminar -->
+                    <a href="/admin/deleteClass/{{classid}}" class="btn delete-btn">Eliminar</a>
+                </td>
+            </tr>
+            {{/GroupClasses}}
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Botones al final -->
+    <div class="btn-group">
+        <a href="/admin" class="btn back-btn">Back</a>
+        <a href="/admin/createClass" class="btn create-btn">Crear Clase</a>
+    </div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Usuarios</title>
+  <link rel="stylesheet" href="/css/adminTables.css">
+</head>
+<body>
+<div class="container">
+  <h1>Gestión de Usuarios</h1>
+
+  <!-- Sección de usuarios -->
+  <section class="section">
+    <h2>Usuarios</h2>
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Clases Inscritas</th>
+        <th>Posts Relacionados</th>
+        <th>Acciones</th>
+      </tr>
+      </thead>
+      <tbody>
+      {{#users}}
+      <tr>
+        <td>{{userid}}</td>
+        <td>{{name}}</td>
+        <td>
+          <!-- Mostrar las clases relacionadas -->
+          <ul>
+            {{#listOfClasses}}
+            <li>{{classname}}</li>
+            {{/listOfClasses}}
+          </ul>
+        </td>
+        <td>
+          <!-- Mostrar los posts relacionados -->
+          <ul>
+            {{#listOfPosts}}
+            <li>{{title}}</li>
+            {{/listOfPosts}}
+          </ul>
+        </td>
+        <td>
+          <!-- Botón Eliminar -->
+          <a href="/admin/deleteUser/{{userid}}" class="btn delete-btn">Eliminar</a>
+        </td>
+      </tr>
+      {{/users}}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- Botones al final -->
+  <div class="btn-group">
+    <a href="/admin" class="btn back-btn">Back</a>
+  </div>
+</div>
+</body>
+</html>

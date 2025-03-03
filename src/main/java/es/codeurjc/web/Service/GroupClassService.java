@@ -47,7 +47,17 @@ public class GroupClassService {
         userService.addGroupClass(5,1);
         userService.addGroupClass(6,3);
 
+        addUser(1, 1);  // Añadir usuario 1 a la clase 1
+        addUser(1, 2);  // Añadir usuario 2 a la clase 1
+        addUser(2, 1);  // Añadir usuario 1 a la clase 2
+        addUser(3, 3);  // Añadir usuario 3 a la clase 3
+        addUser(4, 1);  // Añadir usuario 1 a la clase 4
+        addUser(4, 2);  // Añadir usuario 2 a la clase 4
+        addUser(4, 3);  // Añadir usuario 3 a la clase 4
+        addUser(5, 1);  // Añadir usuario 1 a la clase 5
+        addUser(6, 3);  // Añadir usuario 3 a la clase 6
     }
+
 
     public Collection<GroupClass> findAll() {return groupClasses.values();}
 
@@ -104,4 +114,12 @@ public class GroupClassService {
         // Convertimos el mapa a una lista de entradas
         return new ArrayList<>(groupedClasses.entrySet());
     }
+
+    public Collection<GroupClass> getClassesGroupedByNotOfficialClass() {
+        return groupClasses.values().stream()
+                .filter(gc -> !gc.isOfficialClass()) // Filtra solo clases no oficiales
+                .sorted(Comparator.comparing(GroupClass::getDay)) // Ordena por día
+                .toList();
+    }
+
 }

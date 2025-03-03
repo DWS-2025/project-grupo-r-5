@@ -10,7 +10,6 @@ import java.util.*;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
