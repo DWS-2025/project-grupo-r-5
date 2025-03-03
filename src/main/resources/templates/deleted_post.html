@@ -7,8 +7,14 @@
 </head>
 <body>
 <div class="container">
+    {{#DeletePost}}
     <p>Post has been deleted.</p>
     <a href="/blog">Back</a>
+    {{/DeletePost}}
+    {{#DeleteImage}}
+    <p>Image has been deleted.</p>
+    <a href="/blog/{{postid}}">Back</a>
+    {{/DeleteImage}}
 </div>
 </body>
 </html>

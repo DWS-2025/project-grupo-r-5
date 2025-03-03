@@ -10,7 +10,7 @@
 <div class="container">
     <h1>Gestión de Posts</h1>
 
-    <!-- Sección de posts -->
+    <!-- Section of posts -->
     <section class="section">
         <h2>Posts</h2>
         <table>
@@ -33,14 +33,14 @@
                 <td>{{creator.name}}</td>
                 <td>
                     {{#imagePath}}
-                    <img src="{{imagePath}}" alt="{{imageName}}" style="width: 50px; height: 50px;">
+                    {{imagePath}}
                     {{/imagePath}}
                     {{^imagePath}}
                     No hay imagen
                     {{/imagePath}}
                 </td>
                 <td>
-                    <!-- Botón Eliminar -->
+                    <!-- Delete button -->
                     <a href="/admin/deletePost/{{postid}}" class="btn delete-btn">Eliminar</a>
                 </td>
             </tr>

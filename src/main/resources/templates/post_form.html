@@ -25,15 +25,6 @@
     <p>Image file:</p>
     <input type='file' name='imagefile' accept=".jpg, .jpeg"/>
 
-    {{#isEdit}}
-    <div>
-        <label for="deleteImage">Delete Image</label>
-        <select id="deleteImage" name="deleteImage">
-            <option value="true">Yes</option>
-            <option value="false" selected>No</option>
-        </select>
-    </div>
-    {{/isEdit}}
 
     <input type='submit' value='Save'/>
 
@@ -61,12 +52,6 @@
         document.getElementById('description-textarea').value = quill.root.innerHTML;
     }); //Without enriched text
 
-
-
-    /* For the future:
-    quill.on('text-change', function () {
-        document.getElementById('description-textarea').value = quill.root.innerHTML;
-    });*/
 </script>
 </body>
 </html>

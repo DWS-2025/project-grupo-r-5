@@ -1,14 +1,17 @@
 package es.codeurjc.web.Model;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Post {
     //Properties:
     private long postid;
     private ClassUser creator;
     private String title;
     private String description;
-    private String imageName;
     private String imagePath;
+    private List<ClassUser> listOfUsers = new ArrayList<>();
 
 
     //Constructor:
@@ -21,11 +24,19 @@ public class Post {
         this.creator = classUser;
         this.title = title;
         this.description = text;
-        this.imageName = image;
+        this.imagePath = image;
     }
     public Post() {}
 
     //Methods:
+    public boolean removeUser(ClassUser classUser) {
+        if(this.listOfUsers.contains(classUser) && this.listOfUsers.remove(classUser)) {
+            classUser.setListOfPosts(null);
+            return true;
+        }
+        return false;
+    }
+
     //Getters & setters:
         //Id
     public long getPostid() {
@@ -63,13 +74,6 @@ public class Post {
         this.description = description;
     }
 
-        //ImageName
-    public String getImageName() {
-        return imageName;
-    }
-    public void setImageName(String imageName) {
-        this.imageName = imageName;
-    }
 
         //ImagePath
     public String getImagePath() {return imagePath;}

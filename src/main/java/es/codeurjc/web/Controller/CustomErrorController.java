@@ -19,8 +19,6 @@ public class CustomErrorController implements ErrorController {
 
         if (statusCode == HttpStatus.NOT_FOUND.value()) {
             errorMessage = "La página que buscas no existe.";
-        } else if (statusCode == HttpStatus.FORBIDDEN.value()) {
-            errorMessage = "No tienes permiso para acceder a esta página.";
         } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
             errorMessage = "Se produjo un error en el servidor.";
         }

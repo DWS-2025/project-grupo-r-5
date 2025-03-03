@@ -29,13 +29,13 @@ public class GroupClassService {
 
     @PostConstruct
     public void init() {
-        save(new GroupClass("Advanced yoga", DayOfWeek.MONDAY, LocalTime.parse("10:00"), 60, "Professor A", 20, true));
-        save(new GroupClass("Pilates", DayOfWeek.TUESDAY, LocalTime.parse("15:00"), 120, "Professor B", 15, true));
-        save(new GroupClass("CrossFit", DayOfWeek.WEDNESDAY, LocalTime.parse("18:00"), 45, "Professor C", 25, true));
-        save(new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"), 60, "Professor D", 30, true));
-        save(new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"), 60, "Professor E", 20, true));
-        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"), 60, "Professor F", 25, true));
-        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"), 60, "Professor F", 25, true));
+        save(new GroupClass("Advanced yoga", DayOfWeek.MONDAY, LocalTime.parse("10:00"), 60, "Professor A", 20));
+        save(new GroupClass("Pilates", DayOfWeek.TUESDAY, LocalTime.parse("15:00"), 120, "Professor B", 15));
+        save(new GroupClass("CrossFit", DayOfWeek.WEDNESDAY, LocalTime.parse("18:00"), 45, "Professor C", 25));
+        save(new GroupClass("Zumba", DayOfWeek.THURSDAY, LocalTime.parse("12:00"), 60, "Professor D", 30));
+        save(new GroupClass("Spinning", DayOfWeek.FRIDAY, LocalTime.parse("17:00"), 60, "Professor E", 20));
+        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("09:00"), 60, "Professor F", 25));
+        save(new GroupClass("Aerobics", DayOfWeek.SATURDAY, LocalTime.parse("10:00"), 60, "Professor F", 25));
 
         userService.addGroupClass(1,1);
         userService.addGroupClass(1,2);
@@ -47,15 +47,15 @@ public class GroupClassService {
         userService.addGroupClass(5,1);
         userService.addGroupClass(6,3);
 
-        addUser(1, 1);  // Añadir usuario 1 a la clase 1
-        addUser(1, 2);  // Añadir usuario 2 a la clase 1
-        addUser(2, 1);  // Añadir usuario 1 a la clase 2
-        addUser(3, 3);  // Añadir usuario 3 a la clase 3
-        addUser(4, 1);  // Añadir usuario 1 a la clase 4
-        addUser(4, 2);  // Añadir usuario 2 a la clase 4
-        addUser(4, 3);  // Añadir usuario 3 a la clase 4
-        addUser(5, 1);  // Añadir usuario 1 a la clase 5
-        addUser(6, 3);  // Añadir usuario 3 a la clase 6
+        addUser(1, 1);  // Add user 1 to class 1
+        addUser(1, 2);  // Add user 2 to class 1
+        addUser(2, 1);  // Add user 1 to class 2
+        addUser(3, 3);  // Add user 3 to class 3
+        addUser(4, 1);  // Etc.
+        addUser(4, 2);
+        addUser(4, 3);
+        addUser(5, 1);
+        addUser(6, 3);
     }
 
 
@@ -113,13 +113,6 @@ public class GroupClassService {
 
         // Convertimos el mapa a una lista de entradas
         return new ArrayList<>(groupedClasses.entrySet());
-    }
-
-    public Collection<GroupClass> getClassesGroupedByNotOfficialClass() {
-        return groupClasses.values().stream()
-                .filter(gc -> !gc.isOfficialClass()) // Filtra solo clases no oficiales
-                .sorted(Comparator.comparing(GroupClass::getDay)) // Ordena por día
-                .toList();
     }
 
 }

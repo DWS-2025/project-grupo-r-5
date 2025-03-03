@@ -10,7 +10,7 @@
 <div class="container">
   <h1>Gestión de Usuarios</h1>
 
-  <!-- Sección de usuarios -->
+  <!-- Section of users -->
   <section class="section">
     <h2>Usuarios</h2>
     <table>
@@ -29,7 +29,7 @@
         <td>{{userid}}</td>
         <td>{{name}}</td>
         <td>
-          <!-- Mostrar las clases relacionadas -->
+          <!-- Show related classes -->
           <ul>
             {{#listOfClasses}}
             <li>{{classname}}</li>
@@ -37,7 +37,7 @@
           </ul>
         </td>
         <td>
-          <!-- Mostrar los posts relacionados -->
+          <!-- Show related posts -->
           <ul>
             {{#listOfPosts}}
             <li>{{title}}</li>
@@ -45,7 +45,7 @@
           </ul>
         </td>
         <td>
-          <!-- Botón Eliminar -->
+          <!-- Delete button -->
           <a href="/admin/deleteUser/{{userid}}" class="btn delete-btn">Eliminar</a>
         </td>
       </tr>
@@ -54,7 +54,7 @@
     </table>
   </section>
 
-  <!-- Botones al final -->
+  <!-- Buttons at the end -->
   <div class="btn-group">
     <a href="/admin" class="btn back-btn">Back</a>
   </div>

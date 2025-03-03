@@ -82,17 +82,20 @@ public class UserService {
 
     public boolean addPost(long postId, long userId) {
         ClassUser classUser = this.users.get(userId);
-        Post post = postService.findById(postId);
-        if(classUser != null && post != null){
+        Optional <Post> op = postService.findById(postId);
+        if(op.isPresent() && classUser != null){
+            Post post = op.get();
             return classUser.addPost(post);
         }
+
         return false;
     }
 
     public boolean removePost(long postId, long userId) {
         ClassUser classUser = this.users.get(userId);
-        Post post = postService.findById(postId);
-        if (classUser != null && post != null){
+        Optional <Post> op = postService.findById(postId);
+        if(op.isPresent() && classUser != null){
+            Post post = op.get();
             return classUser.removePost(post);
         }
         return false;

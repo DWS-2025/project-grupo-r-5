@@ -7,7 +7,7 @@ import java.util.List;
 
 public class GroupClass {
     //Properties:
-    private Long classid; //More efficient
+    private Long classid;
     private String classname;
     private String instructor;
     private DayOfWeek day;
@@ -16,13 +16,12 @@ public class GroupClass {
     private LocalTime time_fin;
     private int maxCapacity;
     private int currentCapacity;
-    private boolean officialClass;
     private List<ClassUser> usersList = new ArrayList<>();
 
 
     //Constructor:
     public GroupClass() {}
-    public GroupClass(String name, DayOfWeek day, LocalTime time_init,int duration, String instructor, int maxCapacity, boolean officialClass) {
+    public GroupClass(String name, DayOfWeek day, LocalTime time_init,int duration, String instructor, int maxCapacity) {
         this.classname = name;
         this.day = day;
         this.time_init = time_init;
@@ -31,7 +30,6 @@ public class GroupClass {
         this.instructor = instructor;
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
-        this.officialClass = officialClass;
         this.usersList = new ArrayList<>();
     }
 
@@ -136,13 +134,6 @@ public class GroupClass {
         this.currentCapacity = currentCapacity;
     }
 
-    //OfficialClass
-    public boolean isOfficialClass() {
-        return officialClass;
-    }
-    public void setOfficialClass(boolean officialClass) {
-        this.officialClass = officialClass;
-    }
 
     //User
     public List<ClassUser> getUsersList() {

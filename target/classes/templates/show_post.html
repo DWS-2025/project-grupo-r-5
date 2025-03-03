@@ -8,14 +8,14 @@
 <body>
 {{#Post}}
 <div class="post-container">
-    <p>Creator: {{creator.name}}</p>
+    <p>Creator: {{CreatorName}}</p>
     <p>Title: {{title}}</p>
     <p>Text: {{description}}</p>
 
     {{#ImagePresented}}
     <img src="/blog/{{id}}/image" alt="Post Image" style="max-width: 100%;">
-    <!--img src="/images/{{ImagePresented}}" alt="Post Image" style="max-width: 100%;"-->
     <a href="/blog/{{id}}/image" class="btn edit-btn">Image</a>
+    <a href="/blog/{{id}}/deleteImage/{{imagePath}}" class="btn edit-btn">Delete Image</a>
     {{/ImagePresented}}
 
 

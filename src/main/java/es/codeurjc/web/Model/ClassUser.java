@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ClassUser {
     //Properties:
-    private Long userid; //More efficient
+    private Long userid;
     private String name;
     private List<GroupClass> listOfClasses = new ArrayList<>();
     private List<Post> listOfPosts = new ArrayList<>();
