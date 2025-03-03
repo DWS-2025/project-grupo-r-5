@@ -29,6 +29,7 @@ public class UserService {
 
 
     private ConcurrentMap<Long, ClassUser> users = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);
 
     public UserService() {
@@ -43,6 +44,11 @@ public class UserService {
 
     public ClassUser findById(long id) {
         return users.get(id);
+    }
+
+    public ClassUser findByName(String name) {
+        Long userId = userIdsByName.get(name);
+        return (userId != null) ? users.get(userId) : null;
     }
 
     public boolean exist(long id) {
@@ -96,4 +102,5 @@ public class UserService {
         }
         return false;
     }
+
 }

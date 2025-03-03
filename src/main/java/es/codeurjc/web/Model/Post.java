@@ -40,7 +40,7 @@ public class Post {
         return creator;
     }
     public String getCreatorName() {
-        return creator.getName();
+        return (creator != null) ? creator.getName() : "Unknown user";
     }
     public void setCreator(ClassUser creator) {
         this.creator = creator;

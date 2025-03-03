@@ -33,7 +33,7 @@ public class ValidateService {
             return "Debes seleccionar un día para la clase";
         }
 
-        // Verificar si el día está entre los días permitidos
+        // Verify if it's a valid day
         String[] allowedDays = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Any"};
         boolean validDay = false;
         for (String allowedDay : allowedDays) {
@@ -47,7 +47,7 @@ public class ValidateService {
             return "El día seleccionado no es válido";
         }
 
-        return null; // El día es válido, no hay error
+        return null; // Day valid, no error
     }
     public String validateInstructor(String instructor){
         if(instructor == null || instructor.isEmpty()){
@@ -112,8 +112,8 @@ public class ValidateService {
         if(text == null || text.isEmpty()){
             return "Debes escribir algo en el post, no puedes dejar el campo Text vacio";
         }
-        if(text.length() > 200) {
-            return "El tamaño maximo del titulo es de 200 caracteres";
+        if(text.length() > 500) {
+            return "El tamaño maximo del titulo es de 500 caracteres";
         }
         return null;
     }
