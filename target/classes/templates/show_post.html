@@ -6,11 +6,11 @@
     <link rel="stylesheet" type="text/css" href="/css/show_post.css">
 </head>
 <body>
-{{#Posts}}
+{{#Post}}
 <div class="post-container">
-    <p>Creator: {{CreatorName}}</p>
+    <p>Creator: {{creator.name}}</p>
     <p>Title: {{title}}</p>
-    <p>Text: {{text}}</p>
+    <p>Text: {{description}}</p>
 
     {{#ImagePresented}}
     <img src="/blog/{{id}}/image" alt="Post Image" style="max-width: 100%;">
@@ -21,9 +21,7 @@
     <a href="/blog/deletePost/{{id}}" class="btn delete-btn">Delete</a>
     <a href="/blog/changePost/{{id}}" class="btn edit-btn">Edit</a>
 </div>
-{{/Posts}}
-<h2>Create your own post</h2>
-<p>You can contribute to our comunity by posting your experiences</p>
+{{/Post}}
 <div class="btn-group">
     <a href="/blog/new" class="btn create-btn">Create a post</a>
     <a href="/blog" class="btn back-btn">Back</a>
