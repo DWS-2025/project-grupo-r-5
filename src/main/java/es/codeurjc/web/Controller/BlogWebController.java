@@ -6,9 +6,14 @@ import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +24,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
 
@@ -75,6 +84,9 @@ public class BlogWebController {
     public String editPost(Model model, @PathVariable("id") long id) {
         Post post = postService.findById(id);
         if (postService.exist(id)) {
+
+            System.out.println("Post encontrado: " + post);
+            System.out.println("Descripción del post: " + post.getDescription()); // Verify content
             //
             model.addAttribute("title", post.getTitle());
             model.addAttribute("description", post.getDescription());
@@ -84,6 +96,7 @@ public class BlogWebController {
             model.addAttribute("post", post);
             model.addAttribute("isEdit", true);
         } else {
+            System.out.println("Post no encontrado para ID: " + id);
             return "redirect:/error?message=" + URLEncoder.encode("Post not found", StandardCharsets.UTF_8);
             //return "redirect:/blog";
         }
@@ -101,23 +114,41 @@ public class BlogWebController {
         }
     }
 
-    /*
     @GetMapping("/blog/{id}/image")
     public ResponseEntity<Resource> getImage(@PathVariable Long id) {
         Post post = postService.findById(id);
-        if (post == null || post.getImageName() == null) {
+
+        if (post == null || post.getImageName() == null || post.getImageName().isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        Path imagePath = Paths.get("uploads/" + post.getImageName());
-        Resource image = new UrlResource(imagePath.toUri());
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image);
+
+        try {
+            Path imagePath = Paths.get("uploads").resolve(post.getImageName()).normalize().toAbsolutePath();
+
+            if (!Files.exists(imagePath) || !Files.isReadable(imagePath)) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Resource image = new UrlResource(imagePath.toUri());
+            String contentType = Files.probeContentType(imagePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(image);
+
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
-    */
+
 
     //Post
     @PostMapping("/blog/new")
     public String newPostProcess(Model model, @RequestParam("title") String title,
-                                 @RequestParam("text") String description,
+                                 @RequestParam("description") String description,
                                  @RequestParam("user") String user,
                                  @RequestParam(value = "imagefile", required = false) MultipartFile imagefile) throws IOException {
 
@@ -150,7 +181,7 @@ public class BlogWebController {
 
     @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model, @RequestParam("title") String title,
-                                  @RequestParam("text") String description,
+                                  @RequestParam("description") String description,
                                   @RequestParam("user") String user,
                                   @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
                                   @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage) throws IOException {
@@ -169,7 +200,7 @@ public class BlogWebController {
         //
 
         post.setTitle(title);
-        post.setDescription(description);
+        post.setDescription(Jsoup.parse(description).text());
 
         String validationError = validateService.validatePost(post);
         if (validationError != null && !validationError.isEmpty()) {
