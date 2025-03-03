@@ -2,34 +2,38 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${isEdit} ? 'Edit Post' : 'Create Post'"></title>
+    <title>{{#isEdit}}Edit Post{{/isEdit}}{{^isEdit}}Create Post{{/isEdit}}</title>
     <link rel="stylesheet" type="text/css" href="/css/post_form.css">
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 </head>
 <body>
 
-<form th:action="@{${isEdit} ? '/blog/changePost/' + post.postid : '/blog/new'}" method="post" enctype="multipart/form-data">
+<form action="{{#isEdit}}/blog/changePost/{{post.postid}}{{/isEdit}}{{^isEdit}}/blog/new{{/isEdit}}"
+      method="post" enctype="multipart/form-data">
+    <input type="hidden" name="isEdit" value="{{isEdit}}">
 
     <p><label>User: </label></p>
-    <p><input type="text" name="user" placeholder="Name"></p>
+    <p><input type="text" name="user" placeholder="Name" value="{{#isEdit}}{{post.creatorName}}{{/isEdit}}"></p>
 
     <p><label>Title: </label></p>
-    <p><input type="text" name="title" placeholder="Title" th:value="${post.title}"></p>
+    <p><input type="text" name="title" placeholder="Title" value="{{#isEdit}}{{post.title}}{{/isEdit}}" required></p>
 
     <p>Text:</p>
-    <div id="editor" style="height: 200px;" th:utext="${post.description}"></div>
-    <textarea id="description-textarea" name="text" rows="20" cols="40" style="display: none;" th:text="${post.description}"></textarea>
+    <div id="editor" style="height: 200px;">{{#isEdit}}{{post.description}}{{/isEdit}}</div>
+    <textarea id="description-textarea" name="description" rows="20" cols="40" style="display: none;">{{#isEdit}}{{post.description}}{{/isEdit}}</textarea>
 
     <p>Image file:</p>
     <input type='file' name='imagefile' accept=".jpg, .jpeg"/>
 
-    <div th:if="${isEdit}">
+    {{#isEdit}}
+    <div>
         <label for="deleteImage">Delete Image</label>
         <select id="deleteImage" name="deleteImage">
             <option value="true">Yes</option>
             <option value="false" selected>No</option>
         </select>
     </div>
+    {{/isEdit}}
 
     <input type='submit' value='Save'/>
 
@@ -42,9 +46,22 @@
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
+
+    // Obtain the content of the post and put in on Quill
+    let description = document.getElementById('description-textarea').value;
+
+    console.log("Descripción cargada en Quill:", description); // Debug to verify content
+
+    // Insert description if not empty
+    if (description) {
+        quill.root.innerHTML = description;
+    }
+
     quill.on('text-change', function () {
-        document.getElementById('description-textarea').value = quill.getText().trim();
+        document.getElementById('description-textarea').value = quill.root.innerHTML;
     }); //Without enriched text
+
+
 
     /* For the future:
     quill.on('text-change', function () {
