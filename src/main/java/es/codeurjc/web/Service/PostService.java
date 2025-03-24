@@ -122,13 +122,15 @@ public class PostService {
         }
     }
 
-    public boolean removeUser(long userId, long postId){
+    public Post removeUser(long userId, long postId){
         Post post = posts.get(postId);
         ClassUser classUser = userService.findById(userId);
         if(post != null && classUser != null){
-            return post.removeUser(classUser);
+            return posts.remove(post);
+            //return post.removeUser(classUser);
         }
-        return false;
+        //return false;
+        return null;
     }
 
 }
