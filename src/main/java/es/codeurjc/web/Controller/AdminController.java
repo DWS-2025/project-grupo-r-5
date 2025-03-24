@@ -3,6 +3,9 @@ package es.codeurjc.web.Controller;
 import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.GroupClass;
 import es.codeurjc.web.Model.Post;
+import es.codeurjc.web.Repositories.GroupClassRepository;
+import es.codeurjc.web.Repositories.PostRepository;
+import es.codeurjc.web.Repositories.UserRepository;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Service.GroupClassService;
 import es.codeurjc.web.Service.PostService;
@@ -21,6 +24,15 @@ import java.util.List;
 
 @Controller
 public class AdminController {
+    //Repositories
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private GroupClassRepository groupClassRepository;
+
+    //Services:
     @Autowired
     private UserService userService;
     @Autowired

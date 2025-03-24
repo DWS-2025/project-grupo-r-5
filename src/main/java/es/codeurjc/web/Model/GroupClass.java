@@ -1,12 +1,17 @@
 package es.codeurjc.web.Model;
 
+import jakarta.persistence.*;
+
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class GroupClass {
     //Properties:
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long classid;
     private String classname;
     private String instructor;
@@ -16,6 +21,7 @@ public class GroupClass {
     private LocalTime time_fin;
     private int maxCapacity;
     private int currentCapacity;
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<ClassUser> usersList = new ArrayList<>();
 
 

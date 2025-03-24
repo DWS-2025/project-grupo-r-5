@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 
+import es.codeurjc.web.Repositories.PostRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,9 +24,13 @@ import static es.codeurjc.web.Service.ImageService.IMAGES_FOLDER;
 @Service
 public class PostService {
     @Autowired
-    public ImageService imageService;
+    private ImageService imageService;
+
     @Autowired
-    public UserService userService;
+    private PostRepository postRepository;
+
+    @Autowired
+    private UserService userService;
 
     private ConcurrentMap<Long,Post> posts = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);

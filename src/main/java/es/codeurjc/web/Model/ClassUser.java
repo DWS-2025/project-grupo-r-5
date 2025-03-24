@@ -1,13 +1,20 @@
 package es.codeurjc.web.Model;
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class ClassUser {
     //Properties:
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userid;
     private String name;
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<GroupClass> listOfClasses = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Post> listOfPosts = new ArrayList<>();
 
     //Constructor:

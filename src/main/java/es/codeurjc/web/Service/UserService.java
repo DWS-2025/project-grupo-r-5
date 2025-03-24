@@ -3,6 +3,9 @@ package es.codeurjc.web.Service;
 import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.GroupClass;
 import es.codeurjc.web.Model.Post;
+import es.codeurjc.web.Repositories.GroupClassRepository;
+import es.codeurjc.web.Repositories.PostRepository;
+import es.codeurjc.web.Repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,13 +22,15 @@ import java.util.concurrent.atomic.AtomicLong;
 public class UserService {
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     @Lazy
     private GroupClassService groupClassService;
 
     @Autowired
     @Lazy
     private PostService postService;
-
 
     private ConcurrentMap<Long, ClassUser> users = new ConcurrentHashMap<>();
     private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();

@@ -3,6 +3,7 @@ package es.codeurjc.web.Service;
 
 import es.codeurjc.web.Model.ClassUser;
 import es.codeurjc.web.Model.GroupClass;
+import es.codeurjc.web.Repositories.GroupClassRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,8 @@ public class GroupClassService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private GroupClassRepository groupClassRepository;
 
     private ConcurrentHashMap<Long, GroupClass> groupClasses = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);

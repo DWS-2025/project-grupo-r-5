@@ -1,17 +1,24 @@
 package es.codeurjc.web.Model;
 
 
+import jakarta.persistence.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 public class Post {
     //Properties:
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long postid;
+    @ManyToOne
     private ClassUser creator;
     private String title;
     private String description;
     private String imagePath;
-    private List<ClassUser> listOfUsers = new ArrayList<>();
+    //Comment the next line when everything fixed
+    //private List<ClassUser> listOfUsers = new ArrayList<>();
 
 
     //Constructor:
@@ -29,6 +36,7 @@ public class Post {
     public Post() {}
 
     //Methods:
+    /*
     public boolean removeUser(ClassUser classUser) {
         if(this.listOfUsers.contains(classUser) && this.listOfUsers.remove(classUser)) {
             classUser.setListOfPosts(null);
@@ -36,6 +44,8 @@ public class Post {
         }
         return false;
     }
+    */
+
 
     //Getters & setters:
         //Id
