@@ -12,7 +12,7 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long postid;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private ClassUser creator;
     private String title;
     private String description;

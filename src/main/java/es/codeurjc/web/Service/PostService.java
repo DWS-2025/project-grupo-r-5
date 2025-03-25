@@ -37,6 +37,10 @@ public class PostService {
 
     public PostService(){}
 
+    // ---------------------------------------------------
+    //Change this constructor to the controller
+    // --------------------------------------------------
+
     @PostConstruct
     public void init() {
         // Now the users are available to be saved

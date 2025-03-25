@@ -12,9 +12,9 @@ public class ClassUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userid;
     private String name;
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "usersList", cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private List<GroupClass> listOfClasses = new ArrayList<>();
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<Post> listOfPosts = new ArrayList<>();
 
     //Constructor:
