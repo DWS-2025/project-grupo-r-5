@@ -42,34 +42,38 @@ public class UserService {
         save(new ClassUser("Maria"));
     }
 
-    public Collection<ClassUser> findAll() {
-        return users.values();
+    public List<ClassUser> findAll() {return userRepository.findAll();}
+
+    public Optional<ClassUser> findById(long id) {
+        return userRepository.findById(id);
     }
 
-    public ClassUser findById(long id) {
-        return users.get(id);
-    }
-
-    public ClassUser findByName(String name) {
-        Long userId = userIdsByName.get(name);
-        return (userId != null) ? users.get(userId) : null;
+    public Optional<ClassUser> findByName(String name) {
+        return userRepository.findByName(name);
     }
 
     public boolean exist(long id) {
-        return users.containsKey(id);
+        return userRepository.existsById(id);
     }
 
-    public void save(ClassUser classUser){
+    public ClassUser save(ClassUser classUser){
         long id = nextId.getAndIncrement();
         classUser.setUserid(id);
-        this.users.put(id, classUser);
+        //this.users.put(id, classUser);
+        return userRepository.save(classUser);
     }
 
-    public void delete(long id) {users.remove(id);}
+    public void delete(long id) {userRepository.deleteById(id);}
 
+
+
+    //Change the implementation later
+    //--------------------------------------------------------
     public boolean addGroupClass(long classId, long userId) {
+        //Optional<ClassUser> classUser = userRepository.findById(userId);
         ClassUser classUser = users.get(userId);
         GroupClass groupClass = groupClassService.findById(classId);
+        //Optional<GroupClass> groupClass = groupClassService.findById(classId);
         if (classUser != null) {
             return classUser.addClass(groupClass);
         }
@@ -77,8 +81,10 @@ public class UserService {
     }
 
     public boolean removeGroupClass(long classId, long userId) {
+        //Optional<ClassUser> classUser = userRepository.findById(userId);
         ClassUser classUser = users.get(classId);
         GroupClass groupClass = groupClassService.findById(classId);
+        //Optional<GroupClass> groupClass = groupClassService.findById(classId);
         if (classUser != null && groupClass != null) {
             return classUser.removeClass(groupClass);
         }
@@ -105,5 +111,5 @@ public class UserService {
         }
         return false;
     }
-
+    //-------------------------------------------------------------------------
 }

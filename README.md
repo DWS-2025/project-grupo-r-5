@@ -14,16 +14,22 @@ Changes implemented respect to the DataBase implementation:
 3. Repository Layer
 - Created repositories for Post, User, and GroupClass by extending JpaRepository, enabling CRUD operations.
 - These repositories allow easy interaction with the database without writing SQL queries manually.
+- Updated the UserRepository to provide structured access to user-related data.
 
 4. Service Layer Enhancements
 - Implemented service classes for Post, User, and GroupClass to handle business logic.
 - Injected the respective repositories into service classes using @Autowired to facilitate data retrieval and manipulation.
-- Ensured services provide structured access to database operations while maintaining separation of concerns.
+- Refactored the UserService to use UserRepository for user-related operations, ensuring proper encapsulation of database access.
+  - Methods such as findByName(String name) and save(ClassUser user) now directly call UserRepository methods.
+  - Improved handling of user creation and retrieval using Optional<ClassUser> and orElseGet() to ensure consistency.
 
 5. Controller Layer Implementation
 - Added a RESTful API controller to expose database functionalities to the frontend or external clients.
 - Created endpoints using @RestController to manage CRUD operations for posts, users, and group classes.
 - Used @Autowired to inject the corresponding services into the controller.
+- Updated the PostController methods to correctly use the refactored UserService.
+  - Now retrieves users using the UserService instead of manually checking or instantiating objects.
+  - Ensured that the post creation and editing logic properly assigns existing users or creates new ones when necessary.
 
 
 Changes implemented respect to the API implementation:

@@ -67,6 +67,7 @@ public class GroupClassService {
     public GroupClass findById(long id) {
         return groupClasses.get(id);
     }
+    //public Optional<GroupClass> findById(long id) {return groupClassRepository.findById(id);}
 
     public void save(GroupClass groupClass) {
         long id = nextId.getAndIncrement();
@@ -78,33 +79,35 @@ public class GroupClassService {
         this.groupClasses.remove(id);
     }
 
+    //Change later
     public boolean addUser(long groupId, long userId) {
         GroupClass groupClass = this.groupClasses.get(groupId);
-        ClassUser classUser = userService.findById(userId);
+        /*ClassUser classUser = userService.findById(userId);
         if (groupClass != null) {
             return groupClass.addUser(classUser);
-        }
+        }*/
         return false;
     }
 
+    //Change later
     public boolean removeUser(long groupId, long userId) {
         GroupClass groupClass = this.groupClasses.get(groupId);
-        ClassUser classUser = userService.findById(userId);
+        /*ClassUser classUser = userService.findById(userId);
         if (groupClass != null && classUser != null) {
             return groupClass.removeUser(classUser);
-        }
+        }*/
         return false;
     }
 
     public List<Map.Entry<String, List<GroupClass>>> getClassesGroupedByDayAndSortedByTime() {
         List<GroupClass> allClasses = new ArrayList<>(groupClasses.values());
 
-        // Ordenar por día de la semana y luego por hora
+        // Order by day of the week and then by hour
         allClasses.sort(Comparator
                 .comparing(GroupClass::getDay)
                 .thenComparing(GroupClass::getTime_init));
 
-        // Agrupar en un mapa con String como clave
+        // Group in a map with String as key
         Map<String, List<GroupClass>> groupedClasses = new LinkedHashMap<>();
 
         for (GroupClass groupClass : allClasses) {
@@ -114,7 +117,7 @@ public class GroupClassService {
                     .add(groupClass);
         }
 
-        // Convertimos el mapa a una lista de entradas
+        // Convert the map to an entry list
         return new ArrayList<>(groupedClasses.entrySet());
     }
 

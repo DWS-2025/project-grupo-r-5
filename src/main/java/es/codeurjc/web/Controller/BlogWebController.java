@@ -154,7 +154,11 @@ public class BlogWebController {
 
         Post post = new Post();
 
-        ClassUser classUser = userService.findByName(user);
+        ClassUser classUser = userService.findByName(user).orElseGet(() -> {
+            ClassUser newUser = new ClassUser(user);
+            return userService.save(newUser);
+        });
+
         if (classUser == null){
             classUser = new ClassUser(user);
             userService.save(classUser);
@@ -214,11 +218,11 @@ public class BlogWebController {
         //
         ClassUser classUser = post.getCreator();
         if(classUser == null || !classUser.getName().equals(user)){
-            classUser = userService.findByName(user);
-            if(classUser == null){
-                classUser = new ClassUser(user);
-                userService.save(classUser);
-            }
+            classUser = userService.findByName(user).orElseGet(() -> {
+                ClassUser newUser = new ClassUser(user);
+                userService.save(newUser);
+                return newUser;
+            });
         }
         post.setCreator(classUser);
         //
