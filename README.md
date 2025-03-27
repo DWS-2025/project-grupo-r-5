@@ -11,30 +11,19 @@ Changes implemented respect to the DataBase implementation:
 - Configured relationships between entities using @OneToMany, @ManyToOne, and @ManyToMany, ensuring proper data associations.
 - Specified which entity maps to another within the relationships, defining ownership and mapped entities explicitly to maintain data integrity.
 
-3. Repository Layer
-- Created repositories for Post, User, and GroupClass by extending JpaRepository, enabling CRUD operations.
-- These repositories allow easy interaction with the database without writing SQL queries manually.
-- Updated the UserRepository to provide structured access to user-related data.
-
-4. Service Layer Enhancements
-- Implemented service classes for Post, User, and GroupClass to handle business logic.
-- Injected the respective repositories into service classes using @Autowired to facilitate data retrieval and manipulation.
-- Refactored the UserService to use UserRepository for user-related operations, ensuring proper encapsulation of database access.
-  - Methods such as findByName(String name) and save(ClassUser user) now directly call UserRepository methods.
-  - Improved handling of user creation and retrieval using Optional<ClassUser> and orElseGet() to ensure consistency.
-- Refactored the PostService to use PostRepository for post-related operations.
-  - Methods like findById(Long id), save(Post post), and deleteById(Long id) now interact directly with PostRepository.
-  - Enhanced the management of posts by ensuring proper data validation and entity persistence.
-
-5. Controller Layer Implementation
-- Added a RESTful API controller to expose database functionalities to the frontend or external clients.
-- Created endpoints using @RestController to manage CRUD operations for posts, users, and group classes.
-- Used @Autowired to inject the corresponding services into the controller.
-- Updated the PostController methods to correctly use the refactored UserService.
-  - Now retrieves users using the UserService instead of manually checking or instantiating objects.
-  - Ensured that the post creation and editing logic properly assigns existing users or creates new ones when necessary.
-  - Integrated PostService methods for handling database operations related to posts, ensuring cleaner and more maintainable code.
-
-
+3. Repository, Service, and Controller Layer Enhancements 
+- Implemented a structured repository-service-controller architecture for managing Post, User, and GroupClass entities efficiently.
+- Repository Layer:
+  - Created repositories for Post, User, and GroupClass by extending JpaRepository, enabling CRUD operations.
+  - These repositories facilitate database interaction without requiring manual SQL queries.
+- Service Layer:
+  - Developed dedicated service classes for each entity to encapsulate business logic.
+  - Injected the respective repositories using @Autowired to ensure structured access to database operations.
+  - Improved entity handling by properly managing object retrieval, persistence, and validation.
+- Controller Layer:
+  - Created RESTful API controllers to expose database functionalities.
+  - Implemented endpoints using @RestController for managing CRUD operations across posts, users, and groups.
+  - Refactored the controllers to interact with the updated service methods, ensuring clean and maintainable code. 
+ 
 
 Changes implemented respect to the API implementation:

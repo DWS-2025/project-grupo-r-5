@@ -31,7 +31,6 @@ import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
-//import static es.codeurjc.web.Service.ImageService.IMAGES_FOLDER;
 
 
 @Controller

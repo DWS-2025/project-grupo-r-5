@@ -37,7 +37,7 @@ public class GroupClassWebController {
     }
     @GetMapping("/GroupClasses/Join-{id}")
     public String joinClass(Model model , @PathVariable long id) {
-        GroupClass groupClass = groupClassService.findById(id);
+        Optional<GroupClass> groupClass = groupClassService.findById(id);
         if (groupClass != null) {
             model.addAttribute("GroupClass", groupClass);
             return "joinClass";
@@ -49,20 +49,20 @@ public class GroupClassWebController {
     public String joinClassProcess(Model model, @RequestParam String username, @PathVariable Long id) throws IOException {
 
         ClassUser user = new ClassUser(username);
-        GroupClass groupClass = groupClassService.findById(id);
+        Optional<GroupClass> groupClass = groupClassService.findById(id);
 
         if (groupClass != null) {
             userService.save(user);
             userService.addGroupClass(id, user.getUserid());
             groupClassService.addUser(id, user.getUserid());
         }
-        long classid = groupClass.getClassid();
+        long classid = groupClass.get().getClassid();
         return "redirect:/GroupClasses/Join-" + classid + "/success";
 
     }
     @GetMapping("/GroupClasses/Join-{id}/success")
     public String joinClassSuccess(Model model, @PathVariable long id) {
-        GroupClass groupClass = groupClassService.findById(id);
+        Optional<GroupClass> groupClass = groupClassService.findById(id);
         model.addAttribute("GroupClass", groupClass);
 
         return "successJoinClass";

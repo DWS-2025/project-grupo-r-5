@@ -62,43 +62,41 @@ public class GroupClassService {
     }
 
 
-    public Collection<GroupClass> findAll() {return groupClasses.values();}
+    public List<GroupClass> findAll() {return groupClassRepository.findAll();}
 
-    public GroupClass findById(long id) {
-        return groupClasses.get(id);
-    }
-    //public Optional<GroupClass> findById(long id) {return groupClassRepository.findById(id);}
+    public Optional<GroupClass> findById(long id) {return groupClassRepository.findById(id);}
 
     public void save(GroupClass groupClass) {
         long id = nextId.getAndIncrement();
         groupClass.setClassid(id);
-        this.groupClasses.put(id, groupClass);
+        groupClassRepository.save(groupClass);
+        //this.groupClasses.put(id, groupClass);
     }
 
     public void delete(long id) {
-        this.groupClasses.remove(id);
+        groupClassRepository.deleteById(id);
     }
 
-    //Change later
     public boolean addUser(long groupId, long userId) {
-        GroupClass groupClass = this.groupClasses.get(groupId);
-        /*ClassUser classUser = userService.findById(userId);
-        if (groupClass != null) {
-            return groupClass.addUser(classUser);
-        }*/
+        GroupClass groupClass = groupClassRepository.getReferenceById(groupId);
+        Optional <ClassUser> classUser = userService.findById(userId);
+        if (groupClass != null && classUser.isPresent()) {
+            return groupClass.addUser(classUser.get());
+        }
         return false;
     }
 
-    //Change later
     public boolean removeUser(long groupId, long userId) {
-        GroupClass groupClass = this.groupClasses.get(groupId);
-        /*ClassUser classUser = userService.findById(userId);
-        if (groupClass != null && classUser != null) {
-            return groupClass.removeUser(classUser);
-        }*/
+        GroupClass groupClass = groupClassRepository.getReferenceById(groupId);
+        Optional <ClassUser> classUser = userService.findById(userId);
+        if (groupClass != null && classUser.isPresent()) {
+            return groupClass.removeUser(classUser.get());
+        }
         return false;
     }
 
+    //-----------------------------------------------------------------------------
+    //Change with DataBase usage
     public List<Map.Entry<String, List<GroupClass>>> getClassesGroupedByDayAndSortedByTime() {
         List<GroupClass> allClasses = new ArrayList<>(groupClasses.values());
 
@@ -120,5 +118,6 @@ public class GroupClassService {
         // Convert the map to an entry list
         return new ArrayList<>(groupedClasses.entrySet());
     }
+    //-----------------------------------------------------------------------------
 
 }

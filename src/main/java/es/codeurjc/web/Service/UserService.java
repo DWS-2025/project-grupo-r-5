@@ -66,31 +66,25 @@ public class UserService {
     public void delete(long id) {userRepository.deleteById(id);}
 
 
-
-    //Change the implementation later
-    //--------------------------------------------------------
     public boolean addGroupClass(long classId, long userId) {
-        //Optional<ClassUser> classUser = userRepository.findById(userId);
-        ClassUser classUser = users.get(userId);
-        GroupClass groupClass = groupClassService.findById(classId);
-        //Optional<GroupClass> groupClass = groupClassService.findById(classId);
+        Optional<ClassUser> classUser = userRepository.findById(userId);
+        Optional <GroupClass> groupClass = groupClassService.findById(classId);
         if (classUser != null) {
-            return classUser.addClass(groupClass);
+            //return classUser.addClass(groupClass);
+            return addGroupClass(classId, userId);
         }
         return false;
     }
 
     public boolean removeGroupClass(long classId, long userId) {
-        //Optional<ClassUser> classUser = userRepository.findById(userId);
-        ClassUser classUser = users.get(classId);
-        GroupClass groupClass = groupClassService.findById(classId);
-        //Optional<GroupClass> groupClass = groupClassService.findById(classId);
-        if (classUser != null && groupClass != null) {
-            return classUser.removeClass(groupClass);
+        Optional<ClassUser> classUser = userRepository.findById(userId);
+        Optional<GroupClass> groupClass = groupClassService.findById(classId);
+        if (classUser != null && groupClass.isPresent()) {
+            //return classUser.removeClass(groupClass);
+            return removeGroupClass(classId, userId);
         }
         return false;
     }
-    //-------------------------------------------------------------------------
 
     public boolean addPost(long postId, long userId) {
         ClassUser classUser = userRepository.getReferenceById(userId);
