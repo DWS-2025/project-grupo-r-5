@@ -37,10 +37,7 @@ public class PostService {
 
     public PostService(){}
 
-    // ---------------------------------------------------
-    //Change this constructor to the controller
-    // --------------------------------------------------
-
+    //Change this constructor to the controller (?)
     @PostConstruct
     public void init() {
         // Now the users are available to be saved
@@ -74,16 +71,11 @@ public class PostService {
     }
 
     //Methods
-    public Collection<Post> findAll(){return posts.values();}
+    public List<Post> findAll(){return postRepository.findAll();}
 
-    public Optional<Post>findById(long id){
-        if(this.posts.containsKey(id)){
-            return Optional.of(this.posts.get(id));
-        }
-        return Optional.empty();
-    }
+    public Optional<Post>findById(long id){return postRepository.findById(id);}
 
-    public boolean exist(long id){return posts.containsKey(id);}
+    public boolean exist(long id){return postRepository.existsById(id);}
 
     public void save(Post post, MultipartFile imageFile) throws IOException {
         // If imageFile isn't null, we use ImageService to save it
@@ -97,15 +89,17 @@ public class PostService {
 
         long id = nextId.getAndIncrement();
         post.setPostid(id);
-        posts.put(id, post);
+        postRepository.save(post);
+        //posts.put(id, post);
     }
 
     public void delete(long id){
-        posts.remove(id);
+        postRepository.deleteById(id);
     }
 
     public void edit(Post post, MultipartFile imageFile, long id) throws IOException {
-        Post newP = posts.get(id);
+        //Post newP = posts.get(id);
+        Post newP = postRepository.getReferenceById(id);
         if(newP == null){ //If the post is not valid
             System.out.println("Post not found\n");
         } else {
@@ -121,20 +115,21 @@ public class PostService {
             if(post.getImagePath() == null || post.getImagePath().isEmpty()) post.setImagePath("no-image.png");
 
             //We don't need to actualize the id
-            posts.put(id, newP);
+            //posts.put(id, newP);
+            postRepository.save(newP);
             userService.addPost(newP.getPostid(), newP.getCreator().getUserid());
         }
     }
 
-    public Post removeUser(long userId, long postId){
-        Post post = posts.get(postId);
-        ClassUser classUser = userService.findById(userId);
+    public void removeUser(long userId, long postId){
+        Post post = postRepository.getReferenceById(postId);
+        Optional<ClassUser> classUser = userService.findById(userId);
         if(post != null && classUser != null){
-            return posts.remove(post);
-            //return post.removeUser(classUser);
+            postRepository.delete(post);
+            //return posts.remove(post);
         }
         //return false;
-        return null;
+        //return null;
     }
 
 }

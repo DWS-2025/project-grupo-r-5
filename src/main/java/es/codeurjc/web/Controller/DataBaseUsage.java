@@ -17,6 +17,7 @@ public class DataBaseUsage implements CommandLineRunner {
     @Autowired
     private GroupClassRepository groupClassRepository;
 
+    //Initializes the data
     @Override
     public void run(String... args) throws Exception {
         //slide 7 in presentation 2.2 BBDD

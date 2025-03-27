@@ -22,6 +22,9 @@ Changes implemented respect to the DataBase implementation:
 - Refactored the UserService to use UserRepository for user-related operations, ensuring proper encapsulation of database access.
   - Methods such as findByName(String name) and save(ClassUser user) now directly call UserRepository methods.
   - Improved handling of user creation and retrieval using Optional<ClassUser> and orElseGet() to ensure consistency.
+- Refactored the PostService to use PostRepository for post-related operations.
+  - Methods like findById(Long id), save(Post post), and deleteById(Long id) now interact directly with PostRepository.
+  - Enhanced the management of posts by ensuring proper data validation and entity persistence.
 
 5. Controller Layer Implementation
 - Added a RESTful API controller to expose database functionalities to the frontend or external clients.
@@ -30,6 +33,8 @@ Changes implemented respect to the DataBase implementation:
 - Updated the PostController methods to correctly use the refactored UserService.
   - Now retrieves users using the UserService instead of manually checking or instantiating objects.
   - Ensured that the post creation and editing logic properly assigns existing users or creates new ones when necessary.
+  - Integrated PostService methods for handling database operations related to posts, ensuring cleaner and more maintainable code.
+
 
 
 Changes implemented respect to the API implementation:

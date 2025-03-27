@@ -90,20 +90,20 @@ public class UserService {
         }
         return false;
     }
+    //-------------------------------------------------------------------------
 
     public boolean addPost(long postId, long userId) {
-        ClassUser classUser = this.users.get(userId);
+        ClassUser classUser = userRepository.getReferenceById(userId);
         Optional <Post> op = postService.findById(postId);
         if(op.isPresent() && classUser != null){
             Post post = op.get();
             return classUser.addPost(post);
         }
-
         return false;
     }
 
     public boolean removePost(long postId, long userId) {
-        ClassUser classUser = this.users.get(userId);
+        ClassUser classUser = userRepository.getReferenceById(userId);
         Optional <Post> op = postService.findById(postId);
         if(op.isPresent() && classUser != null){
             Post post = op.get();
@@ -111,5 +111,5 @@ public class UserService {
         }
         return false;
     }
-    //-------------------------------------------------------------------------
+
 }
