@@ -36,7 +36,8 @@ public class UserService {
     private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);
 
-    public UserService() {
+    @PostConstruct
+    public void init() {
         save(new ClassUser("Pepe"));
         save(new ClassUser("Juan"));
         save(new ClassUser("Maria"));

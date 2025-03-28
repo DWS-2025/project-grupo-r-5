@@ -21,17 +21,10 @@ import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class AdminController {
-    //Repositories
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private PostRepository postRepository;
-    @Autowired
-    private GroupClassRepository groupClassRepository;
-
     //Services:
     @Autowired
     private UserService userService;
@@ -70,10 +63,10 @@ public class AdminController {
     }
     @PostMapping("/admin/groupClasses/delete-{id}")
     public String deleteGroupClassConfirmed(@PathVariable long id) {
-        GroupClass groupClass = groupClassService.findById(id);
+        Optional<GroupClass> groupClass = groupClassService.findById(id);
 
         if (groupClass != null) {
-            List<ClassUser> usersList = new ArrayList<>(groupClass.getUsersList());
+            List<ClassUser> usersList = new ArrayList<>(groupClass.get().getUsersList());
 
             if (!usersList.isEmpty()) {
                 for (ClassUser user : usersList) {
@@ -127,7 +120,7 @@ public class AdminController {
 
     @PostMapping("/admin/users/delete-{id}")
     public String deleteUserConfirmed(@PathVariable long id) {
-        ClassUser user = userService.findById(id);
+        Optional<ClassUser> user = userService.findById(id);
 
         if(user != null){
             List<GroupClass> groupClassList = new ArrayList<>();
@@ -136,16 +129,16 @@ public class AdminController {
             if(!groupClassList.isEmpty()){
                 for (GroupClass groupClass : groupClassList) {
                     long groupClassId = groupClass.getClassid();
-                    groupClassService.removeUser(groupClassId, user.getUserid());
-                    userService.removeGroupClass(groupClassId, user.getUserid());
+                    groupClassService.removeUser(groupClassId, user.get().getUserid());
+                    userService.removeGroupClass(groupClassId, user.get().getUserid());
                 }
             }
 
             if(!postList.isEmpty()) {
                 for (Post post : postList) {
                     long postId = post.getPostid();
-                    postService.removeUser(user.getUserid(), postId);
-                    userService.removePost(postId, user.getUserid());
+                    postService.removeUser(user.get().getUserid(), postId);
+                    userService.removePost(postId, user.get().getUserid());
                 }
             }
         }

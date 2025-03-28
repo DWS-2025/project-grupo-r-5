@@ -15,6 +15,7 @@ public class GroupClass {
     private Long classid;
     private String classname;
     private String instructor;
+    @Column(name = "DayOfWeek")
     private DayOfWeek day;
     private LocalTime time_init;
     private int duration;

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Blob;
 
 @Entity
 public class Post {
@@ -16,7 +17,10 @@ public class Post {
     private ClassUser creator;
     private String title;
     private String description;
+    @Lob
+    private Blob imageFile;
     private String imagePath;
+
     //Comment the next line when everything fixed
     //private List<ClassUser> listOfUsers = new ArrayList<>();
 
@@ -84,8 +88,15 @@ public class Post {
         this.description = description;
     }
 
+        //ImageFile
+    public Blob getImageFile() {
+        return imageFile;
+    }
+    public void setImageFile(Blob imageFile) {
+        this.imageFile = imageFile;
+    }
 
-        //ImagePath
+    //ImagePath
     public String getImagePath() {return imagePath;}
     public void setImagePath(String imagePath) {this.imagePath = imagePath;}
 }
