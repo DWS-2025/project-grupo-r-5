@@ -54,7 +54,6 @@ public class GroupClassWebController {
         if (groupClass != null) {
             userService.save(user);
             userService.addGroupClass(id, user.getUserid());
-            groupClassService.addUser(id, user.getUserid());
         }
         long classid = groupClass.get().getClassid();
         return "redirect:/GroupClasses/Join-" + classid + "/success";

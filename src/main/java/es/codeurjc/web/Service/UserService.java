@@ -8,9 +8,9 @@ import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -25,23 +25,15 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    @Lazy
     private GroupClassService groupClassService;
 
     @Autowired
-    @Lazy
     private PostService postService;
 
     private ConcurrentMap<Long, ClassUser> users = new ConcurrentHashMap<>();
     private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();
     private AtomicLong nextId = new AtomicLong(1L);
 
-    @PostConstruct
-    public void init() {
-        save(new ClassUser("Pepe"));
-        save(new ClassUser("Juan"));
-        save(new ClassUser("Maria"));
-    }
 
     public List<ClassUser> findAll() {return userRepository.findAll();}
 
@@ -58,9 +50,6 @@ public class UserService {
     }
 
     public ClassUser save(ClassUser classUser){
-        long id = nextId.getAndIncrement();
-        classUser.setUserid(id);
-        //this.users.put(id, classUser);
         return userRepository.save(classUser);
     }
 
@@ -68,41 +57,80 @@ public class UserService {
 
 
     public boolean addGroupClass(long classId, long userId) {
-        Optional<ClassUser> classUser = userRepository.findById(userId);
-        Optional <GroupClass> groupClass = groupClassService.findById(classId);
-        if (classUser != null) {
-            //return classUser.addClass(groupClass);
-            return addGroupClass(classId, userId);
+        Optional <ClassUser> op_classUser = userRepository.findById(userId);
+        Optional <GroupClass> op_groupClass = groupClassService.findById(classId);
+
+        if (op_classUser.isPresent() && op_groupClass.isPresent()) {
+            ClassUser classUser = op_classUser.get();
+            GroupClass groupClass = op_groupClass.get();
+
+            classUser.addClass(groupClass);
+            groupClass.addUser(classUser);
+
+            groupClassService.save(groupClass);
+            save(classUser);
+            return true;
+
         }
         return false;
     }
 
     public boolean removeGroupClass(long classId, long userId) {
-        Optional<ClassUser> classUser = userRepository.findById(userId);
-        Optional<GroupClass> groupClass = groupClassService.findById(classId);
-        if (classUser != null && groupClass.isPresent()) {
-            //return classUser.removeClass(groupClass);
-            return removeGroupClass(classId, userId);
+        Optional<ClassUser> op_classUser = userRepository.findById(userId);
+        Optional<GroupClass> op_groupClass = groupClassService.findById(classId);
+
+        if (op_classUser.isPresent() && op_groupClass.isPresent()) {
+
+            GroupClass groupClass = op_groupClass.get();
+            ClassUser classUser = op_classUser.get();
+
+            classUser.removeClass(groupClass);
+            groupClass.removeUser(classUser);
+
+            groupClassService.save(groupClass);
+            save(classUser);
+
+            return true;
         }
         return false;
     }
 
-    public boolean addPost(long postId, long userId) {
-        ClassUser classUser = userRepository.getReferenceById(userId);
-        Optional <Post> op = postService.findById(postId);
-        if(op.isPresent() && classUser != null){
-            Post post = op.get();
-            return classUser.addPost(post);
+    public boolean addPost(long postId, long userId) throws IOException {
+        Optional <ClassUser> op_classUser = userRepository.findById(userId);
+        Optional <Post> op_post = postService.findById(postId);
+
+        if(op_post.isPresent() && op_classUser.isPresent()){
+
+            Post post = op_post.get();
+            ClassUser classUser = op_classUser.get();
+
+            classUser.addPost(post);
+            post.setCreator(classUser);
+
+            postService.save(post, null);
+            save(classUser);
+
+            return true;
         }
         return false;
     }
 
     public boolean removePost(long postId, long userId) {
-        ClassUser classUser = userRepository.getReferenceById(userId);
-        Optional <Post> op = postService.findById(postId);
-        if(op.isPresent() && classUser != null){
-            Post post = op.get();
-            return classUser.removePost(post);
+        Optional <ClassUser> op_classUser = userRepository.findById(userId);
+        Optional <Post> op_post = postService.findById(postId);
+
+        if(op_post.isPresent() && op_classUser.isPresent()){
+
+            Post post = op_post.get();
+            ClassUser classUser = op_classUser.get();
+
+            post.setCreator(null);
+            classUser.removePost(post);
+
+            post.setCreator(null);
+            save(classUser);
+
+            return true;
         }
         return false;
     }

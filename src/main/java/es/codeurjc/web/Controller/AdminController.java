@@ -72,7 +72,6 @@ public class AdminController {
                 for (ClassUser user : usersList) {
                     long userId = user.getUserid();
                     userService.removeGroupClass(id, userId);
-                    groupClassService.removeUser(id, userId);
                 }
             }
 
@@ -129,7 +128,6 @@ public class AdminController {
             if(!groupClassList.isEmpty()){
                 for (GroupClass groupClass : groupClassList) {
                     long groupClassId = groupClass.getClassid();
-                    groupClassService.removeUser(groupClassId, user.get().getUserid());
                     userService.removeGroupClass(groupClassId, user.get().getUserid());
                 }
             }
@@ -137,7 +135,6 @@ public class AdminController {
             if(!postList.isEmpty()) {
                 for (Post post : postList) {
                     long postId = post.getPostid();
-                    postService.removeUser(user.get().getUserid(), postId);
                     userService.removePost(postId, user.get().getUserid());
                 }
             }
