@@ -33,7 +33,7 @@ public class PostService {
     private UserService userService;
 
     private ConcurrentMap<Long,Post> posts = new ConcurrentHashMap<>();
-    private AtomicLong nextId = new AtomicLong(1L);
+    //private AtomicLong nextId = new AtomicLong(1L);
 
     public PostService(){}
 
@@ -52,7 +52,6 @@ public class PostService {
         }
 
         if(post.getImagePath() == null || post.getImagePath().isEmpty()) post.setImagePath("no-image.png");
-
 
         postRepository.save(post);
     }

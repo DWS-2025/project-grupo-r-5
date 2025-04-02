@@ -21,9 +21,6 @@ public class Post {
     private Blob imageFile;
     private String imagePath;
 
-    //Comment the next line when everything fixed
-    //private List<ClassUser> listOfUsers = new ArrayList<>();
-
 
     //Constructor:
     public Post(ClassUser classUser, String title, String text){
@@ -40,15 +37,6 @@ public class Post {
     public Post() {}
 
     //Methods:
-    /*
-    public boolean removeUser(ClassUser classUser) {
-        if(this.listOfUsers.contains(classUser) && this.listOfUsers.remove(classUser)) {
-            classUser.setListOfPosts(null);
-            return true;
-        }
-        return false;
-    }
-    */
 
 
     //Getters & setters:

@@ -22,7 +22,7 @@ public class GroupClass {
     private LocalTime time_fin;
     private int maxCapacity;
     private int currentCapacity;
-    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<ClassUser> usersList = new ArrayList<>();
 
 

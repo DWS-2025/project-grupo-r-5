@@ -7,6 +7,7 @@ import es.codeurjc.web.Repositories.GroupClassRepository;
 import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Repositories.UserRepository;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,7 @@ public class UserService {
 
     private ConcurrentMap<Long, ClassUser> users = new ConcurrentHashMap<>();
     private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();
-    private AtomicLong nextId = new AtomicLong(1L);
+    //private AtomicLong nextId = new AtomicLong(1L);
 
 
     public List<ClassUser> findAll() {return userRepository.findAll();}
@@ -54,8 +55,7 @@ public class UserService {
     }
 
     public void delete(long id) {userRepository.deleteById(id);}
-
-
+    @Transactional
     public boolean addGroupClass(long classId, long userId) {
         Optional <ClassUser> op_classUser = userRepository.findById(userId);
         Optional <GroupClass> op_groupClass = groupClassService.findById(classId);
@@ -67,7 +67,7 @@ public class UserService {
             classUser.addClass(groupClass);
             groupClass.addUser(classUser);
 
-            groupClassService.save(groupClass);
+            //groupClassService.save(groupClass);
             save(classUser);
             return true;
 
@@ -87,14 +87,14 @@ public class UserService {
             classUser.removeClass(groupClass);
             groupClass.removeUser(classUser);
 
-            groupClassService.save(groupClass);
+            //groupClassService.save(groupClass);
             save(classUser);
 
             return true;
         }
         return false;
     }
-
+    @Transactional
     public boolean addPost(long postId, long userId) throws IOException {
         Optional <ClassUser> op_classUser = userRepository.findById(userId);
         Optional <Post> op_post = postService.findById(postId);
@@ -107,7 +107,7 @@ public class UserService {
             classUser.addPost(post);
             post.setCreator(classUser);
 
-            postService.save(post, null);
+            //postService.save(post, null);
             save(classUser);
 
             return true;

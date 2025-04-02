@@ -24,13 +24,9 @@ public class GroupClassService {
     private GroupClassRepository groupClassRepository;
 
     private ConcurrentHashMap<Long, GroupClass> groupClasses = new ConcurrentHashMap<>();
-    private AtomicLong nextId = new AtomicLong(1L);
-
-
+    //private AtomicLong nextId = new AtomicLong(1L);
 
     public GroupClassService() {}
-
-
 
     public List<GroupClass> findAll() {return groupClassRepository.findAll();}
 
