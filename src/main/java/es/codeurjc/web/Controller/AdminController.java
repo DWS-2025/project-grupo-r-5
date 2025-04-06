@@ -6,6 +6,8 @@ import es.codeurjc.web.Model.Post;
 import es.codeurjc.web.Repositories.GroupClassRepository;
 import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Service.GroupClassService;
 import es.codeurjc.web.Service.PostService;
@@ -40,17 +42,20 @@ public class AdminController {
         return "admin";
     }
     @GetMapping("/admin/posts")
-    public String showPosts(Model model) {
-        model.addAttribute("posts", postService.findAll());
+    public String showPosts(Model model, Pageable pageable) {
+        Page<Post> posts = postService.findAll();
+        model.addAttribute("posts", posts);
         return "adminPosts";
     }
 
+    //Page it:
     @GetMapping("/admin/users")
     public String showUsers(Model model) {
         model.addAttribute("users", classUserService.findAll());
         return "adminUsers";
     }
 
+    //Page it:
     @GetMapping("/admin/groupClasses")
     public String showGroupClasses(Model model) {
         model.addAttribute("GroupClasses", groupClassService.findAll());

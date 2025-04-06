@@ -25,19 +25,10 @@ public class DataInitilizer {
     private UserService userService;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private GroupClassService groupClassService;
 
     @Autowired
-    private GroupClassRepository groupClassRepository;
-
-    @Autowired
     private PostService postService;
-
-    @Autowired
-    private PostRepository postRepository;
 
     @PostConstruct
     //@Transactional

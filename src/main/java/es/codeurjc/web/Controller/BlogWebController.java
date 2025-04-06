@@ -6,10 +6,13 @@ import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,6 +22,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.swing.text.html.Option;
 import java.io.IOException;
@@ -28,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,8 +55,9 @@ public class BlogWebController {
 
     //Get
     @GetMapping("/blog")
-    public String showBlog(Model model) {
-        model.addAttribute("Posts", postService.findAll());
+    public String showBlog(Model model, Pageable pageable) {
+        Page<Post> posts = postService.findAll();
+        model.addAttribute("Posts", posts);
         return "blog";
     }
 
@@ -62,9 +68,8 @@ public class BlogWebController {
         return "post_form";
     }
 
-
     @GetMapping("/blog/{id}")
-    public String showPost(@PathVariable Long id, Model model) {
+    public String showPost(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
         Optional<Post> post = postService.findById(id);
         if(post.isPresent()){
             model.addAttribute("Post", post.get());
@@ -77,79 +82,91 @@ public class BlogWebController {
             }
             return "show_post";
         } else {
-            return "redirect:/error?message=" + URLEncoder.encode("Post not found", StandardCharsets.UTF_8);
+            redirectAttributes.addAttribute("message", "Post not found");
+            return "redirect:/error";
         }
     }
+
     @GetMapping("/blog/{id}/image")
     public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
         Optional<Post> op = postService.findById(id);
 
-        if(op.isPresent()) {
+        if(op.isPresent() && op.get().getImagePath() != null) {
             Post post = op.get();
-            Resource poster = imageService.getImage(post.getImagePath());
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").body(poster);
+
+            Blob image = post.getImageFile();
+            Resource file = new InputStreamResource(image.getBinaryStream());
+            return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Film not found");
+            return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/blog/changePost/{id}")
-    public String editPost(Model model, @PathVariable("id") long id) {
+    public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Optional<Post> op = postService.findById(id);
         if (op.isPresent()) {
-
             Post post = op.get();
 
             System.out.println("Post encontrado: " + post);
             System.out.println("Descripción del post: " + post.getDescription());
-            //
+
             model.addAttribute("title", post.getTitle());
             model.addAttribute("description", post.getDescription());
             model.addAttribute("creatorName", post.getCreatorName());
-            //
 
             model.addAttribute("post", post);
             model.addAttribute("isEdit", true);
+
         } else {
-            System.out.println("Post no encontrado para ID: " + id);
-            return "redirect:/error?message=" + URLEncoder.encode("Post not found", StandardCharsets.UTF_8);
-            //return "redirect:/blog";
+            redirectAttributes.addAttribute("message", "Post not found");
+            return "redirect:/error";
         }
+
         return "post_form";
     }
 
     @GetMapping("/blog/deletePost/{id}")
-    public String deletePost(Model model,@PathVariable long id){
+    public String deletePost(Model model,@PathVariable long id, RedirectAttributes redirectAttributes){
         try {
             model.addAttribute("DeletePost", true);
             postService.delete(id);
             return "deleted_post";
         } catch (Exception e){
-            return "redirect:/error?message=" + URLEncoder.encode("Error deleting post", StandardCharsets.UTF_8);
+            redirectAttributes.addAttribute("message", "Error deleting post");
+            return "redirect:/error";
         }
     }
 
     @GetMapping("/blog/{id}/deleteImage/{imageName}")
-    public String deleteImage(Model model, @PathVariable String imageName, @PathVariable long id) {
+    public String deleteImage(Model model, @PathVariable String imageName, @PathVariable long id, RedirectAttributes redirectAttributes) {
         try{
             model.addAttribute("DeleteImage", true);
             imageService.deleteImage(imageName);
-            postService.findById(id).ifPresent(post -> {post.setImagePath("no-image.png");});
+            postService.findById(id).ifPresent(post -> {
+                post.setImagePath("no-image.png");
+                try {
+                    postService.save(post);
+                } catch (IOException e) {
+                    throw new RuntimeException("Error saving post after deleting image", e);
+                }
+            });
             model.addAttribute("postid", id);
             return "deleted_post";
         } catch (Exception e) {
-            return "redirect:/error?message=" + URLEncoder.encode("Error deleting image", StandardCharsets.UTF_8);
+            redirectAttributes.addAttribute("message", "Error deleting image");
+            return "redirect:/error";
         }
     }
-
 
     //Post
     @PostMapping("/blog/new")
     public String newPostProcess(Model model, @RequestParam("title") String title,
                                  @RequestParam("description") String description,
                                  @RequestParam("user") String user,
-                                 @RequestParam(value = "imagefile", required = false) MultipartFile imagefile) throws IOException {
+                                 @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
+                                 RedirectAttributes redirectAttributes) throws IOException {
 
         Post post = new Post();
 
@@ -158,12 +175,7 @@ public class BlogWebController {
             return userService.save(newUser);
         });
 
-        if (classUser == null){
-            classUser = new ClassUser(user);
-            userService.save(classUser);
-        }
         post.setCreator(classUser);
-
         post.setTitle(title);
         post.setDescription(Jsoup.parse(description).text());
 
@@ -171,11 +183,23 @@ public class BlogWebController {
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
             model.addAttribute("Post", post);
-            return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8);
+
+            redirectAttributes.addAttribute("message", validationError);
+            return "redirect:/error";
         }
 
-        //Validate image before uploading
         if(imagefile != null && !imagefile.isEmpty()){
+            //Validate image before uploading
+            String imageValidationError = validateService.validateImage(imagefile);
+            if (imageValidationError != null && !imageValidationError.isEmpty()) {
+                model.addAttribute("error", imageValidationError);
+                model.addAttribute("Post", post);
+
+                redirectAttributes.addAttribute("message", imageValidationError);
+                return "redirect:/error";
+            }
+
+            // Create directory if it doesn't exist
             Path imagesDir = Paths.get("images");
             if (!Files.exists(imagesDir)) {
                 Files.createDirectories(imagesDir);
@@ -185,11 +209,9 @@ public class BlogWebController {
             String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
             Path imagePath = imagesDir.resolve(imageName).normalize();
 
-            System.out.println("Nombre de archivo: " + imagefile.getOriginalFilename());
-            System.out.println("Tamaño del archivo: " + imagefile.getSize());
-            System.out.println("Ruta absoluta: " + imagesDir.toAbsolutePath());
-
-
+            //System.out.println("Nombre de archivo: " + imagefile.getOriginalFilename());
+            //System.out.println("Tamaño del archivo: " + imagefile.getSize());
+            //System.out.println("Ruta absoluta: " + imagesDir.toAbsolutePath());
 
             post.setImagePath(imageName);
         }
@@ -207,14 +229,16 @@ public class BlogWebController {
                                   @RequestParam("description") String description,
                                   @RequestParam("user") String user,
                                   @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
-                                  @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage) throws IOException {
+                                  @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage,
+                                  RedirectAttributes redirectAttributes) throws IOException {
 
         Optional <Post> op = postService.findById(id);
-        if(!op.isPresent()){
-            return "redirect:/error?message=" + URLEncoder.encode("Post does not exists", StandardCharsets.UTF_8);
+        if(op.isEmpty()){
+            redirectAttributes.addAttribute("message", "Post not found");
+            return "redirect:/error";
         }
         Post post = op.get();
-        //
+
         ClassUser classUser = post.getCreator();
         if(classUser == null || !classUser.getName().equals(user)){
             classUser = userService.findByName(user).orElseGet(() -> {
@@ -223,9 +247,8 @@ public class BlogWebController {
                 return newUser;
             });
         }
-        post.setCreator(classUser);
-        //
 
+        post.setCreator(classUser);
         post.setTitle(title);
         post.setDescription(Jsoup.parse(description).text());
 
@@ -233,10 +256,10 @@ public class BlogWebController {
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
             model.addAttribute("post", post);
-            return "redirect:/error?message=" + URLEncoder.encode(validationError, StandardCharsets.UTF_8);
+            redirectAttributes.addAttribute("message", validationError);
+            return "redirect:/error";
         }
-            postService.edit(post, imagefile, id);
-
+        postService.edit(post, imagefile, id);
 
         return "redirect:/blog/" + post.getPostid();
     }

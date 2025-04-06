@@ -21,7 +21,6 @@ public class Post {
     private Blob imageFile;
     private String imagePath;
 
-
     //Constructor:
     public Post(ClassUser classUser, String title, String text){
         this.creator = classUser;
@@ -35,8 +34,6 @@ public class Post {
         this.imagePath = image;
     }
     public Post() {}
-
-    //Methods:
 
 
     //Getters & setters:
