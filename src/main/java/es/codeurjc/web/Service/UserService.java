@@ -3,6 +3,11 @@ package es.codeurjc.web.Service;
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.ClassUserBasicDTO;
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
+import es.codeurjc.web.Repositories.GroupClassRepository;
+import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,34 +31,40 @@ public class UserService {
     @Autowired
     private PostService postService;
 
-    private ConcurrentMap<Long, ClassUser> users = new ConcurrentHashMap<>();
-    private ConcurrentMap<String, Long> userIdsByName = new ConcurrentHashMap<>();
-    //private AtomicLong nextId = new AtomicLong(1L);
+    @Autowired
+    private ClassUserMapper classUserMapper;
+    @Autowired
+    private GroupClassRepository groupClassRepository;
+    @Autowired
+    private PostRepository postRepository;
 
 
-    public List<ClassUser> findAll() {return userRepository.findAll();}
+    public List<ClassUserBasicDTO> findAll() {
+        List<ClassUser> users = userRepository.findAll();
+        return classUserMapper.toDTOs(users);}
 
-    public Optional<ClassUser> findById(long id) {
-        return userRepository.findById(id);
+    public Optional<ClassUserDTO> findById(long id) {
+        return userRepository.findById(id)
+                .map(classUserMapper::toDTO);
     }
 
-    public Optional<ClassUser> findByName(String name) {
-        return userRepository.findByName(name);
+    public Optional<ClassUserDTO> findByName(String name) {
+        return userRepository.findByName(name)
+                .map(classUserMapper::toDTO);
     }
 
-    public boolean exist(long id) {
-        return userRepository.existsById(id);
-    }
-
-    public ClassUser save(ClassUser classUser){
-        return userRepository.save(classUser);
+    public ClassUserDTO save(ClassUserDTO classUserDTO){
+        ClassUser classUser = classUserMapper.toDomain(classUserDTO);
+        ClassUser saved = userRepository.save(classUser);
+        return classUserMapper.toDTO(saved);
     }
 
     public void delete(long id) {userRepository.deleteById(id);}
+
     @Transactional
-    public boolean addGroupClass(long classId, long userId) {
-        Optional <ClassUser> op_classUser = userRepository.findById(userId);
-        Optional <GroupClass> op_groupClass = groupClassService.findById(classId);
+    public Optional<ClassUserDTO> addGroupClass(long classId, long userId) {
+        Optional<ClassUser> op_classUser = userRepository.findById(userId);
+        Optional<GroupClass> op_groupClass = groupClassRepository.findById(classId);
 
         if (op_classUser.isPresent() && op_groupClass.isPresent()) {
             ClassUser classUser = op_classUser.get();
@@ -62,17 +73,15 @@ public class UserService {
             classUser.addClass(groupClass);
             groupClass.addUser(classUser);
 
-            //groupClassService.save(groupClass);
-            save(classUser);
-            return true;
-
+            ClassUser updated = userRepository.save(classUser);
+            return Optional.of(classUserMapper.toDTO(updated));
         }
-        return false;
+        return Optional.empty();
     }
-
-    public boolean removeGroupClass(long classId, long userId) {
+    @Transactional
+    public Optional<ClassUserDTO> removeGroupClass(long classId, long userId) {
         Optional<ClassUser> op_classUser = userRepository.findById(userId);
-        Optional<GroupClass> op_groupClass = groupClassService.findById(classId);
+        Optional<GroupClass> op_groupClass = groupClassRepository.findById(classId);
 
         if (op_classUser.isPresent() && op_groupClass.isPresent()) {
 
@@ -82,53 +91,49 @@ public class UserService {
             classUser.removeClass(groupClass);
             groupClass.removeUser(classUser);
 
-            //groupClassService.save(groupClass);
-            save(classUser);
+            ClassUser updated = userRepository.save(classUser);
 
-            return true;
+            return Optional.of(classUserMapper.toDTO(updated));
         }
-        return false;
+        return Optional.empty();
     }
-/*     @Transactional
-   public boolean addPost(long postId, long userId) throws IOException {
-        Optional <ClassUser> op_classUser = userRepository.findById(userId);
+    @Transactional
+    public Optional<ClassUserDTO> addPost(long postId, long userId) throws IOException {
+        Optional<ClassUser> op_classUser = userRepository.findById(userId);
+        Optional<Post> op_post = postRepository.findById(postId);
 
-        Optional <Post> op_post = postService.findById(postId);
-
-        if(op_post.isPresent() && op_classUser.isPresent()){
-
+        if (op_post.isPresent() && op_classUser.isPresent()) {
             Post post = op_post.get();
             ClassUser classUser = op_classUser.get();
 
             classUser.addPost(post);
             post.setCreator(classUser);
 
-            //postService.save(post, null);
-            save(classUser);
-
-            return true;
+            ClassUser updated = userRepository.save(classUser);
+            return Optional.of(classUserMapper.toDTO(updated));
         }
-        return false;
+
+        return Optional.empty();
     }
 
-    public boolean removePost(long postId, long userId) {
-        Optional <ClassUser> op_classUser = userRepository.findById(userId);
-        Optional <Post> op_post = postService.findById(postId);
+    @Transactional
+    public Optional<ClassUserDTO> removePost(long postId, long userId) {
+        Optional<ClassUser> op_classUser = userRepository.findById(userId);
+        Optional<Post> op_post = postRepository.findById(postId);
 
-        if(op_post.isPresent() && op_classUser.isPresent()){
-
+        if (op_post.isPresent() && op_classUser.isPresent()) {
             Post post = op_post.get();
             ClassUser classUser = op_classUser.get();
 
-            post.setCreator(null);
             classUser.removePost(post);
-
             post.setCreator(null);
-            save(classUser);
 
-            return true;
+            ClassUser updated = userRepository.save(classUser);
+            return Optional.of(classUserMapper.toDTO(updated));
         }
-        return false;
+
+        return Optional.empty();
     }
-*/
+
+
 }

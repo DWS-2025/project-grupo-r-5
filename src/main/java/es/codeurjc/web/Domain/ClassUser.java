@@ -65,19 +65,21 @@ public class ClassUser {
     public void setName(String name) {
         this.name = name;
     }
-        //UserPosts
+
+        public List<GroupClass> getListOfClasses() {
+            return listOfClasses;
+        }
+
+    public void setListOfClasses(List<GroupClass> listOfClasses) {
+        this.listOfClasses = listOfClasses;
+    }
+
     public List<Post> getListOfPosts() {
-        return this.listOfPosts;
+        return listOfPosts;
     }
-    public void setListOfPosts(List<Post> userPost) {
-        this.listOfPosts = userPost;
-    }
-        //UserGroupClasses
-    public List<GroupClass> getUserClass() {
-        return this.listOfClasses;
-    }
-    public void setUserClass(List<GroupClass> userClass) {
-        this.listOfClasses = userClass;
+
+    public void setListOfPosts(List<Post> listOfPosts) {
+        this.listOfPosts = listOfPosts;
     }
 
 }

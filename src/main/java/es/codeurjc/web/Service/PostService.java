@@ -38,6 +38,8 @@ public class PostService {
         return toDTOs(postRepository.findAll());
     }
 
+    public Optional<PostDTO> findById(long id){return postRepository.findById(id).map(mapper::toDTO);}
+
     public PostDTO getPost (long id){return toDTO(postRepository.findById(id).orElseThrow());}
 
     public PostDTO save(PostDTO postDTO) throws IOException {
