@@ -84,7 +84,7 @@ public class BlogWebController {
         }
     }
 
-    /*@GetMapping("/blog/{id}/image")
+    @GetMapping("/blog/{id}/image")
     public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
         try{
@@ -96,9 +96,11 @@ public class BlogWebController {
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error retrieving image");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-    }*/
+    }
 
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
@@ -136,8 +138,6 @@ public class BlogWebController {
 
         Post post = new Post();
 
-
-
         ClassUser classUser = userService.findByName(user).orElseThrow();
 
         post.setCreator(classUser);
@@ -174,10 +174,6 @@ public class BlogWebController {
             String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
             Path imagePath = imagesDir.resolve(imageName).normalize();
 
-            //System.out.println("Nombre de archivo: " + imagefile.getOriginalFilename());
-            //System.out.println("Tamaño del archivo: " + imagefile.getSize());
-            //System.out.println("Ruta absoluta: " + imagesDir.toAbsolutePath());
-
             post.setImagePath(imageName);
         }
 
@@ -185,6 +181,7 @@ public class BlogWebController {
         PostDTO postDTO = postMapper.toDTO(post);
 
         postService.save(postDTO, imagefile);
+        //FIX THIS
         /*userService.addPost(post.getPostid(), classUser.getUserid());
         classUser.addPost(post);
         userService.save(classUser);*/
@@ -192,7 +189,7 @@ public class BlogWebController {
         return "redirect:/blog/" + post.getPostid();
     }
 
-    /*@PostMapping("/blog/changePost/{id}")
+    @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model, @RequestParam("title") String title,
                                   @RequestParam("description") String description,
                                   @RequestParam("user") String user,
@@ -200,36 +197,38 @@ public class BlogWebController {
                                   @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage,
                                   RedirectAttributes redirectAttributes) throws IOException {
 
-        Optional <Post> op = postService.findById(id);
+        // Check if the post exists
+        Optional <PostDTO> op = Optional.ofNullable(postService.getPost(id));
         if(op.isEmpty()){
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
-        Post post = op.get();
-
-        ClassUser classUser = post.getCreator();
+        // Get the post
+        PostDTO originalPost = op.get();
+        // Check if the user is the creator of the post
+        ClassUser classUser = originalPost.creator();
         if(classUser == null || !classUser.getName().equals(user)){
-            classUser = userService.findByName(user).orElseGet(() -> {
-                ClassUser newUser = new ClassUser(user);
-                userService.save(newUser);
-                return newUser;
-            });
+            classUser = userService.findByName(user).orElseThrow();
         }
 
-        post.setCreator(classUser);
-        post.setTitle(title);
-        post.setDescription(Jsoup.parse(description).text());
-
-        String validationError = validateService.validatePost(post);
+        PostDTO updatedPost = new PostDTO(
+                originalPost.postid(),
+                classUser,
+                title,
+                Jsoup.parse(description).text(),
+                originalPost.imagePath()
+        );
+        //Uncomment this in the 3rd phase
+        /*String validationError = validateService.validatePost(updatedPost);
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
             model.addAttribute("post", post);
             redirectAttributes.addAttribute("message", validationError);
             return "redirect:/error";
-        }
-        postService.edit(post, imagefile, id);
+        }*/
+        postService.edit(updatedPost, imagefile, id);
 
-        return "redirect:/blog/" + post.getPostid();
-    }*/
+        return "redirect:/blog/" + updatedPost.postid();
+    }
 
 }
