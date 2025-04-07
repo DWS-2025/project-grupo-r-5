@@ -48,14 +48,13 @@ public class BlogWebController {
 
     @Autowired
     private ImageService imageService;
-    @Autowired
-    private PostRepository postRepository;
+
     @Autowired
     private PostMapper postMapper;
 
     //Get
     @GetMapping("/blog")
-    public String showBlog(Model model, Pageable pageable) {
+    public String showBlog(Model model) {
         model.addAttribute("Posts", postService.findAll());
         return "blog";
     }
@@ -69,8 +68,20 @@ public class BlogWebController {
 
     @GetMapping("/blog/{id}")
     public String showPost(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-
-        try{
+        Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
+        if(postOptional.isPresent()){
+            PostDTO post = postOptional.get();
+            model.addAttribute("Post", post);
+            String imagefile = post.imagePath();
+            if(!imagefile.matches("no-image.png")){
+                model.addAttribute("ImagePresented", true);
+            }
+            return "show_post";
+        } else {
+            redirectAttributes.addAttribute("message", "Post not found");
+            return "redirect:/error";
+        }
+        /*try{
             PostDTO post = postService.getPost(id);
             model.addAttribute("Post", post);
             String imagefile = post.imagePath();
@@ -81,37 +92,57 @@ public class BlogWebController {
         } catch (NoSuchElementException e){
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
-        }
+        }*/
     }
 
     @GetMapping("/blog/{id}/image")
     public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
+        Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
+        if (postOptional.isPresent() && postOptional.get().imagePath() != null) {
+            try {
+                PostDTO post = postOptional.get();
+                Blob image = postService.getBlobImage(id);
+                Resource file = new InputStreamResource(image.getBinaryStream());
+                return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(500).body("Error retrieving image");
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-        try{
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
+        /*try {
+            PostDTO post = postService.getPost(id);
             Blob image = postService.getBlobImage(id);
             Resource file = new InputStreamResource(image.getBinaryStream());
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
-        } catch (NoSuchElementException e){
-            return ResponseEntity.notFound().build();
         } catch (SQLException e) {
             e.printStackTrace();
             return ResponseEntity.status(500).body("Error retrieving image");
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-
+        }*/
     }
 
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
-
+        Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
         try {
-            PostDTO post = postService.getPost(id);
-            model.addAttribute("post", post);
-            model.addAttribute("isEdit", true);
-            return "post_form";
-
-        } catch (NoSuchElementException e){
+            if (postOptional.isPresent()){
+                PostDTO post = postService.getPost(id);
+                model.addAttribute("post", post);
+                model.addAttribute("isEdit", true);
+                return "post_form";
+            } else {
+                redirectAttributes.addAttribute("message", "Post not found");
+                return "redirect:/error";
+            }
+        } catch (NoSuchElementException e) {
+            redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
     }
@@ -119,14 +150,47 @@ public class BlogWebController {
     @GetMapping("/blog/deletePost/{id}")
     public String deletePost(Model model,@PathVariable long id, RedirectAttributes redirectAttributes){
         try {
-            model.addAttribute("DeletePost", true);
-            postService.delete(id);
-            return "deleted_post";
+            Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
+            if (postOptional.isPresent()) {
+                model.addAttribute("DeletePost", true);
+                postService.delete(id);
+                return "deleted_post";
+            } else {
+                redirectAttributes.addAttribute("message", "Post not found");
+                return "redirect:/error";
+            }
         } catch (Exception e){
             redirectAttributes.addAttribute("message", "Error deleting post");
             return "redirect:/error";
         }
     }
+
+    @GetMapping("/blog/{id}/deleteImage/{imageName}")
+    public String deleteImage(Model model, @PathVariable String imageName, @PathVariable long id, RedirectAttributes redirectAttributes) {
+        try {
+            model.addAttribute("DeleteImage", true);
+            imageService.deleteImage(imageName);
+
+            Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
+            if (postOptional.isPresent()) {
+                PostDTO post = postOptional.get();
+                PostDTO updatedPost = new PostDTO(post.postid(), post.creator(), post.title(), post.description(), "no-image.png");
+                postService.save(updatedPost);
+                model.addAttribute("postid", id);
+                return "deleted_post";
+            } else {
+                redirectAttributes.addAttribute("message", "Post not found");
+                return "redirect:/error";
+            }
+        } catch (IOException e) {
+            redirectAttributes.addAttribute("message", "Error saving post after deleting image");
+            return "redirect:/error";
+        } catch (Exception e) {
+            redirectAttributes.addAttribute("message", "Error deleting image");
+            return "redirect:/error";
+        }
+    }
+
 
     //Post
     @PostMapping("/blog/new")

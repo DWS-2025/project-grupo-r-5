@@ -81,8 +81,6 @@ public class PostService {
             if(updatedPost.getImagePath() == null || updatedPost.getImagePath().isEmpty()) updatedPost.setImagePath("no-image.png");
             postRepository.save(updatedPost);
 
-            postRepository.save(updatedPost);
-
             return toDTO(updatedPost);
 
         } else {

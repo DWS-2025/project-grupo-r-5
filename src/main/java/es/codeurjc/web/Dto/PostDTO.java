@@ -9,4 +9,5 @@ public record PostDTO (
     String title,
     String description,
     String imagePath){
+
 }
