@@ -1,18 +1,13 @@
 package es.codeurjc.web.Service;
 
 
-import es.codeurjc.web.Model.ClassUser;
-import es.codeurjc.web.Model.GroupClass;
+import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Repositories.GroupClassRepository;
-import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class GroupClassService {

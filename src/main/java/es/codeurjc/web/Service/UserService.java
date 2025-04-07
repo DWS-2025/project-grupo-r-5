@@ -1,23 +1,18 @@
 package es.codeurjc.web.Service;
 
-import es.codeurjc.web.Model.ClassUser;
-import es.codeurjc.web.Model.GroupClass;
-import es.codeurjc.web.Model.Post;
-import es.codeurjc.web.Repositories.GroupClassRepository;
-import es.codeurjc.web.Repositories.PostRepository;
+import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Domain.GroupClass;
+import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Repositories.UserRepository;
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 @Service
 public class UserService {
@@ -94,9 +89,10 @@ public class UserService {
         }
         return false;
     }
-    @Transactional
-    public boolean addPost(long postId, long userId) throws IOException {
+/*     @Transactional
+   public boolean addPost(long postId, long userId) throws IOException {
         Optional <ClassUser> op_classUser = userRepository.findById(userId);
+
         Optional <Post> op_post = postService.findById(postId);
 
         if(op_post.isPresent() && op_classUser.isPresent()){
@@ -134,5 +130,5 @@ public class UserService {
         }
         return false;
     }
-
+*/
 }

@@ -1,4 +1,4 @@
-package es.codeurjc.web.Model;
+package es.codeurjc.web.Domain;
 
 import jakarta.persistence.*;
 

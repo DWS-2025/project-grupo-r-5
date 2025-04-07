@@ -1,6 +1,6 @@
 package es.codeurjc.web.Repositories;
 
-import es.codeurjc.web.Model.GroupClass;
+import es.codeurjc.web.Domain.GroupClass;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

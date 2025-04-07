@@ -1,39 +1,35 @@
 package es.codeurjc.web.Controller;
 
-import es.codeurjc.web.Model.ClassUser;
-import es.codeurjc.web.Model.Post;
+import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.PostDTO;
+import es.codeurjc.web.Dto.PostMapper;
+import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -52,12 +48,15 @@ public class BlogWebController {
 
     @Autowired
     private ImageService imageService;
+    @Autowired
+    private PostRepository postRepository;
+    @Autowired
+    private PostMapper postMapper;
 
     //Get
     @GetMapping("/blog")
     public String showBlog(Model model, Pageable pageable) {
-        Page<Post> posts = postService.findAll();
-        model.addAttribute("Posts", posts);
+        model.addAttribute("Posts", postService.findAll());
         return "blog";
     }
 
@@ -70,61 +69,49 @@ public class BlogWebController {
 
     @GetMapping("/blog/{id}")
     public String showPost(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
-        Optional<Post> post = postService.findById(id);
-        if(post.isPresent()){
-            model.addAttribute("Post", post.get());
-            model.addAttribute("CreatorName", post.get().getCreatorName());
-            model.addAttribute("title", post.get().getTitle());
-            model.addAttribute("description", post.get().getDescription());
-            String imagefile = post.get().getImagePath();
+
+        try{
+            PostDTO post = postService.getPost(id);
+            model.addAttribute("Post", post);
+            String imagefile = post.imagePath();
             if(!imagefile.matches("no-image.png")){
                 model.addAttribute("ImagePresented", true);
             }
             return "show_post";
-        } else {
+        } catch (NoSuchElementException e){
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
     }
 
-    @GetMapping("/blog/{id}/image")
+    /*@GetMapping("/blog/{id}/image")
     public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
 
-        Optional<Post> op = postService.findById(id);
-
-        if(op.isPresent() && op.get().getImagePath() != null) {
-            Post post = op.get();
-
-            Blob image = post.getImageFile();
+        try{
+            Blob image = postService.getBlobImage(id);
             Resource file = new InputStreamResource(image.getBinaryStream());
             return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
-        } else {
+        } catch (NoSuchElementException e){
             return ResponseEntity.notFound().build();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error retrieving image");
         }
-    }
+
+    }*/
 
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
-        Optional<Post> op = postService.findById(id);
-        if (op.isPresent()) {
-            Post post = op.get();
 
-            System.out.println("Post encontrado: " + post);
-            System.out.println("Descripción del post: " + post.getDescription());
-
-            model.addAttribute("title", post.getTitle());
-            model.addAttribute("description", post.getDescription());
-            model.addAttribute("creatorName", post.getCreatorName());
-
+        try {
+            PostDTO post = postService.getPost(id);
             model.addAttribute("post", post);
             model.addAttribute("isEdit", true);
+            return "post_form";
 
-        } else {
-            redirectAttributes.addAttribute("message", "Post not found");
+        } catch (NoSuchElementException e){
             return "redirect:/error";
         }
-
-        return "post_form";
     }
 
     @GetMapping("/blog/deletePost/{id}")
@@ -139,27 +126,6 @@ public class BlogWebController {
         }
     }
 
-    @GetMapping("/blog/{id}/deleteImage/{imageName}")
-    public String deleteImage(Model model, @PathVariable String imageName, @PathVariable long id, RedirectAttributes redirectAttributes) {
-        try{
-            model.addAttribute("DeleteImage", true);
-            imageService.deleteImage(imageName);
-            postService.findById(id).ifPresent(post -> {
-                post.setImagePath("no-image.png");
-                try {
-                    postService.save(post);
-                } catch (IOException e) {
-                    throw new RuntimeException("Error saving post after deleting image", e);
-                }
-            });
-            model.addAttribute("postid", id);
-            return "deleted_post";
-        } catch (Exception e) {
-            redirectAttributes.addAttribute("message", "Error deleting image");
-            return "redirect:/error";
-        }
-    }
-
     //Post
     @PostMapping("/blog/new")
     public String newPostProcess(Model model, @RequestParam("title") String title,
@@ -170,10 +136,9 @@ public class BlogWebController {
 
         Post post = new Post();
 
-        ClassUser classUser = userService.findByName(user).orElseGet(() -> {
-            ClassUser newUser = new ClassUser(user);
-            return userService.save(newUser);
-        });
+
+
+        ClassUser classUser = userService.findByName(user).orElseThrow();
 
         post.setCreator(classUser);
         post.setTitle(title);
@@ -216,15 +181,18 @@ public class BlogWebController {
             post.setImagePath(imageName);
         }
 
-        postService.save(post, imagefile);
-        userService.addPost(post.getPostid(), classUser.getUserid());
+
+        PostDTO postDTO = postMapper.toDTO(post);
+
+        postService.save(postDTO, imagefile);
+        /*userService.addPost(post.getPostid(), classUser.getUserid());
         classUser.addPost(post);
-        userService.save(classUser);
+        userService.save(classUser);*/
 
         return "redirect:/blog/" + post.getPostid();
     }
 
-    @PostMapping("/blog/changePost/{id}")
+    /*@PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model, @RequestParam("title") String title,
                                   @RequestParam("description") String description,
                                   @RequestParam("user") String user,
@@ -262,6 +230,6 @@ public class BlogWebController {
         postService.edit(post, imagefile, id);
 
         return "redirect:/blog/" + post.getPostid();
-    }
+    }*/
 
 }

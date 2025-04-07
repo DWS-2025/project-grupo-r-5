@@ -1,10 +1,10 @@
 package es.codeurjc.web.Controller;
 
 
-import es.codeurjc.web.Model.ClassUser;
+import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.ui.Model;
-import es.codeurjc.web.Model.GroupClass;
+import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
-import java.time.DayOfWeek;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;

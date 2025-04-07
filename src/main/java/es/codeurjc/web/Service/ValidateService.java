@@ -1,7 +1,6 @@
 package es.codeurjc.web.Service;
 
-import es.codeurjc.web.Model.GroupClass;
-import es.codeurjc.web.Model.Post;
+import es.codeurjc.web.Domain.Post;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Service;

@@ -1,22 +1,16 @@
 package es.codeurjc.web.Service;
 
 
-import es.codeurjc.web.Model.ClassUser;
-import es.codeurjc.web.Model.GroupClass;
-import es.codeurjc.web.Model.Post;
-import es.codeurjc.web.Repositories.GroupClassRepository;
-import es.codeurjc.web.Repositories.PostRepository;
-import es.codeurjc.web.Repositories.UserRepository;
+import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Domain.GroupClass;
+import es.codeurjc.web.Domain.Post;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.util.Optional;
 
 @Service
 public class DataInitilizer {
@@ -133,13 +127,13 @@ public class DataInitilizer {
         Post post6 = new Post(classUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
 
         // Guardar los posts de una en una
-        userService.addPost(post1.getPostid(), classUser1.getUserid());
+        /*userService.addPost(post1.getPostid(), classUser1.getUserid());
         userService.addPost(post2.getPostid(), classUser2.getUserid());
         userService.addPost(post3.getPostid(), classUser3.getUserid());
         userService.addPost(post4.getPostid(), classUser4.getUserid());
         userService.addPost(post5.getPostid(), classUser5.getUserid());
         userService.addPost(post6.getPostid(), classUser6.getUserid());
-
+        */
     }
 
 

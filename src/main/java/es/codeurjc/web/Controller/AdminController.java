@@ -1,11 +1,8 @@
 package es.codeurjc.web.Controller;
 
-import es.codeurjc.web.Model.ClassUser;
-import es.codeurjc.web.Model.GroupClass;
-import es.codeurjc.web.Model.Post;
-import es.codeurjc.web.Repositories.GroupClassRepository;
-import es.codeurjc.web.Repositories.PostRepository;
-import es.codeurjc.web.Repositories.UserRepository;
+import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Domain.GroupClass;
+import es.codeurjc.web.Domain.Post;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -42,9 +39,8 @@ public class AdminController {
         return "admin";
     }
     @GetMapping("/admin/posts")
-    public String showPosts(Model model, Pageable pageable) {
-        Page<Post> posts = postService.findAll();
-        model.addAttribute("posts", posts);
+    public String showPosts(Model model) {
+        model.addAttribute("posts", postService.findAll());
         return "adminPosts";
     }
 
@@ -137,12 +133,12 @@ public class AdminController {
                 }
             }
 
-            if(!postList.isEmpty()) {
+            /*if(!postList.isEmpty()) {
                 for (Post post : postList) {
                     long postId = post.getPostid();
                     userService.removePost(postId, user.get().getUserid());
                 }
-            }
+            }*/
         }
 
         userService.delete(id);

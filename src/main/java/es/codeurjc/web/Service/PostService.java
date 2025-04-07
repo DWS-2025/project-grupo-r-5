@@ -1,11 +1,14 @@
 package es.codeurjc.web.Service;
 
-import es.codeurjc.web.Model.Post;
+import es.codeurjc.web.Domain.Post;
 
 import java.io.*;
+import java.sql.Blob;
 import java.util.*;
 
 
+import es.codeurjc.web.Dto.PostDTO;
+import es.codeurjc.web.Dto.PostMapper;
 import es.codeurjc.web.Repositories.PostRepository;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,20 +28,32 @@ public class PostService {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PostMapper mapper;
+
     public PostService(){}
 
     //Methods
-    public Page<Post> findAll(){return postRepository.findAll(PageRequest.of(0,15));}
-
-    public Optional<Post>findById(long id){return postRepository.findById(id);}
-
-    public boolean exist(long id){return postRepository.existsById(id);}
-
-    public void save(Post post) throws IOException {
-        save(post, null);
+    public Collection<PostDTO> findAll(){
+        return toDTOs(postRepository.findAll());
     }
 
-    public void save(Post post, MultipartFile imageFile) throws IOException {
+    public PostDTO getPost (long id){return toDTO(postRepository.findById(id).orElseThrow());}
+
+    public PostDTO save(PostDTO postDTO) throws IOException {
+
+        Post post = toDomain(postDTO);
+
+        postRepository.save(post);
+
+        return toDTO(post);
+
+    }
+
+    public PostDTO save(PostDTO postDTO, MultipartFile imageFile) throws IOException {
+
+        Post post = toDomain(postDTO);
+
         // If imageFile isn't null, we use ImageService to save it
         if (!imageFile.isEmpty() && imageFile != null) {
             post.setImageFile(BlobProxy.generateProxy(imageFile.getInputStream(), imageFile.getSize()));
@@ -46,33 +61,57 @@ public class PostService {
 
         if(post.getImagePath() == null || post.getImagePath().isEmpty()) post.setImagePath("no-image.png");
         postRepository.save(post);
+
+        return toDTO(post);
     }
 
-    public void delete(long id){
-        postRepository.deleteById(id);
-    }
+    public PostDTO edit(PostDTO updatedPostDTO, MultipartFile imageFile, long id) throws IOException {
+        if (postRepository.existsById(id)) {
 
-    public void edit(Post post, MultipartFile imageFile, long id) throws IOException {
-        Optional<Post> newP = postRepository.findById(id);
-        if (newP.isPresent()) {
-            Post saveP = newP.get();
-            saveP.setTitle(post.getTitle());
-            saveP.setDescription(post.getDescription());
-            saveP.setCreator(post.getCreator());
+            Post updatedPost = toDomain(updatedPostDTO);
+            updatedPost.setPostid(id);
 
-            if (imageFile != null && !imageFile.isEmpty()) {
-                String path = imageService.createImage(imageFile);
-                saveP.setImagePath(path);
+            // If imageFile isn't null, we use ImageService to save it
+            if (!imageFile.isEmpty() && imageFile != null) {
+                updatedPost.setImageFile(BlobProxy.generateProxy(imageFile.getInputStream(), imageFile.getSize()));
             }
 
-            if(saveP.getImagePath() == null || saveP.getImagePath().isEmpty()) saveP.setImagePath("no-image.png");
+            if(updatedPost.getImagePath() == null || updatedPost.getImagePath().isEmpty()) updatedPost.setImagePath("no-image.png");
+            postRepository.save(updatedPost);
 
-            postRepository.save(saveP);
-            userService.addPost(saveP.getPostid(), saveP.getCreator().getUserid());
-        } else { //If the post is not valid
-            System.out.println("Post not found\n");
+            postRepository.save(updatedPost);
+
+            return toDTO(updatedPost);
+
+        } else {
+            throw new NoSuchElementException();
         }
     }
 
+    public PostDTO delete(long id){
+        Post post = postRepository.findById(id).orElseThrow();
+
+        postRepository.deleteById(id);
+
+        return toDTO(post);
+    }
+
+    public Blob getBlobImage(long id) throws IOException {
+        Post post = postRepository.findById(id).orElseThrow();
+        Blob blob = post.getImageFile();
+        return blob;
+    }
+
+    private PostDTO toDTO(Post post){
+        return mapper.toDTO(post);
+    }
+
+    private Post toDomain(PostDTO postDTO){
+        return mapper.toDomain(postDTO);
+    }
+
+    private Collection<PostDTO> toDTOs(Collection<Post> posts){
+        return mapper.toDTOs(posts);
+    }
 
 }
