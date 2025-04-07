@@ -31,3 +31,4 @@ public class CustomErrorController implements ErrorController {
         return "errorPage";
     }
 }
+
