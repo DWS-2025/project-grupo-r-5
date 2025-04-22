@@ -2,6 +2,8 @@ package es.codeurjc.web.Controller;
 
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.PostDTO;
 import es.codeurjc.web.Dto.PostMapper;
 import es.codeurjc.web.Repositories.PostRepository;
@@ -51,6 +53,9 @@ public class BlogWebController {
 
     @Autowired
     private PostMapper postMapper;
+
+    @Autowired
+    private ClassUserMapper classUserMapper;
 
     //Get
     @GetMapping("/blog")
@@ -200,57 +205,14 @@ public class BlogWebController {
                                  @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
                                  RedirectAttributes redirectAttributes) throws IOException {
 
-        Post post = new Post();
+    // The validation of the inputs should be here
+        // String validationError = postService.createAndValidatePost(title, desc, user, imagefile);
+    // Add an if line with: if (validationError != null && !validationError.isEmpty()) ...
 
-        ClassUser classUser = userService.findByName(user).orElseThrow();
+    PostDTO postDTO = postService.save(user,title,description,imagefile);
 
-        post.setCreator(classUser);
-        post.setTitle(title);
-        post.setDescription(Jsoup.parse(description).text());
+    return "redirect:/blog/" + postDTO.postid();
 
-        String validationError = validateService.validatePost(post);
-        if (validationError != null && !validationError.isEmpty()) {
-            model.addAttribute("error", validationError);
-            model.addAttribute("Post", post);
-
-            redirectAttributes.addAttribute("message", validationError);
-            return "redirect:/error";
-        }
-
-        if(imagefile != null && !imagefile.isEmpty()){
-            //Validate image before uploading
-            String imageValidationError = validateService.validateImage(imagefile);
-            if (imageValidationError != null && !imageValidationError.isEmpty()) {
-                model.addAttribute("error", imageValidationError);
-                model.addAttribute("Post", post);
-
-                redirectAttributes.addAttribute("message", imageValidationError);
-                return "redirect:/error";
-            }
-
-            // Create directory if it doesn't exist
-            Path imagesDir = Paths.get("images");
-            if (!Files.exists(imagesDir)) {
-                Files.createDirectories(imagesDir);
-            }
-
-            // Generate unique name and save
-            String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
-            Path imagePath = imagesDir.resolve(imageName).normalize();
-
-            post.setImagePath(imageName);
-        }
-
-
-        PostDTO postDTO = postMapper.toDTO(post);
-
-        postService.save(postDTO, imagefile);
-        //FIX THIS
-        /*userService.addPost(post.getPostid(), classUser.getUserid());
-        classUser.addPost(post);
-        userService.save(classUser);*/
-
-        return "redirect:/blog/" + post.getPostid();
     }
 
     @PostMapping("/blog/changePost/{id}")

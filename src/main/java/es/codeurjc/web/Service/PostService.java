@@ -1,5 +1,6 @@
 package es.codeurjc.web.Service;
 
+import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.Post;
 
 import java.io.*;
@@ -7,6 +8,8 @@ import java.sql.Blob;
 import java.util.*;
 
 
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.PostDTO;
 import es.codeurjc.web.Dto.PostMapper;
 import es.codeurjc.web.Repositories.PostRepository;
@@ -30,6 +33,8 @@ public class PostService {
 
     @Autowired
     private PostMapper mapper;
+    @Autowired
+    private ClassUserMapper classUserMapper;
 
     public PostService(){}
 
@@ -65,6 +70,39 @@ public class PostService {
         postRepository.save(post);
 
         return toDTO(post);
+    }
+
+    public PostDTO save(String user, String title, String description, MultipartFile imageFile) throws IOException {
+
+        Optional <ClassUserDTO> classUserDTO = userService.findByName(user);
+
+        if(classUserDTO.isPresent()){
+
+            ClassUser classUser = classUserMapper.toDomain(classUserDTO.get());
+
+            String imagePath;
+
+            if (!imageFile.isEmpty() && imageFile != null) {
+
+                imagePath = imageService.createImage(imageFile);
+
+            } else{
+
+                imagePath = "no-image.png";
+
+            }
+
+
+            Post newpost = new Post(classUser,title,description,imagePath);
+
+            postRepository.save(newpost);
+
+            return toDTO(newpost);
+
+        }
+
+
+
     }
 
     public PostDTO edit(PostDTO updatedPostDTO, MultipartFile imageFile, long id) throws IOException {
