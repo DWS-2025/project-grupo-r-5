@@ -101,7 +101,13 @@ public class PostService {
 
         }
 
+        return null;
 
+    }
+
+    public boolean checkCreator(PostDTO postDTO, ClassUserDTO classUserDTO) {
+
+        return postDTO.creator().userid() == classUserDTO.userid();
 
     }
 

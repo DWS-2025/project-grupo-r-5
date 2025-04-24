@@ -211,6 +211,10 @@ public class BlogWebController {
 
     PostDTO postDTO = postService.save(user,title,description,imagefile);
 
+    if(postDTO == null){
+        return "redirect:/error";
+    }
+
     return "redirect:/blog/" + postDTO.postid();
 
     }
@@ -224,37 +228,52 @@ public class BlogWebController {
                                   RedirectAttributes redirectAttributes) throws IOException {
 
         // Check if the post exists
-        Optional <PostDTO> op = Optional.ofNullable(postService.getPost(id));
-        if(op.isEmpty()){
+        Optional <PostDTO> opPost = Optional.ofNullable(postService.getPost(id));
+
+        if(opPost.isEmpty()){
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
-        // Get the post
-        PostDTO originalPost = op.get();
-        // Check if the user is the creator of the post
-        ClassUser classUser = originalPost.creator();
-        if(classUser == null || !classUser.getName().equals(user)){
-            classUser = userService.findByName(user).orElseThrow();
+
+        //once we check if the post is not empty we get it
+
+        PostDTO originalPost = opPost.get();
+
+        // Get the creatorId
+
+        long userId = originalPost.creator().userid();
+
+        //Check if the creator exist and if then, get it
+
+        Optional <ClassUserDTO> opUser = userService.findById(userId);
+
+        if(opUser.isEmpty()){
+            redirectAttributes.addAttribute("message", "User not found");
+            return "redirect:/error";
         }
 
-        PostDTO updatedPost = new PostDTO(
-                originalPost.postid(),
-                classUser,
-                title,
-                Jsoup.parse(description).text(),
-                originalPost.imagePath()
-        );
-        //Uncomment this in the 3rd phase
-        /*String validationError = validateService.validatePost(updatedPost);
-        if (validationError != null && !validationError.isEmpty()) {
-            model.addAttribute("error", validationError);
-            model.addAttribute("post", post);
-            redirectAttributes.addAttribute("message", validationError);
-            return "redirect:/error";
-        }*/
-        postService.edit(updatedPost, imagefile, id);
+        ClassUserDTO userDTO = opUser.get();
 
-        return "redirect:/blog/" + updatedPost.postid();
+        // Check if the user is the creator of the post
+
+        if(postService.checkCreator(originalPost, userDTO)){
+
+            PostDTO updatedPost = new PostDTO(
+                    originalPost.postid(),
+                    userDTO,
+                    title,
+                    Jsoup.parse(description).text(),
+                    originalPost.imagePath()
+            );
+
+            postService.edit(updatedPost,imagefile, originalPost.postid());
+
+            return "redirect:/blog/" + updatedPost.postid();
+        }
+
+        redirectAttributes.addAttribute("message", "The post cannot be updated");
+        return "redirect:/error";
+
     }
 
 }
