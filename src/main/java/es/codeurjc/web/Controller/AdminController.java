@@ -3,6 +3,8 @@ package es.codeurjc.web.Controller;
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -33,6 +35,9 @@ public class AdminController {
     private UserService classUserService;
     @Autowired
     private GroupClassService groupClassService;
+
+    @Autowired
+    private ClassUserMapper classUserMapper;
 
     @GetMapping("/admin")
     public String showAdminDashboard(Model model) {
@@ -120,7 +125,7 @@ public class AdminController {
 
     @PostMapping("/admin/users/delete-{id}")
     public String deleteUserConfirmed(@PathVariable long id) {
-        Optional<ClassUser> user = userService.findById(id);
+        Optional<ClassUserDTO> user = userService.findById(id);
 
         if(user != null){
             List<GroupClass> groupClassList = new ArrayList<>();
@@ -129,7 +134,7 @@ public class AdminController {
             if(!groupClassList.isEmpty()){
                 for (GroupClass groupClass : groupClassList) {
                     long groupClassId = groupClass.getClassid();
-                    userService.removeGroupClass(groupClassId, user.get().getUserid());
+                    userService.removeGroupClass(groupClassId, user.get().userid());
                 }
             }
 

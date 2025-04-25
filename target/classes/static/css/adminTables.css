@@ -1,0 +1,102 @@
+/* Fondo de la página */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    background-image: url('https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fwallpapercave.com%2Fwp%2Fwp2639536.jpg&f=1&nofb=1&ipt=b12f3050a59b86bb0c818b61fc581fb2c0148ccc178319f0fda4583f757ab4b8&ipo=images'); /* Asegúrate de tener esta imagen */
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    color: white;
+}
+
+/* Contenedor principal */
+.container {
+    background: rgba(0, 0, 0, 0.7); /* Fondo translúcido */
+    padding: 40px;
+    margin: 50px auto;
+    width: 80%;
+    border-radius: 10px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+/* Título principal */
+h1 {
+    color: #03488f; /* Azul oscuro */
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+/* Sección de clases */
+.section {
+    margin-top: 30px;
+    text-align: left;
+}
+
+/* Tabla de clases */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+table th {
+    background-color: #03488f;
+    color: white;
+}
+
+table td {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Botón Eliminar */
+.delete-btn {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+
+/* Botones Back y Crear */
+.btn-group {
+    margin-top: 30px;
+}
+
+.btn {
+    padding: 12px 25px;
+    background-color: #03488f;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin: 10px;
+    font-size: 1.1em;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #007bff;
+}
+
+.create-btn {
+    background-color: #f8b400;
+}
+
+.create-btn:hover {
+    background-color: #ffa500;
+}

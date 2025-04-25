@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Posts</title>
+    <link rel="stylesheet" href="/css/adminTables.css">
+</head>
+<body>
+<div class="container">
+    <h1>Gestión de Posts</h1>
+
+    <!-- Section of posts -->
+    <section class="section">
+        <h2>Posts</h2>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Descripción</th>
+                <th>Creado por</th>
+                <th>Imagen</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#posts}}
+            <tr>
+                <td>{{postid}}</td>
+                <td>{{title}}</td>
+                <td>{{description}}</td>
+                <td>{{creator.name}}</td>
+                <td>
+                    {{#imagePath}}
+                    {{imagePath}}
+                    {{/imagePath}}
+                    {{^imagePath}}
+                    No hay imagen
+                    {{/imagePath}}
+                </td>
+                <td>
+                    <!-- Delete button -->
+                    <a href="/admin/deletePost/{{postid}}" class="btn delete-btn">Eliminar</a>
+                </td>
+            </tr>
+            {{/posts}}
+            </tbody>
+        </table>
+    </section>
+    <div class="btn-group">
+        <a href="/admin" class="btn back-btn">Back</a>
+        </div>
+</div>
+</body>
+</html>
+

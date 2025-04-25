@@ -2,6 +2,9 @@ package es.codeurjc.web.Controller;
 
 
 import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Dto.ClassUserBasicDTO;
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
@@ -27,6 +30,9 @@ public class GroupClassWebController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ClassUserMapper classUserMapper;
+
     @GetMapping("/")
     public String showGroupClasses(Model model) {
         List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();
@@ -44,14 +50,14 @@ public class GroupClassWebController {
         }
     }
     @PostMapping("/GroupClasses/Join-{id}")
-    public String joinClassProcess(Model model, @RequestParam String username, @PathVariable Long id) throws IOException {
+    public String joinClassProcess(Model model, @RequestParam String username, @PathVariable Long id, @PathVariable Long userid) throws IOException {
 
-        ClassUser user = new ClassUser(username);
+        ClassUserBasicDTO user = new ClassUserBasicDTO(userid, username);
         Optional<GroupClass> groupClass = groupClassService.findById(id);
 
         if (groupClass != null) {
             userService.save(user);
-            userService.addGroupClass(id, user.getUserid());
+            userService.addGroupClass(id, userid);
         }
         long classid = groupClass.get().getClassid();
         return "redirect:/GroupClasses/Join-" + classid + "/success";

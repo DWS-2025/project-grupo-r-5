@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Delete Post</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="/css/post_done.css">
+</head>
+<body>
+<div class="container">
+    {{#DeletePost}}
+    <p>Post has been deleted.</p>
+    <a href="/blog">Back</a>
+    {{/DeletePost}}
+    {{#DeleteImage}}
+    <p>Image has been deleted.</p>
+    <a href="/blog/{{postid}}">Back</a>
+    {{/DeleteImage}}
+</div>
+</body>
+</html>

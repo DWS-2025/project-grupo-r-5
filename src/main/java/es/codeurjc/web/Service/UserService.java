@@ -59,6 +59,12 @@ public class UserService {
         return classUserMapper.toDTO(saved);
     }
 
+    public ClassUserDTO save(ClassUserBasicDTO classUserBasicDTO){
+        ClassUser classUser = classUserMapper.toDomain(classUserBasicDTO);
+        ClassUser saved = userRepository.save(classUser);
+        return classUserMapper.toDTO(saved);
+    }
+
     public void delete(long id) {userRepository.deleteById(id);}
 
     @Transactional
@@ -134,6 +140,5 @@ public class UserService {
 
         return Optional.empty();
     }
-
 
 }

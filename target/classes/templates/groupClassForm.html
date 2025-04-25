@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/post_form.css">
+</head>
+<body>
+<form action="/class/new" method="post" enctype="multipart/form-data">
+    <p><label>Class Name: </label></p>
+    <p><input type="text" name="classname" placeholder="Class Name" required></p>
+
+    <p><label>Instructor: </label></p>
+    <p><input type="text" name="instructor" placeholder="Instructor Name" required></p>
+
+    <p><label>Day of the Week: </label></p>
+    <p>
+        <select name="day" required>
+            <option value="MONDAY">Monday</option>
+            <option value="TUESDAY">Tuesday</option>
+            <option value="WEDNESDAY">Wednesday</option>
+            <option value="THURSDAY">Thursday</option>
+            <option value="FRIDAY">Friday</option>
+            <option value="SATURDAY">Saturday</option>
+            <option value="SUNDAY">Sunday</option>
+        </select>
+    </p>
+
+    <p><label>Start Time: </label></p>
+    <p><input type="time" name="time_init" required></p>
+
+    <p><label>Duration (in minutes): </label></p>
+    <p><input type="number" name="duration" min="1" required></p>
+
+    <p><label>Maximum Capacity: </label></p>
+    <p><input type="number" name="maxCapacity" min="1" required></p>
+
+    <input type="submit" value="Save"/>
+</form>
+</body>
+</html>

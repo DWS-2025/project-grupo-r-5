@@ -17,4 +17,5 @@ public interface ClassUserMapper {
     @Mapping(target = "listOfClasses", ignore = true)
     @Mapping(target = "listOfPosts", ignore = true)
     ClassUser toDomain(ClassUserDTO classUserDTO);
+    ClassUser toDomain(ClassUserBasicDTO classUserBasicDTO);
 }

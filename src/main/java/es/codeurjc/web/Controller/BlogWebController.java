@@ -2,6 +2,8 @@ package es.codeurjc.web.Controller;
 
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.PostDTO;
 import es.codeurjc.web.Dto.PostMapper;
 import es.codeurjc.web.Repositories.PostRepository;
@@ -52,6 +54,9 @@ public class BlogWebController {
     @Autowired
     private PostMapper postMapper;
 
+    @Autowired
+    private ClassUserMapper userMapper;
+
     //Get
     @GetMapping("/blog")
     public String showBlog(Model model) {
@@ -81,18 +86,6 @@ public class BlogWebController {
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
-        /*try{
-            PostDTO post = postService.getPost(id);
-            model.addAttribute("Post", post);
-            String imagefile = post.imagePath();
-            if(!imagefile.matches("no-image.png")){
-                model.addAttribute("ImagePresented", true);
-            }
-            return "show_post";
-        } catch (NoSuchElementException e){
-            redirectAttributes.addAttribute("message", "Post not found");
-            return "redirect:/error";
-        }*/
     }
 
     @GetMapping("/blog/{id}/image")
@@ -202,7 +195,11 @@ public class BlogWebController {
 
         Post post = new Post();
 
-        ClassUser classUser = userService.findByName(user).orElseThrow();
+
+        ClassUserDTO classUserDTO = userService.findByName(user)
+                .orElseThrow(() -> new NoSuchElementException("User not found"));
+
+        ClassUser classUser = userMapper.toDomain(classUserDTO);
 
         post.setCreator(classUser);
         post.setTitle(title);
@@ -270,9 +267,14 @@ public class BlogWebController {
         // Get the post
         PostDTO originalPost = op.get();
         // Check if the user is the creator of the post
-        ClassUser classUser = originalPost.creator();
-        if(classUser == null || !classUser.getName().equals(user)){
+        ClassUserDTO classUser = originalPost.creator();
+
+        if(classUser == null || !classUser.getClass().getName().equals(user)) {
             classUser = userService.findByName(user).orElseThrow();
+            if (classUser == null) {
+                redirectAttributes.addAttribute("message", "User not found");
+                return "redirect:/error";
+            }
         }
 
         PostDTO updatedPost = new PostDTO(
@@ -283,13 +285,13 @@ public class BlogWebController {
                 originalPost.imagePath()
         );
         //Uncomment this in the 3rd phase
-        /*String validationError = validateService.validatePost(updatedPost);
+        String validationError = validateService.validatePost(postMapper.toDomain(updatedPost));
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
-            model.addAttribute("post", post);
+            model.addAttribute("post", updatedPost);
             redirectAttributes.addAttribute("message", validationError);
             return "redirect:/error";
-        }*/
+        }
         postService.edit(updatedPost, imagefile, id);
 
         return "redirect:/blog/" + updatedPost.postid();
