@@ -4,9 +4,7 @@ package es.codeurjc.web.Service;
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
-import es.codeurjc.web.Dto.ClassUserBasicDTO;
-import es.codeurjc.web.Dto.ClassUserDTO;
-import es.codeurjc.web.Dto.ClassUserMapper;
+import es.codeurjc.web.Dto.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,10 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 @Transactional
 @Service
@@ -30,27 +31,6 @@ public class DataInitilizer {
     @Autowired
     private PostService postService;
 
-    @Autowired
-    private ClassUserMapper classUserMapper;
-
-    /*
-    public void init() throws IOException {
-        // Crear los posts
-        Post post1 = new Post(classUser4, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!...");
-        Post post2 = new Post(classUser5, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga...");
-        Post post3 = new Post(classUser6, "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal!...");
-        Post post4 = new Post(classUser5, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!");
-        Post post5 = new Post(classUser4, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa.");
-        Post post6 = new Post(classUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
-
-        // Guardar los posts de una en una
-        userService.addPost(post1.getPostid(), classUser1.getUserid());
-        userService.addPost(post2.getPostid(), classUser2.getUserid());
-        userService.addPost(post3.getPostid(), classUser3.getUserid());
-        userService.addPost(post4.getPostid(), classUser4.getUserid());
-        userService.addPost(post5.getPostid(), classUser5.getUserid());
-        userService.addPost(post6.getPostid(), classUser6.getUserid());
-    }*/
 
     @PostConstruct
     public void init() throws IOException {
@@ -58,13 +38,15 @@ public class DataInitilizer {
         initializeUsers();
 
         //To assign users to classes
-        List<GroupClass> groupClasses = groupClassService.findAll();
+        List<GroupClass> groupClasses = groupClassService.findAll().stream()
+                .map(groupClassService::toDomain) // Convert DTOs back to domain objects
+                .toList();
         List<ClassUser> users = userService.findAll().stream()
-                .map(classUserMapper::toDomain) //Convert DTOs back to domain objects
+                .map(userService::toDomain) // Convert DTOs back to domain objects
                 .toList();
         assignUsersToClasses(groupClasses, users);
 
-        initializePosts();
+        initializePosts(users);
     }
 
     private void initializeGroupClasses() {
@@ -79,25 +61,29 @@ public class DataInitilizer {
         };
 
         for (GroupClass groupClass : groupClasses) {
-            groupClassService.save(groupClass);
+            GroupClassBasicDTO gbd = groupClassService.toBasicDTO(groupClass);
+            groupClassService.save(gbd);
         }
     }
 
     private void initializeUsers() {
         ClassUser[] users = {
-                new ClassUser("Pepe"),
+                new ClassUser("Pepe"),  //0
                 new ClassUser("Juan"),
                 new ClassUser("Maria"),
                 new ClassUser("Manolo"),
                 new ClassUser("Julian"),
-                new ClassUser("Rufusberto")
+                new ClassUser("Rufusberto") //5
         };
 
         for (ClassUser user : users) {
-            userService.save(classUserMapper.toDTO(user));
+            ClassUserBasicDTO userDTO = userService.toBasicDTO(user);
+            userService.save(userDTO);
         }
 
     }
+
+
     private void assignUsersToClasses(List<GroupClass> groupClasses, List<ClassUser> users) {
         // Example: Assign the first two users to the first group class
         if (!groupClasses.isEmpty() && users.size() >= 2) {
@@ -119,31 +105,41 @@ public class DataInitilizer {
         }
     }
 
-    private void initializePosts() {
-        Post[] posts = {
-                new Post(new ClassUser("Manolo"), "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!..."),
-                new Post(new ClassUser("Julian"), "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga..."),
-                new Post(new ClassUser("Rufusberto"), "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal!..."),
-                new Post(new ClassUser("Julian"), "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!"),
-                new Post(new ClassUser("Manolo"), "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa."),
-                new Post(new ClassUser("Julian"), "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.")
-        };
+    private void initializePosts(List<ClassUser> users) throws IOException {
+        if(!users.isEmpty()) {
 
+            Post[] posts = {
+                    new Post(users.get(0), "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!..."),
+                    new Post(users.get(4), "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga..."),
+                    new Post(users.get(5), "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal!..."),
+                    new Post(users.get(4), "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!"),
+                    new Post(users.get(0), "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa."),
+                    new Post(users.get(4), "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.")
+            };
 
-        try {
-            assignPostsToUsers(posts);
-        } catch (IOException e) {
-            System.err.println("Error assigning posts to users: " + e.getMessage());
+            List<Post> savedPosts = new ArrayList<>();
+            for (Post post : posts) {
+                PostDTO postDTO = postService.toDTO(post);
+                PostDTO savedDTO = postService.save(postDTO);
+                savedPosts.add(postService.toDomain(savedDTO));
+            }
+
+            try {
+                assignPostsToUsers(posts);
+            } catch (IOException e) {
+                System.err.println("Error assigning posts to users: " + e.getMessage());
+            }
         }
 
     }
+
 
     public void assignPostsToUsers(Post[] posts) throws IOException {
         for (int i = 0; i < posts.length; i++) {
             Post post = posts[i];
             List<ClassUserBasicDTO> classUsers = userService.findAll();
             ClassUserBasicDTO user = classUsers.get(i % classUsers.size()); // Cycle through users if posts > users
-            userService.addPost(post.getPostid(), classUserMapper.toDomain(user).getUserid());
+            userService.addPost(post.getPostid(), userService.toDomain(user).getUserid());
         }
     }
 

@@ -146,15 +146,15 @@ public class PostService {
         return blob;
     }
 
-    private PostDTO toDTO(Post post){
+    public PostDTO toDTO(Post post){
         return mapper.toDTO(post);
     }
 
-    private Post toDomain(PostDTO postDTO){
+    public Post toDomain(PostDTO postDTO){
         return mapper.toDomain(postDTO);
     }
 
-    private Collection<PostDTO> toDTOs(Collection<Post> posts){
+    public Collection<PostDTO> toDTOs(Collection<Post> posts){
         return mapper.toDTOs(posts);
     }
 

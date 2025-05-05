@@ -5,6 +5,7 @@ import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.ClassUserDTO;
 import es.codeurjc.web.Dto.ClassUserMapper;
+import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
@@ -30,9 +31,6 @@ public class GroupClassWebController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private ClassUserMapper classUserMapper;
-
     @GetMapping("/")
     public String showGroupClasses(Model model) {
         List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();
@@ -41,8 +39,8 @@ public class GroupClassWebController {
     }
     @GetMapping("/GroupClasses/Join-{id}")
     public String joinClass(Model model , @PathVariable long id) {
-        Optional<GroupClass> groupClass = groupClassService.findById(id);
-        if (groupClass != null) {
+        Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
+        if (groupClass.isPresent()) {
             model.addAttribute("GroupClass", groupClass);
             return "joinClass";
         } else{
@@ -53,19 +51,19 @@ public class GroupClassWebController {
     public String joinClassProcess(Model model, @RequestParam String username, @PathVariable Long id, @PathVariable Long userid) throws IOException {
 
         ClassUserBasicDTO user = new ClassUserBasicDTO(userid, username);
-        Optional<GroupClass> groupClass = groupClassService.findById(id);
+        Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
 
-        if (groupClass != null) {
+        if (groupClass.isPresent()) {
             userService.save(user);
             userService.addGroupClass(id, userid);
         }
-        long classid = groupClass.get().getClassid();
+        long classid = groupClass.get().classid();
         return "redirect:/GroupClasses/Join-" + classid + "/success";
 
     }
     @GetMapping("/GroupClasses/Join-{id}/success")
     public String joinClassSuccess(Model model, @PathVariable long id) {
-        Optional<GroupClass> groupClass = groupClassService.findById(id);
+        Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
         model.addAttribute("GroupClass", groupClass);
 
         return "successJoinClass";

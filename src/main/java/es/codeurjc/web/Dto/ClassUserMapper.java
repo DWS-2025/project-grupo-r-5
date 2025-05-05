@@ -12,6 +12,8 @@ public interface ClassUserMapper {
 
     ClassUserDTO toDTO(ClassUser classUser);
 
+    ClassUserBasicDTO toBasicDTO(ClassUser classUser);
+
     List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
 
     @Mapping(target = "listOfClasses", ignore = true)

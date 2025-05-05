@@ -11,8 +11,12 @@ import java.util.List;
 public interface GroupClassMapper {
     GroupClassDTO toDTO(GroupClass groupClass);
 
+    GroupClassBasicDTO toBasicDTO(GroupClass groupClass);
+
     List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses);
 
     //@Mapping(target = "usersList" , ignore = true)
     GroupClass toDomain(GroupClassBasicDTO groupClassDTO);
+
+    //GroupClass toDomain(GroupClassDTO groupClassDTO);
 }

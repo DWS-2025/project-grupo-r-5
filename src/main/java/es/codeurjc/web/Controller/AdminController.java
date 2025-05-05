@@ -5,6 +5,8 @@ import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Dto.ClassUserDTO;
 import es.codeurjc.web.Dto.ClassUserMapper;
+import es.codeurjc.web.Dto.GroupClassBasicDTO;
+import es.codeurjc.web.Dto.GroupClassDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -36,8 +38,6 @@ public class AdminController {
     @Autowired
     private GroupClassService groupClassService;
 
-    @Autowired
-    private ClassUserMapper classUserMapper;
 
     @GetMapping("/admin")
     public String showAdminDashboard(Model model) {
@@ -62,31 +62,32 @@ public class AdminController {
         model.addAttribute("GroupClasses", groupClassService.findAll());
         return "adminGroupClasses";
     }
+
     @GetMapping("/admin/groupClasses/delete-{id}")
     public String deleteGroupClass(@PathVariable long id, Model model) {
         model.addAttribute("groupClass",groupClassService.findById(id));
         return "adminRemoveClassConfirmation";
     }
+
     @PostMapping("/admin/groupClasses/delete-{id}")
     public String deleteGroupClassConfirmed(@PathVariable long id) {
-        Optional<GroupClass> groupClass = groupClassService.findById(id);
+        Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
 
-        if (groupClass != null) {
-            List<ClassUser> usersList = new ArrayList<>(groupClass.get().getUsersList());
+        if (groupClass.isPresent()) {
+            List<ClassUserDTO> usersList = new ArrayList<>(groupClass.get().usersList());
 
             if (!usersList.isEmpty()) {
-                for (ClassUser user : usersList) {
-                    long userId = user.getUserid();
+                for (ClassUserDTO user : usersList) {
+                    long userId = user.userid();
                     userService.removeGroupClass(id, userId);
                 }
             }
-
             // Now we eliminate the class
             groupClassService.delete(id);
         }
-
         return "redirect:/admin/groupClasses";
     }
+
     @GetMapping("/admin/groupClasses/new")
     public String NewGroupClass(Model model) {
         model.addAttribute("GroupClass", new GroupClass());
@@ -111,8 +112,8 @@ public class AdminController {
                 instructor,
                 maxCapacity
         );
-
-        groupClassService.save(newClass);
+        GroupClassBasicDTO newgpClassBasicDTO = groupClassService.toBasicDTO(newClass);
+        groupClassService.save(newgpClassBasicDTO);
 
         return "redirect:/admin/groupClasses";  // Redirect to a success page
     }
@@ -127,7 +128,7 @@ public class AdminController {
     public String deleteUserConfirmed(@PathVariable long id) {
         Optional<ClassUserDTO> user = userService.findById(id);
 
-        if(user != null){
+        if(user.isPresent()){
             List<GroupClass> groupClassList = new ArrayList<>();
             List<Post> postList = new ArrayList<>();
 
@@ -138,12 +139,12 @@ public class AdminController {
                 }
             }
 
-            /*if(!postList.isEmpty()) {
+            if(!postList.isEmpty()) {
                 for (Post post : postList) {
                     long postId = post.getPostid();
-                    userService.removePost(postId, user.get().getUserid());
+                    userService.removePost(postId, user.get().userid());
                 }
-            }*/
+            }
         }
 
         userService.delete(id);

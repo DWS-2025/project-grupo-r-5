@@ -14,10 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 @Service
 public class UserService {
@@ -84,6 +83,7 @@ public class UserService {
         }
         return Optional.empty();
     }
+
     @Transactional
     public Optional<ClassUserDTO> removeGroupClass(long classId, long userId) {
         Optional<ClassUser> op_classUser = userRepository.findById(userId);
@@ -103,6 +103,7 @@ public class UserService {
         }
         return Optional.empty();
     }
+
     @Transactional
     public Optional<ClassUserDTO> addPost(long postId, long userId) throws IOException {
         Optional<ClassUser> op_classUser = userRepository.findById(userId);
@@ -139,6 +140,25 @@ public class UserService {
         }
 
         return Optional.empty();
+    }
+
+    public ClassUserDTO toDTO (ClassUser classUser) {
+        return classUserMapper.toDTO(classUser);
+    }
+
+    public ClassUserBasicDTO toBasicDTO (ClassUser classUser) {
+        return classUserMapper.toBasicDTO(classUser);
+    }
+
+    public ClassUser toDomain (ClassUserDTO classUserDTO) {
+        return classUserMapper.toDomain(classUserDTO);
+    }
+    public ClassUser toDomain (ClassUserBasicDTO classUserBasicDTO) {
+        return classUserMapper.toDomain(classUserBasicDTO);
+    }
+
+    public List<ClassUserBasicDTO> toDTOs (Collection<ClassUser> classUsers) {
+        return classUserMapper.toDTOs(classUsers);
     }
 
 }

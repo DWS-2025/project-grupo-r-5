@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-21T20:34:22+0200",
+    date = "2025-05-05T19:05:21+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -53,6 +53,38 @@ public class GroupClassMapperImpl implements GroupClassMapper {
     }
 
     @Override
+    public GroupClassBasicDTO toBasicDTO(GroupClass groupClass) {
+        if ( groupClass == null ) {
+            return null;
+        }
+
+        Long classid = null;
+        String classname = null;
+        String instructor = null;
+        String day = null;
+        int duration = 0;
+        int maxCapacity = 0;
+        int currentCapacity = 0;
+
+        classid = groupClass.getClassid();
+        classname = groupClass.getClassname();
+        instructor = groupClass.getInstructor();
+        if ( groupClass.getDay() != null ) {
+            day = groupClass.getDay().name();
+        }
+        duration = groupClass.getDuration();
+        maxCapacity = groupClass.getMaxCapacity();
+        currentCapacity = groupClass.getCurrentCapacity();
+
+        String timeInit = null;
+        String timeFin = null;
+
+        GroupClassBasicDTO groupClassBasicDTO = new GroupClassBasicDTO( classid, classname, instructor, day, timeInit, duration, timeFin, maxCapacity, currentCapacity );
+
+        return groupClassBasicDTO;
+    }
+
+    @Override
     public List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
         if ( groupClasses == null ) {
             return null;
@@ -60,7 +92,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
 
         List<GroupClassBasicDTO> list = new ArrayList<GroupClassBasicDTO>( groupClasses.size() );
         for ( GroupClass groupClass : groupClasses ) {
-            list.add( groupClassToGroupClassBasicDTO( groupClass ) );
+            list.add( toBasicDTO( groupClass ) );
         }
 
         return list;
@@ -168,36 +200,5 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         }
 
         return list1;
-    }
-
-    protected GroupClassBasicDTO groupClassToGroupClassBasicDTO(GroupClass groupClass) {
-        if ( groupClass == null ) {
-            return null;
-        }
-
-        Long classid = null;
-        String classname = null;
-        String instructor = null;
-        String day = null;
-        int duration = 0;
-        int maxCapacity = 0;
-        int currentCapacity = 0;
-
-        classid = groupClass.getClassid();
-        classname = groupClass.getClassname();
-        instructor = groupClass.getInstructor();
-        if ( groupClass.getDay() != null ) {
-            day = groupClass.getDay().name();
-        }
-        duration = groupClass.getDuration();
-        maxCapacity = groupClass.getMaxCapacity();
-        currentCapacity = groupClass.getCurrentCapacity();
-
-        String timeInit = null;
-        String timeFin = null;
-
-        GroupClassBasicDTO groupClassBasicDTO = new GroupClassBasicDTO( classid, classname, instructor, day, timeInit, duration, timeFin, maxCapacity, currentCapacity );
-
-        return groupClassBasicDTO;
     }
 }

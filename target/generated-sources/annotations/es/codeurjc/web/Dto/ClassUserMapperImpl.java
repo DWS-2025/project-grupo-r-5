@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-21T20:34:21+0200",
+    date = "2025-05-05T19:05:21+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -41,6 +41,25 @@ public class ClassUserMapperImpl implements ClassUserMapper {
     }
 
     @Override
+    public ClassUserBasicDTO toBasicDTO(ClassUser classUser) {
+        if ( classUser == null ) {
+            return null;
+        }
+
+        long userid = 0L;
+        String name = null;
+
+        if ( classUser.getUserid() != null ) {
+            userid = classUser.getUserid();
+        }
+        name = classUser.getName();
+
+        ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, name );
+
+        return classUserBasicDTO;
+    }
+
+    @Override
     public List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers) {
         if ( classUsers == null ) {
             return null;
@@ -48,7 +67,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
 
         List<ClassUserBasicDTO> list = new ArrayList<ClassUserBasicDTO>( classUsers.size() );
         for ( ClassUser classUser : classUsers ) {
-            list.add( classUserToClassUserBasicDTO( classUser ) );
+            list.add( toBasicDTO( classUser ) );
         }
 
         return list;
@@ -174,23 +193,5 @@ public class ClassUserMapperImpl implements ClassUserMapper {
         }
 
         return list1;
-    }
-
-    protected ClassUserBasicDTO classUserToClassUserBasicDTO(ClassUser classUser) {
-        if ( classUser == null ) {
-            return null;
-        }
-
-        long userid = 0L;
-        String name = null;
-
-        if ( classUser.getUserid() != null ) {
-            userid = classUser.getUserid();
-        }
-        name = classUser.getName();
-
-        ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, name );
-
-        return classUserBasicDTO;
     }
 }
