@@ -3,6 +3,7 @@ package es.codeurjc.web.Dto;
 import es.codeurjc.web.Domain.ClassUser;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +15,7 @@ public interface ClassUserMapper {
 
     ClassUserBasicDTO toBasicDTO(ClassUser classUser);
 
-    List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
+    Page<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
 
     @Mapping(target = "listOfClasses", ignore = true)
     @Mapping(target = "listOfPosts", ignore = true)

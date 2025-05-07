@@ -3,10 +3,7 @@ package es.codeurjc.web.Controller;
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Dto.ClassUserDTO;
-import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.PostDTO;
-import es.codeurjc.web.Dto.PostMapper;
-import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
@@ -15,7 +12,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.jsoup.Jsoup;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -51,16 +47,10 @@ public class BlogWebController {
     @Autowired
     private ImageService imageService;
 
-    @Autowired
-    private PostMapper postMapper;
-
-    @Autowired
-    private ClassUserMapper userMapper;
-
     //Get
     @GetMapping("/blog")
-    public String showBlog(Model model) {
-        model.addAttribute("Posts", postService.findAll());
+    public String showBlog(Model model, Pageable page) {
+        model.addAttribute("Posts", postService.findAll(page));
         return "blog";
     }
 
@@ -107,18 +97,6 @@ public class BlogWebController {
         } else {
             return ResponseEntity.notFound().build();
         }
-
-        /*try {
-            PostDTO post = postService.getPost(id);
-            Blob image = postService.getBlobImage(id);
-            Resource file = new InputStreamResource(image.getBinaryStream());
-            return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(500).body("Error retrieving image");
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }*/
     }
 
     @GetMapping("/blog/changePost/{id}")
@@ -199,7 +177,7 @@ public class BlogWebController {
         ClassUserDTO classUserDTO = userService.findByName(user)
                 .orElseThrow(() -> new NoSuchElementException("User not found"));
 
-        ClassUser classUser = userMapper.toDomain(classUserDTO);
+        ClassUser classUser = userService.toDomain(classUserDTO);
 
         post.setCreator(classUser);
         post.setTitle(title);
@@ -239,7 +217,7 @@ public class BlogWebController {
         }
 
 
-        PostDTO postDTO = postMapper.toDTO(post);
+        PostDTO postDTO = postService.toDTO(post);
 
         postService.save(postDTO, imagefile);
         //FIX THIS
@@ -285,7 +263,7 @@ public class BlogWebController {
                 originalPost.imagePath()
         );
         //Uncomment this in the 3rd phase
-        String validationError = validateService.validatePost(postMapper.toDomain(updatedPost));
+        String validationError = validateService.validatePost(postService.toDomain(updatedPost));
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
             model.addAttribute("post", updatedPost);

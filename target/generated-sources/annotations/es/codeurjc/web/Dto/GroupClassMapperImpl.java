@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
@@ -85,7 +87,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
     }
 
     @Override
-    public List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
+    public Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
         if ( groupClasses == null ) {
             return null;
         }
@@ -95,7 +97,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
             list.add( toBasicDTO( groupClass ) );
         }
 
-        return list;
+        return (Page<GroupClassBasicDTO>) list;
     }
 
     @Override

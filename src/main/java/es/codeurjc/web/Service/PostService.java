@@ -17,6 +17,7 @@ import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -39,8 +40,9 @@ public class PostService {
     public PostService(){}
 
     //Methods
-    public Collection<PostDTO> findAll(){
-        return toDTOs(postRepository.findAll());
+    public Page<PostDTO> findAll(Pageable page) {
+        Page<Post> posts = postRepository.findAll(page);
+        return toDTOs(posts.getContent());
     }
 
     public Optional<PostDTO> findById(long id){return postRepository.findById(id).map(mapper::toDTO);}
@@ -154,7 +156,7 @@ public class PostService {
         return mapper.toDomain(postDTO);
     }
 
-    public Collection<PostDTO> toDTOs(Collection<Post> posts){
+    public Page<PostDTO> toDTOs(Collection<Post> posts){
         return mapper.toDTOs(posts);
     }
 

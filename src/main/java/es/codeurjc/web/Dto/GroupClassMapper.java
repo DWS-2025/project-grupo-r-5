@@ -3,6 +3,7 @@ package es.codeurjc.web.Dto;
 import es.codeurjc.web.Domain.GroupClass;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +14,7 @@ public interface GroupClassMapper {
 
     GroupClassBasicDTO toBasicDTO(GroupClass groupClass);
 
-    List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses);
+    Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses);
 
     //@Mapping(target = "usersList" , ignore = true)
     GroupClass toDomain(GroupClassBasicDTO groupClassDTO);

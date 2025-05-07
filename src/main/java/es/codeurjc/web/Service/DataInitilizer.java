@@ -22,6 +22,8 @@ import static java.util.stream.Collectors.toList;
 @Service
 public class DataInitilizer {
 
+/*
+
     @Autowired
     private UserService userService;
 
@@ -142,5 +144,6 @@ public class DataInitilizer {
             userService.addPost(post.getPostid(), userService.toDomain(user).getUserid());
         }
     }
+*/
 
 }

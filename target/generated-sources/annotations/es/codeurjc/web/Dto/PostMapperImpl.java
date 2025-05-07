@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
@@ -42,7 +44,7 @@ public class PostMapperImpl implements PostMapper {
     }
 
     @Override
-    public List<PostDTO> toDTOs(Collection<Post> posts) {
+    public Page<PostDTO> toDTOs(Collection<Post> posts) {
         if ( posts == null ) {
             return null;
         }
@@ -52,7 +54,7 @@ public class PostMapperImpl implements PostMapper {
             list.add( toDTO( post ) );
         }
 
-        return list;
+        return (Page<PostDTO>) list;
     }
 
     @Override

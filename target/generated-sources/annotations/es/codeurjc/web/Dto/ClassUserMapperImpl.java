@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
+
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
@@ -60,7 +62,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
     }
 
     @Override
-    public List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers) {
+    public Page<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers) {
         if ( classUsers == null ) {
             return null;
         }
@@ -70,7 +72,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
             list.add( toBasicDTO( classUser ) );
         }
 
-        return list;
+        return (Page<ClassUserBasicDTO>) list;
     }
 
     @Override

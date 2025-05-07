@@ -7,6 +7,7 @@ import es.codeurjc.web.Dto.ClassUserDTO;
 import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Service.UserService;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
@@ -32,11 +33,12 @@ public class GroupClassWebController {
     private UserService userService;
 
     @GetMapping("/")
-    public String showGroupClasses(Model model) {
-        List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();
-        model.addAttribute("groupedClasses", groupedClasses);
+    public String showGroupClasses(Model model, Pageable page) {
+        /*List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();*/
+        model.addAttribute("groupedClasses", groupClassService.findAll(page));
         return "index";
     }
+
     @GetMapping("/GroupClasses/Join-{id}")
     public String joinClass(Model model , @PathVariable long id) {
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
@@ -47,6 +49,7 @@ public class GroupClassWebController {
             return "index";
         }
     }
+
     @PostMapping("/GroupClasses/Join-{id}")
     public String joinClassProcess(Model model, @RequestParam String username, @PathVariable Long id, @PathVariable Long userid) throws IOException {
 
@@ -61,6 +64,7 @@ public class GroupClassWebController {
         return "redirect:/GroupClasses/Join-" + classid + "/success";
 
     }
+
     @GetMapping("/GroupClasses/Join-{id}/success")
     public String joinClassSuccess(Model model, @PathVariable long id) {
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);

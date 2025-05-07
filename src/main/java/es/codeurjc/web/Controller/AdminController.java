@@ -43,23 +43,24 @@ public class AdminController {
     public String showAdminDashboard(Model model) {
         return "admin";
     }
+
     @GetMapping("/admin/posts")
-    public String showPosts(Model model) {
-        model.addAttribute("posts", postService.findAll());
+    public String showPosts(Model model, Pageable page) {
+        model.addAttribute("posts", postService.findAll(page));
         return "adminPosts";
     }
 
     //Page it:
     @GetMapping("/admin/users")
-    public String showUsers(Model model) {
-        model.addAttribute("users", classUserService.findAll());
+    public String showUsers(Model model, Pageable page) {
+        model.addAttribute("users", classUserService.findAll(page));
         return "adminUsers";
     }
 
     //Page it:
     @GetMapping("/admin/groupClasses")
-    public String showGroupClasses(Model model) {
-        model.addAttribute("GroupClasses", groupClassService.findAll());
+    public String showGroupClasses(Model model, Pageable page) {
+        model.addAttribute("GroupClasses", groupClassService.findAll(page));
         return "adminGroupClasses";
     }
 
