@@ -41,6 +41,7 @@ Others:
 - Refined existing methods and removed unused code to improve maintainability and readability.
 
 
-
-
+Changes implemented to add security:
+- Created a Validation Service to handle user input validation, by cleaning and validating data before processing it with a Jsoup Safelist.
+- 
 

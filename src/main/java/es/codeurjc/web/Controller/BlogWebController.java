@@ -183,18 +183,9 @@ public class BlogWebController {
         post.setTitle(title);
         post.setDescription(Jsoup.parse(description).text());
 
-        String validationError = validateService.validatePost(post);
-        if (validationError != null && !validationError.isEmpty()) {
-            model.addAttribute("error", validationError);
-            model.addAttribute("Post", post);
-
-            redirectAttributes.addAttribute("message", validationError);
-            return "redirect:/error";
-        }
-
         if(imagefile != null && !imagefile.isEmpty()){
             //Validate image before uploading
-            String imageValidationError = validateService.validateImage(imagefile);
+            String imageValidationError = validateService.validatePostWithImage(post);
             if (imageValidationError != null && !imageValidationError.isEmpty()) {
                 model.addAttribute("error", imageValidationError);
                 model.addAttribute("Post", post);
@@ -216,17 +207,26 @@ public class BlogWebController {
             post.setImagePath(imageName);
         }
 
+        String validationError = validateService.validatePost(post);
+        if (validationError != null && !validationError.isEmpty()) {
+            model.addAttribute("error", validationError);
+            model.addAttribute("Post", post);
+
+            redirectAttributes.addAttribute("message", validationError);
+            return "redirect:/error";
+        }
+
 
         PostDTO postDTO = postService.toDTO(post);
 
         postService.save(postDTO, imagefile);
-        //FIX THIS
-        /*userService.addPost(post.getPostid(), classUser.getUserid());
-        classUser.addPost(post);
-        userService.save(classUser);*/
+        userService.addPost(post.getPostid(), classUser.getUserid());
+        userService.save(userService.toDTO(classUser));
+
 
         return "redirect:/blog/" + post.getPostid();
     }
+
 
     @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model, @RequestParam("title") String title,
