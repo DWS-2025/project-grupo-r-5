@@ -35,6 +35,9 @@ Changes implemented respect to the API implementation:
   - Created dedicated DTO classes for Post, User, and GroupClass to shape the data exchanged through the API.
   - Implemented mappers or transformation logic to convert between entities and DTOs in the service layer.
   - Updated service and controller methods to use DTOs instead of directly exposing or receiving entity objects, improving data encapsulation and API contract clarity.
+- Created a dedicated API response structure to standardize the format of responses returned by the API.
+  - Implemented a consistent response wrapper for all API responses, including success and error messages.
+  - Ensured that all controllers return responses in the standardized format, improving client-side handling and consistency across the API.
 
 Others:
 - Improved global exception handling to return consistent and descriptive error responses.
