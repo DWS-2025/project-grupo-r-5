@@ -1,5 +1,6 @@
 package es.codeurjc.web.Service;
 
+import es.codeurjc.web.Domain.Post;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
 import org.springframework.core.io.Resource;

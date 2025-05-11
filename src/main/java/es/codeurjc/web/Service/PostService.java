@@ -18,8 +18,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class PostService {
@@ -146,6 +148,34 @@ public class PostService {
         Post post = postRepository.findById(id).orElseThrow();
         Blob blob = post.getImageFile();
         return blob;
+    }
+
+    public void deleteImageByPostId(Long postId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        if (post.getImagePath() != null) {
+            imageService.deleteImage(post.getImagePath());
+            post.setImagePath(null);
+            postRepository.save(post);
+        }
+    }
+
+    public String updateImageForPost(Long postId, MultipartFile newImageFile) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found"));
+
+        //Delete previous image if it exists
+        if (post.getImagePath() != null) {
+            imageService.deleteImage(post.getImagePath());
+        }
+
+        //Save new image
+        String newImageUrl = imageService.createImage(newImageFile);
+        post.setImagePath(newImageUrl);
+        postRepository.save(post);
+
+        return newImageUrl;
     }
 
     public PostDTO toDTO(Post post){
