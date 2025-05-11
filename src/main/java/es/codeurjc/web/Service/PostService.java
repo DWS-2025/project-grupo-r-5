@@ -66,7 +66,7 @@ public class PostService {
         Post post = toDomain(postDTO);
 
         // If imageFile isn't null, we use ImageService to save it
-        if (!imageFile.isEmpty() && imageFile != null) {
+        if (!imageFile.isEmpty()) {
             post.setImageFile(BlobProxy.generateProxy(imageFile.getInputStream(), imageFile.getSize()));
         }
 
@@ -86,7 +86,7 @@ public class PostService {
 
             String imagePath;
 
-            if (!imageFile.isEmpty() && imageFile != null) {
+            if (!imageFile.isEmpty()) {
 
                 imagePath = imageService.createImage(imageFile);
 
@@ -110,9 +110,7 @@ public class PostService {
     }
 
     public boolean checkCreator(PostDTO postDTO, ClassUserDTO classUserDTO) {
-
         return postDTO.creator().userid() == classUserDTO.userid();
-
     }
 
     public PostDTO edit(PostDTO updatedPostDTO, MultipartFile imageFile, long id) throws IOException {
@@ -122,7 +120,7 @@ public class PostService {
             updatedPost.setPostid(id);
 
             // If imageFile isn't null, we use ImageService to save it
-            if (!imageFile.isEmpty() && imageFile != null) {
+            if (!imageFile.isEmpty()) {
                 updatedPost.setImageFile(BlobProxy.generateProxy(imageFile.getInputStream(), imageFile.getSize()));
             }
 
@@ -146,8 +144,7 @@ public class PostService {
 
     public Blob getBlobImage(long id) throws IOException {
         Post post = postRepository.findById(id).orElseThrow();
-        Blob blob = post.getImageFile();
-        return blob;
+        return post.getImageFile();
     }
 
     public void deleteImageByPostId(Long postId) {

@@ -6,13 +6,12 @@ import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Dto.GroupClassMapper;
 import es.codeurjc.web.Repositories.GroupClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class GroupClassService {
@@ -54,31 +53,32 @@ public class GroupClassService {
         return toDTO(groupClass);
     }
 
+    public Map<String, List<GroupClassDTO>> getGroupedClassesByExample(GroupClass filter, Pageable page) {
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues();
+        Example<GroupClass> example = Example.of(filter, matcher);
 
-    //-----------------------------------------------------------------------------
-    //Change with DataBase usage
-    /*
-    public List<Map.Entry<String, List<GroupClass>>> getClassesGroupedByDayAndSortedByTime() {
-        List<GroupClass> allClasses = new ArrayList<>(groupClasses.values());
+        //Add manual order (day and hour)
+        Pageable sortedPage = PageRequest.of(
+                page.getPageNumber(),
+                page.getPageSize(),
+                Sort.by("day").ascending().and(Sort.by("timeInit").ascending())
+        );
 
-        // Order by day of the week and then by hour
-        allClasses.sort(Comparator
-                .comparing(GroupClass::getDay)
-                .thenComparing(GroupClass::getTime_init));
+        Page<GroupClass> result = groupClassRepository.findAll(example, sortedPage);
+        List<GroupClassDTO> dtoList = result
+                .stream()
+                .map(groupClassMapper::toDTO)
+                .toList();
 
-        // Group in a map with String as key
-        Map<String, List<GroupClass>> groupedClasses = new LinkedHashMap<>();
+        //Group by day
+        return dtoList.stream()
+                .collect(Collectors.groupingBy(
+                        GroupClassDTO::day,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ));
+    }
 
-        for (GroupClass groupClass : allClasses) {
-            String dayAsString = groupClass.getDay().toString();
-            groupedClasses
-                    .computeIfAbsent(dayAsString, k -> new ArrayList<>())
-                    .add(groupClass);
-        }
-
-        // Convert the map to an entry list
-        return new ArrayList<>(groupedClasses.entrySet());
-    } */
 
     public GroupClassDTO toDTO(GroupClass groupClass) {
         return groupClassMapper.toDTO(groupClass);

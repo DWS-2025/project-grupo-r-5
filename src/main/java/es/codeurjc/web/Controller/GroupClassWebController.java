@@ -1,10 +1,6 @@
 package es.codeurjc.web.Controller;
 
-
-import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Dto.ClassUserBasicDTO;
-import es.codeurjc.web.Dto.ClassUserDTO;
-import es.codeurjc.web.Dto.ClassUserMapper;
 import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.data.domain.Pageable;
@@ -13,10 +9,7 @@ import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,8 +26,11 @@ public class GroupClassWebController {
     private UserService userService;
 
     @GetMapping("/")
-    public String showGroupClasses(Model model, Pageable page) {
-        /*List<Map.Entry<String, List<GroupClass>>> groupedClasses = groupClassService.getClassesGroupedByDayAndSortedByTime();*/
+    public String showGroupClasses(@ModelAttribute("filter") GroupClass filter, Model model, Pageable page) {
+        /* sorted by day and hour:
+        Map<String, List<GroupClassDTO>> groupedClasses = groupClassService.getGroupedClassesByExample(filter, page);
+        model.addAttribute("groupedClasses", groupedClasses);
+        */
         model.addAttribute("groupedClasses", groupClassService.findAll(page));
         return "index";
     }
