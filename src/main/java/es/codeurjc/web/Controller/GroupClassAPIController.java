@@ -8,9 +8,12 @@ import es.codeurjc.web.Service.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
+
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
 @RequestMapping("/groupClass")
@@ -22,7 +25,6 @@ public class GroupClassAPIController {
     @Autowired
     private ValidateService validateService;
 
-
     @GetMapping("/")
     public Page<GroupClassBasicDTO> getGroupClasses(Pageable page) {
         return groupClassService.findAll(page);
@@ -33,4 +35,20 @@ public class GroupClassAPIController {
         return groupClassService.findById(id).orElseThrow();
     }
 
+    @PostMapping("/")
+    public GroupClassDTO createGroupClass(GroupClassDTO groupClassDTO) {
+        groupClassDTO = groupClassService.save(groupClassDTO);
+        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(groupClassDTO.classid()).toUri();
+        return ResponseEntity.created(location).body(groupClassDTO).getBody();
+    }
+
+    @PutMapping("/{id}")
+    public GroupClassDTO replaceGroupClass(@PathVariable long id, @RequestBody GroupClassDTO updatedGroupClassDTO) {
+        return groupClassService.save(updatedGroupClassDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public GroupClassDTO deleteGroupClass(@PathVariable long id) {
+        return groupClassService.delete(id);
+    }
 }

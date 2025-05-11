@@ -42,8 +42,16 @@ public class GroupClassService {
         return groupClassMapper.toDTO(saved);
     }
 
-    public void delete(long id) {
+    public GroupClassDTO save(GroupClassDTO groupClassDTO) {
+        GroupClass groupClass = groupClassMapper.toDomain(groupClassDTO);
+        GroupClass saved = groupClassRepository.save(groupClass);
+        return groupClassMapper.toDTO(saved);
+    }
+
+    public GroupClassDTO delete(long id) {
+        GroupClass groupClass = groupClassRepository.findById(id).orElseThrow();
         groupClassRepository.deleteById(id);
+        return toDTO(groupClass);
     }
 
 

@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
-public class GroupClassMapperImpl implements GroupClassMapper {
+public abstract class GroupClassMapperImpl implements GroupClassMapper {
 
     @Override
     public GroupClassDTO toDTO(GroupClass groupClass) {

@@ -7,12 +7,15 @@ import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Pageable;
 
+import java.io.IOException;
+import java.net.URI;
 import java.util.Collection;
+
+import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
 @RequestMapping("/posts")
@@ -26,6 +29,7 @@ public class BlogAPIController {
     @Autowired
     private ValidateService validateService;
 
+
     @GetMapping("/")
     public Page<PostDTO> getPosts(Pageable page) {
         return postService.findAll(page);
@@ -36,6 +40,22 @@ public class BlogAPIController {
         return postService.getPost(id);
     }
 
+    @PostMapping("/")
+    public PostDTO createPost(@RequestBody PostDTO postDTO) throws IOException {
+        postDTO = postService.save(postDTO);
+        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(postDTO.postid()).toUri();
+        return ResponseEntity.created(location).body(postDTO).getBody();
+    }
+
+    @PutMapping("/{id}")
+    public PostDTO replacePost(@PathVariable long id, @RequestBody PostDTO updatedPostDTO) throws IOException {
+        return postService.save(updatedPostDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public PostDTO deletePost(@PathVariable long id) {
+        return postService.delete(id);
+    }
 
 
 }

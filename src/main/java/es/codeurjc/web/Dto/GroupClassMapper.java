@@ -19,5 +19,5 @@ public interface GroupClassMapper {
     //@Mapping(target = "usersList" , ignore = true)
     GroupClass toDomain(GroupClassBasicDTO groupClassDTO);
 
-    //GroupClass toDomain(GroupClassDTO groupClassDTO);
+    GroupClass toDomain(GroupClassDTO groupClassDTO);
 }

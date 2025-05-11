@@ -68,7 +68,11 @@ public class UserService {
         return classUserMapper.toDTO(saved);
     }
 
-    public void delete(long id) {userRepository.deleteById(id);}
+    public ClassUserDTO delete(long id) {
+        ClassUser classUser = userRepository.findById(id).orElseThrow();
+        userRepository.deleteById(id);
+        return toDTO(classUser);
+    }
 
     @Transactional
     public Optional<ClassUserDTO> addGroupClass(long classId, long userId) {
