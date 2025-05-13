@@ -16,7 +16,7 @@ import java.net.URI;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
-@RequestMapping("/groupClass")
+@RequestMapping("/api/groupClasses")
 public class GroupClassAPIController {
     @Autowired
     private GroupClassService groupClassService;

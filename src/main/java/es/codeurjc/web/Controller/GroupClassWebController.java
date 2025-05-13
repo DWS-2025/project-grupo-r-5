@@ -3,6 +3,7 @@ package es.codeurjc.web.Controller;
 import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Service.UserService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +36,19 @@ public class GroupClassWebController {
         model.addAttribute("groupedClasses", groupClassService.findAll(page));
         return "index";
     }
+
+    @GetMapping("/GroupClasses")
+    public String listFilteredClasses(
+            @RequestParam(required = false) DayOfWeek day,
+            @RequestParam(required = false) String instructor,
+            Pageable pageable,
+            Model model
+    ) {
+        Page<GroupClassDTO> classes = groupClassService.findClassesByExample(day, instructor, pageable);
+        model.addAttribute("classes", classes);
+        return "classesList";
+    }
+
 
     @GetMapping("/GroupClasses/Join-{id}")
     public String joinClass(Model model , @PathVariable long id) {

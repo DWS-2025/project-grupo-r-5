@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -77,6 +78,20 @@ public class GroupClassService {
                         LinkedHashMap::new,
                         Collectors.toList()
                 ));
+    }
+
+    //Actual dynamic query with QBE and Spring Data JPA
+    public Page<GroupClassDTO> findClassesByExample(DayOfWeek day, String instructor, Pageable pageable) {
+        GroupClass exampleClass = new GroupClass();
+        if (day != null) exampleClass.setDay(day);
+        if (instructor != null && !instructor.isBlank()) exampleClass.setInstructor(instructor);
+
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues();
+        Example<GroupClass> example = Example.of(exampleClass, matcher);
+
+        Page<GroupClass> page = groupClassRepository.findAll(example, pageable);
+
+        return page.map(groupClassMapper::toDTO);
     }
 
 

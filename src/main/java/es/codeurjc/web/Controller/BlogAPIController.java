@@ -21,7 +21,7 @@ import java.sql.SQLException;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/api/posts")
 public class BlogAPIController {
     @Autowired
     private UserService userService;

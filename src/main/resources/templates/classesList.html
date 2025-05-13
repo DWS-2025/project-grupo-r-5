@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="joinClass.html">
+    <title>GroupClasses List</title>
+</head>
+<body>
+<h1>Find Classes</h1>
+
+<form action="/GroupClasses" method="get">
+    <label for="day">Día</label>
+    <select name="day" id="day">
+        <option value="">-- Todos --</option>
+        {{#days}}
+        <option value="{{value}}"{{#selected}} selected {{/selected}}>{{value}}</option>
+        {{/days}}
+
+    </select>
+
+    <label for="instructor">Instructor</label>
+    <input type="text" id="instructor" name="instructor" placeholder="Nombre del instructor" value="{{instructor}}"/>
+
+    <button type="submit">Filtrar</button>
+</form>
+
+<table>
+    <thead>
+    <tr>
+        <th>Día</th>
+        <th>Hora</th>
+        <th>Instructor</th>
+        <th>Nombre de Clase</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#classes}}
+    <tr>
+        <td>{{day}}</td>
+        <td>{{timeInit}}</td>
+        <td>{{instructor}}</td>
+        <td>{{name}}</td>
+    </tr>
+    {{/classes}}
+    </tbody>
+</table>
+</body>
+</html>
