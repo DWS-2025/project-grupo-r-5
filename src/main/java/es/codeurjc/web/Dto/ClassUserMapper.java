@@ -15,7 +15,9 @@ public interface ClassUserMapper {
 
     ClassUserBasicDTO toBasicDTO(ClassUser classUser);
 
-    Page<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
+    List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
+
+    //Page<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
 
     @Mapping(target = "listOfClasses", ignore = true)
     @Mapping(target = "listOfPosts", ignore = true)

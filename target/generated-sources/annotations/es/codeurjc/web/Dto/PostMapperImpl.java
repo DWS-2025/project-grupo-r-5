@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
-
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-04-21T20:34:21+0200",
+    date = "2025-05-14T13:30:28+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -44,7 +42,7 @@ public class PostMapperImpl implements PostMapper {
     }
 
     @Override
-    public Page<PostDTO> toDTOs(Collection<Post> posts) {
+    public List<PostDTO> toDTOs(Collection<Post> posts) {
         if ( posts == null ) {
             return null;
         }
@@ -54,7 +52,7 @@ public class PostMapperImpl implements PostMapper {
             list.add( toDTO( post ) );
         }
 
-        return (Page<PostDTO>) list;
+        return list;
     }
 
     @Override

@@ -13,7 +13,8 @@ public interface PostMapper {
 
     PostDTO toDTO(Post post);
 
-    Page<PostDTO> toDTOs(Collection<Post> posts);
+    //Page<PostDTO> toDTOs(Collection<Post> posts);
+    List<PostDTO> toDTOs(Collection<Post> posts);
 
     @Mapping(target = "imageFile", ignore = true)
     Post toDomain(PostDTO postDTO);

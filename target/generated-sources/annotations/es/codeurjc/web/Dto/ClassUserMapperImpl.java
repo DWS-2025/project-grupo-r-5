@@ -7,13 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
-
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-05-05T19:05:21+0200",
+    date = "2025-05-14T13:30:27+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -62,7 +60,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
     }
 
     @Override
-    public Page<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers) {
+    public List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers) {
         if ( classUsers == null ) {
             return null;
         }
@@ -72,7 +70,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
             list.add( toBasicDTO( classUser ) );
         }
 
-        return (Page<ClassUserBasicDTO>) list;
+        return list;
     }
 
     @Override

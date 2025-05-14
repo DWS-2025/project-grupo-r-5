@@ -1,21 +1,21 @@
 package es.codeurjc.web.Service;
 
 import es.codeurjc.web.Domain.ClassUser;
+import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
 
 import java.io.*;
 import java.sql.Blob;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
-import es.codeurjc.web.Dto.ClassUserDTO;
-import es.codeurjc.web.Dto.ClassUserMapper;
-import es.codeurjc.web.Dto.PostDTO;
-import es.codeurjc.web.Dto.PostMapper;
+import es.codeurjc.web.Dto.*;
 import es.codeurjc.web.Repositories.PostRepository;
 import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -42,9 +42,21 @@ public class PostService {
     public PostService(){}
 
     //Methods
+    /*
     public Page<PostDTO> findAll(Pageable page) {
         Page<Post> posts = postRepository.findAll(page);
         return toDTOs(posts.getContent());
+    } */
+
+    public Page<PostDTO> findAll(Pageable page) {
+        Page<Post> posts = postRepository.findAll(page);
+        List<PostDTO> dtoList = posts
+                .getContent()
+                .stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, page, posts.getTotalElements());
     }
 
     public Optional<PostDTO> findById(long id){return postRepository.findById(id).map(mapper::toDTO);}
@@ -183,8 +195,20 @@ public class PostService {
         return mapper.toDomain(postDTO);
     }
 
-    public Page<PostDTO> toDTOs(Collection<Post> posts){
+    /*public Page<PostDTO> toDTOs(Collection<Post> posts){
         return mapper.toDTOs(posts);
+    }*/
+
+    public Page<PostDTO> toDTOs(Page<Post> postPage) {
+        List<PostDTO> dtoList = postPage
+                .getContent()
+                .stream()
+                .map(mapper::toDTO)
+                .collect(Collectors.toList());
+
+        //If you want to reverse the order:
+        //Collections.reverse(dtoList);
+        return new PageImpl<>(dtoList, postPage.getPageable(), postPage.getTotalElements());
     }
 
 }

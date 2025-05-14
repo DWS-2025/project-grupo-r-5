@@ -12,12 +12,14 @@ import es.codeurjc.web.Repositories.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -39,10 +41,22 @@ public class UserService {
     private PostRepository postRepository;
 
 
-    public Page<ClassUserBasicDTO> findAll(Pageable page) {
+    /*public Page<ClassUserBasicDTO> findAll(Pageable page) {
         Page<ClassUser> users = userRepository.findAll(page);
         return classUserMapper.toDTOs(users.getContent());
+    }*/
+
+    public Page<ClassUserBasicDTO> findAll(Pageable page) {
+        Page<ClassUser> users = userRepository.findAll(page);
+        List<ClassUserBasicDTO> dtoList = users
+                .getContent()
+                .stream()
+                .map(classUserMapper::toBasicDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, page, users.getTotalElements());
     }
+
 
     public Optional<ClassUserDTO> findById(long id) {
         return userRepository.findById(id)
@@ -163,8 +177,17 @@ public class UserService {
         return classUserMapper.toDomain(classUserBasicDTO);
     }
 
-    public Page<ClassUserBasicDTO> toDTOs (Collection<ClassUser> classUsers) {
-        return classUserMapper.toDTOs(classUsers);
+    public Page<ClassUserBasicDTO> toDTOs(Page<ClassUser> classUsersPage) {
+        List<ClassUserBasicDTO> dtoList = classUsersPage
+                .getContent()
+                .stream()
+                .map(classUserMapper::toBasicDTO) //returns ClassUserBasicDTO
+                .collect(Collectors.toList());
+
+        //If you want to reverse the order:
+        //Collections.reverse(dtoList);
+        return new PageImpl<>(dtoList, classUsersPage.getPageable(), classUsersPage.getTotalElements());
     }
+
 
 }

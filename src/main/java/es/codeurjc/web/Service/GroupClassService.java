@@ -1,6 +1,8 @@
 package es.codeurjc.web.Service;
 
+import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
+import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.GroupClassBasicDTO;
 import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Dto.GroupClassMapper;
@@ -26,9 +28,21 @@ public class GroupClassService {
 
     public GroupClassService() {}
 
-    public Page<GroupClassBasicDTO> findAll(Pageable page) {
+
+    /*public Page<GroupClassBasicDTO> findAll(Pageable page) {
         Page<GroupClass> groupClasses = groupClassRepository.findAll(page);
         return groupClassMapper.toDTOs(groupClasses.getContent());
+    }*/
+
+    public Page<GroupClassBasicDTO> findAll(Pageable page) {
+        Page<GroupClass> groupClasses = groupClassRepository.findAll(page);
+        List<GroupClassBasicDTO> dtoList = groupClasses
+                .getContent()
+                .stream()
+                .map(groupClassMapper::toBasicDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, page, groupClasses.getTotalElements());
     }
 
     public Optional<GroupClassDTO> findById(long id) {
@@ -106,8 +120,22 @@ public class GroupClassService {
     public GroupClass toDomain(GroupClassBasicDTO groupClassDTO) {
         return groupClassMapper.toDomain(groupClassDTO);
     }
+
+    /*
     public Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
         return groupClassMapper.toDTOs(groupClasses);
+    } */
+
+    public Page<GroupClassBasicDTO> toDTOs(Page<GroupClass> groupClassPage) {
+        List<GroupClassBasicDTO> dtoList = groupClassPage
+                .getContent()
+                .stream()
+                .map(groupClassMapper::toBasicDTO) //returns ClassUserBasicDTO
+                .collect(Collectors.toList());
+
+        //If you want to reverse the order:
+        //Collections.reverse(dtoList);
+        return new PageImpl<>(dtoList, groupClassPage.getPageable(), groupClassPage.getTotalElements());
     }
 
 }

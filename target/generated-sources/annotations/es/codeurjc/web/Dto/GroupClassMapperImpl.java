@@ -8,17 +8,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
-
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-05-05T19:05:21+0200",
+    date = "2025-05-14T13:30:28+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
-public abstract class GroupClassMapperImpl implements GroupClassMapper {
+public class GroupClassMapperImpl implements GroupClassMapper {
 
     @Override
     public GroupClassDTO toDTO(GroupClass groupClass) {
@@ -87,7 +85,7 @@ public abstract class GroupClassMapperImpl implements GroupClassMapper {
     }
 
     @Override
-    public Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
+    public List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
         if ( groupClasses == null ) {
             return null;
         }
@@ -97,7 +95,7 @@ public abstract class GroupClassMapperImpl implements GroupClassMapper {
             list.add( toBasicDTO( groupClass ) );
         }
 
-        return (Page<GroupClassBasicDTO>) list;
+        return list;
     }
 
     @Override
@@ -117,6 +115,28 @@ public abstract class GroupClassMapperImpl implements GroupClassMapper {
         groupClass.setDuration( groupClassDTO.duration() );
         groupClass.setMaxCapacity( groupClassDTO.maxCapacity() );
         groupClass.setCurrentCapacity( groupClassDTO.currentCapacity() );
+
+        return groupClass;
+    }
+
+    @Override
+    public GroupClass toDomain(GroupClassDTO groupClassDTO) {
+        if ( groupClassDTO == null ) {
+            return null;
+        }
+
+        GroupClass groupClass = new GroupClass();
+
+        groupClass.setClassid( groupClassDTO.classid() );
+        groupClass.setClassname( groupClassDTO.classname() );
+        groupClass.setInstructor( groupClassDTO.instructor() );
+        if ( groupClassDTO.day() != null ) {
+            groupClass.setDay( Enum.valueOf( DayOfWeek.class, groupClassDTO.day() ) );
+        }
+        groupClass.setDuration( groupClassDTO.duration() );
+        groupClass.setMaxCapacity( groupClassDTO.maxCapacity() );
+        groupClass.setCurrentCapacity( groupClassDTO.currentCapacity() );
+        groupClass.setUsersList( classUserDTOListToClassUserList( groupClassDTO.usersList() ) );
 
         return groupClass;
     }
@@ -199,6 +219,76 @@ public abstract class GroupClassMapperImpl implements GroupClassMapper {
         List<ClassUserDTO> list1 = new ArrayList<ClassUserDTO>( list.size() );
         for ( ClassUser classUser : list ) {
             list1.add( classUserToClassUserDTO( classUser ) );
+        }
+
+        return list1;
+    }
+
+    protected List<GroupClass> groupClassDTOListToGroupClassList(List<GroupClassDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<GroupClass> list1 = new ArrayList<GroupClass>( list.size() );
+        for ( GroupClassDTO groupClassDTO : list ) {
+            list1.add( toDomain( groupClassDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected Post postDTOToPost(PostDTO postDTO) {
+        if ( postDTO == null ) {
+            return null;
+        }
+
+        Post post = new Post();
+
+        post.setPostid( postDTO.postid() );
+        post.setCreator( classUserDTOToClassUser( postDTO.creator() ) );
+        post.setTitle( postDTO.title() );
+        post.setDescription( postDTO.description() );
+        post.setImagePath( postDTO.imagePath() );
+
+        return post;
+    }
+
+    protected List<Post> postDTOListToPostList(List<PostDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<Post> list1 = new ArrayList<Post>( list.size() );
+        for ( PostDTO postDTO : list ) {
+            list1.add( postDTOToPost( postDTO ) );
+        }
+
+        return list1;
+    }
+
+    protected ClassUser classUserDTOToClassUser(ClassUserDTO classUserDTO) {
+        if ( classUserDTO == null ) {
+            return null;
+        }
+
+        ClassUser classUser = new ClassUser();
+
+        classUser.setUserid( classUserDTO.userid() );
+        classUser.setName( classUserDTO.name() );
+        classUser.setListOfClasses( groupClassDTOListToGroupClassList( classUserDTO.listOfClasses() ) );
+        classUser.setListOfPosts( postDTOListToPostList( classUserDTO.listOfPosts() ) );
+
+        return classUser;
+    }
+
+    protected List<ClassUser> classUserDTOListToClassUserList(List<ClassUserDTO> list) {
+        if ( list == null ) {
+            return null;
+        }
+
+        List<ClassUser> list1 = new ArrayList<ClassUser>( list.size() );
+        for ( ClassUserDTO classUserDTO : list ) {
+            list1.add( classUserDTOToClassUser( classUserDTO ) );
         }
 
         return list1;

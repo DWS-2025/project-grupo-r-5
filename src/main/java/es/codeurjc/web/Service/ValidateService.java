@@ -62,6 +62,13 @@ public class ValidateService {
         return null; //Day valid, no error
     }
 
+    public String cleanInstructor(String instructor){
+        return Jsoup.clean(instructor, CUSTOM_SAFE_LIST);
+    }
+
+    public String cleanDay(DayOfWeek day){
+        return Jsoup.clean(String.valueOf(day), CUSTOM_SAFE_LIST);
+    }
 
     public String validateInstructor(String instructor){
         String cleanedInstructor = cleanInput(instructor);

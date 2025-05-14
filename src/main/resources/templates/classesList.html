@@ -8,41 +8,29 @@
 <body>
 <h1>Find Classes</h1>
 
-<form action="/GroupClasses" method="get">
-    <label for="day">Día</label>
-    <select name="day" id="day">
-        <option value="">-- Todos --</option>
-        {{#days}}
-        <option value="{{value}}"{{#selected}} selected {{/selected}}>{{value}}</option>
-        {{/days}}
+<form action="/GroupClasses" method="post" enctype="multipart/form-data">
+        <!-- Filter by day of the week -->
+        <label for="dayWeek">Day of the Week:</label>
+        <select id="dayWeek" name="dayWeek">
+            <option value="">Select a day</option>
+            <option value="Monday">Monday</option>
+            <option value="Tuesday">Tuesday</option>
+            <option value="Wednesday">Wednesday</option>
+            <option value="Thursday">Thursday</option>
+            <option value="Friday">Friday</option>
+            <option value="Saturday">Saturday</option>
+            <option value="Sunday">Sunday</option>
+            <option value="Any">Any</option>
+        </select><br><br>
+        <!-- Filter by instructor -->
+        <label for="instructor">Instructor:</label>
+        <input type="text" id="instructor" name="instructor" placeholder="Instructor's name"><br><br>
 
-    </select>
+        <!-- Button to apply filters -->
+        <button type="submit" value='Save'>Apply Filters</button>
+    </form>
 
-    <label for="instructor">Instructor</label>
-    <input type="text" id="instructor" name="instructor" placeholder="Nombre del instructor" value="{{instructor}}"/>
+<a href="/">Back</a>
 
-    <button type="submit">Filtrar</button>
-</form>
-
-<table>
-    <thead>
-    <tr>
-        <th>Día</th>
-        <th>Hora</th>
-        <th>Instructor</th>
-        <th>Nombre de Clase</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{#classes}}
-    <tr>
-        <td>{{day}}</td>
-        <td>{{timeInit}}</td>
-        <td>{{instructor}}</td>
-        <td>{{name}}</td>
-    </tr>
-    {{/classes}}
-    </tbody>
-</table>
 </body>
 </html>
