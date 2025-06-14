@@ -11,7 +11,8 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long postid;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userid")
     private ClassUser creator;
     private String title;
     private String description;

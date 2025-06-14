@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-05-14T13:30:28+0200",
+    date = "2025-06-14T20:05:10+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -24,14 +24,14 @@ public class PostMapperImpl implements PostMapper {
             return null;
         }
 
-        long postid = 0L;
         ClassUserDTO creator = null;
+        long postid = 0L;
         String title = null;
         String description = null;
         String imagePath = null;
 
-        postid = post.getPostid();
         creator = classUserToClassUserDTO( post.getCreator() );
+        postid = post.getPostid();
         title = post.getTitle();
         description = post.getDescription();
         imagePath = post.getImagePath();

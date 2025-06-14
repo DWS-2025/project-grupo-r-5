@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface PostMapper {
 
+    @Mapping(target = "creator", source = "creator")
     PostDTO toDTO(Post post);
 
     //Page<PostDTO> toDTOs(Collection<Post> posts);

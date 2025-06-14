@@ -81,14 +81,19 @@ public class BasicDataInitializer {
 
 
 
+        //Recover users to initialize posts:
+        ClassUser managedUser1 = userRepository.findById(user1.getUserid()).orElseThrow();
+        ClassUser managedUser5 = userRepository.findById(user5.getUserid()).orElseThrow();
+        ClassUser managedUser6 = userRepository.findById(user6.getUserid()).orElseThrow();
+
 
         //Then create posts:
-        Post post1 = new Post(user1, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!...");
-        Post post2 = new Post(user5, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga...");
-        Post post3 = new Post(user6, "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal!...");
-        Post post4 = new Post(user5, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!");
-        Post post5 = new Post(user1, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa.");
-        Post post6 = new Post(user5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
+        Post post1 = new Post(managedUser1, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!...");
+        Post post2 = new Post(managedUser5, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga...");
+        Post post3 = new Post(managedUser6, "Nunca había sudado tanto", "¡La clase de CrossFit de hoy fue brutal!...");
+        Post post4 = new Post(managedUser5, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!");
+        Post post5 = new Post(managedUser1, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa.");
+        Post post6 = new Post(managedUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
 
         postRepository.save(post1);
         postRepository.save(post2);

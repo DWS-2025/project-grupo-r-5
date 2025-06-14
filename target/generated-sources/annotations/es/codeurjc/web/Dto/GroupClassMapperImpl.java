@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-05-14T13:30:28+0200",
+    date = "2025-06-14T20:05:10+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
@@ -31,7 +31,6 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         int duration = 0;
         int maxCapacity = 0;
         int currentCapacity = 0;
-        List<ClassUserDTO> usersList = null;
 
         classid = groupClass.getClassid();
         classname = groupClass.getClassname();
@@ -42,8 +41,8 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         duration = groupClass.getDuration();
         maxCapacity = groupClass.getMaxCapacity();
         currentCapacity = groupClass.getCurrentCapacity();
-        usersList = classUserListToClassUserDTOList( groupClass.getUsersList() );
 
+        List<ClassUserDTO> usersList = null;
         String timeInit = null;
         String timeFin = null;
 
@@ -139,89 +138,6 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         groupClass.setUsersList( classUserDTOListToClassUserList( groupClassDTO.usersList() ) );
 
         return groupClass;
-    }
-
-    protected List<GroupClassDTO> groupClassListToGroupClassDTOList(List<GroupClass> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<GroupClassDTO> list1 = new ArrayList<GroupClassDTO>( list.size() );
-        for ( GroupClass groupClass : list ) {
-            list1.add( toDTO( groupClass ) );
-        }
-
-        return list1;
-    }
-
-    protected PostDTO postToPostDTO(Post post) {
-        if ( post == null ) {
-            return null;
-        }
-
-        long postid = 0L;
-        ClassUserDTO creator = null;
-        String title = null;
-        String description = null;
-        String imagePath = null;
-
-        postid = post.getPostid();
-        creator = classUserToClassUserDTO( post.getCreator() );
-        title = post.getTitle();
-        description = post.getDescription();
-        imagePath = post.getImagePath();
-
-        PostDTO postDTO = new PostDTO( postid, creator, title, description, imagePath );
-
-        return postDTO;
-    }
-
-    protected List<PostDTO> postListToPostDTOList(List<Post> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<PostDTO> list1 = new ArrayList<PostDTO>( list.size() );
-        for ( Post post : list ) {
-            list1.add( postToPostDTO( post ) );
-        }
-
-        return list1;
-    }
-
-    protected ClassUserDTO classUserToClassUserDTO(ClassUser classUser) {
-        if ( classUser == null ) {
-            return null;
-        }
-
-        long userid = 0L;
-        String name = null;
-        List<GroupClassDTO> listOfClasses = null;
-        List<PostDTO> listOfPosts = null;
-
-        if ( classUser.getUserid() != null ) {
-            userid = classUser.getUserid();
-        }
-        name = classUser.getName();
-        listOfClasses = groupClassListToGroupClassDTOList( classUser.getListOfClasses() );
-        listOfPosts = postListToPostDTOList( classUser.getListOfPosts() );
-
-        ClassUserDTO classUserDTO = new ClassUserDTO( userid, name, listOfClasses, listOfPosts );
-
-        return classUserDTO;
-    }
-
-    protected List<ClassUserDTO> classUserListToClassUserDTOList(List<ClassUser> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<ClassUserDTO> list1 = new ArrayList<ClassUserDTO>( list.size() );
-        for ( ClassUser classUser : list ) {
-            list1.add( classUserToClassUserDTO( classUser ) );
-        }
-
-        return list1;
     }
 
     protected List<GroupClass> groupClassDTOListToGroupClassList(List<GroupClassDTO> list) {
