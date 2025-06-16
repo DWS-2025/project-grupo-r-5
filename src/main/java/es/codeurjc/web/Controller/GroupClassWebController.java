@@ -31,10 +31,18 @@ public class GroupClassWebController {
     @Autowired
     private ValidateService validateService;
 
+    public record GroupedEntry(String key, List<GroupClassDTO> value) {}
+
     @GetMapping("/")
     public String showGroupClasses(@ModelAttribute("filter") GroupClass filter, Model model, Pageable page) {
         //Sorted by day and hour:
-        Map<String, List<GroupClassDTO>> groupedClasses = groupClassService.getGroupedClassesByExample(filter, page);
+        Map<String, List<GroupClassDTO>> groupedMap = groupClassService.getGroupedClassesByExample(filter, page);
+        // Convertimos el Map en una lista de objetos GroupedEntry
+        List<GroupedEntry> groupedClasses = groupedMap.entrySet()
+                .stream()
+                .map(entry -> new GroupedEntry(entry.getKey(), entry.getValue()))
+                .toList();
+
         model.addAttribute("groupedClasses", groupedClasses);
 
         //model.addAttribute("groupedClasses", groupClassService.findAll(page));
@@ -121,3 +129,6 @@ public class GroupClassWebController {
     }
 
 }
+
+
+

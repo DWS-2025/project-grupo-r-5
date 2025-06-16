@@ -17,7 +17,7 @@ public class GroupClass {
     private String instructor;
     @Column(name = "DayOfWeek")
     private DayOfWeek day;
-    private LocalTime time_init;
+    private LocalTime timeInit;
     private int duration;
     private LocalTime time_fin;
     private int maxCapacity;
@@ -31,7 +31,7 @@ public class GroupClass {
     public GroupClass(String name, DayOfWeek day, LocalTime time_init,int duration, String instructor, int maxCapacity) {
         this.classname = name;
         this.day = day;
-        this.time_init = time_init;
+        this.timeInit = time_init;
         this.duration = duration;
         this.time_fin = this.getTimefin();
         this.instructor = instructor;
@@ -100,13 +100,13 @@ public class GroupClass {
 
     //Time_init
     public LocalTime getTime_init() {
-        return time_init;
+        return timeInit;
     }
     public void setTime_init(LocalTime time) {
-        this.time_init = time;
+        this.timeInit = time;
     }
     public String getTimeAsString() {
-        return this.time_init.toString();
+        return this.timeInit.toString();
     }
 
     //Duration
@@ -119,7 +119,7 @@ public class GroupClass {
 
     //Time_fin
     public LocalTime getTimefin() {
-        return time_init.plusMinutes(this.duration);
+        return timeInit.plusMinutes(this.duration);
     }
     public String getTimefinAsString(){
         return this.getTimefin().toString();

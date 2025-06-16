@@ -69,7 +69,7 @@ public class GroupClassService {
     }
 
     public Map<String, List<GroupClassDTO>> getGroupedClassesByExample(GroupClass filter, Pageable page) {
-        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues();
+        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues().withIgnorePaths("duration", "maxCapacity", "currentCapacity", "usersList");
         Example<GroupClass> example = Example.of(filter, matcher);
 
         //Add manual order (day and hour)
@@ -139,3 +139,4 @@ public class GroupClassService {
     }
 
 }
+
