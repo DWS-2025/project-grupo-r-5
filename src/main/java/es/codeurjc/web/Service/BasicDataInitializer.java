@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
@@ -87,6 +90,8 @@ public class BasicDataInitializer {
         ClassUser managedUser6 = userRepository.findById(user6.getUserid()).orElseThrow();
 
 
+
+
         //Then create posts:
         Post post1 = new Post(managedUser1, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!...");
         Post post2 = new Post(managedUser5, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga...");
@@ -94,6 +99,7 @@ public class BasicDataInitializer {
         Post post4 = new Post(managedUser5, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!");
         Post post5 = new Post(managedUser1, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa.");
         Post post6 = new Post(managedUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
+        //"/resources/images/example1.jpg"
 
         postRepository.save(post1);
         postRepository.save(post2);

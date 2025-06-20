@@ -2,7 +2,9 @@ package es.codeurjc.web.Domain;
 
 
 import jakarta.persistence.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.sql.rowset.serial.SerialBlob;
 import java.sql.Blob;
 
 @Entity
@@ -26,11 +28,12 @@ public class Post {
         this.title = title;
         this.description = text;
     }
-    public Post(ClassUser classUser, String title, String text, String image){
+    public Post(ClassUser classUser, String title, String text, String image, MultipartFile imageFile) throws Exception {
         this.creator = classUser;
         this.title = title;
         this.description = text;
         this.imagePath = image;
+        this.imageFile = new SerialBlob(imageFile.getBytes());
     }
     public Post() {}
 

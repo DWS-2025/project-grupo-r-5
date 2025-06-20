@@ -6,6 +6,7 @@ import es.codeurjc.web.Domain.Post;
 
 import java.io.*;
 import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.sql.rowset.serial.SerialBlob;
 
 @Service
 public class PostService {
@@ -88,7 +91,7 @@ public class PostService {
         return toDTO(post);
     }
 
-    public PostDTO save(String user, String title, String description, MultipartFile imageFile) throws IOException {
+    public PostDTO save(String user, String title, String description, MultipartFile imageFile) throws Exception {
 
         Optional <ClassUserDTO> classUserDTO = userService.findByName(user);
 
@@ -109,8 +112,7 @@ public class PostService {
             }
 
 
-            Post newpost = new Post(classUser,title,description,imagePath);
-
+            Post newpost = new Post(classUser, title, description, imagePath, imageFile);
             postRepository.save(newpost);
 
             return toDTO(newpost);
