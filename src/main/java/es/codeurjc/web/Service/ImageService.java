@@ -1,5 +1,7 @@
 package es.codeurjc.web.Service;
 
+import org.hibernate.engine.jdbc.BlobProxy;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -7,8 +9,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.*;
 import java.net.MalformedURLException;
 import java.nio.file.*;
+import java.sql.Blob;
 import java.util.UUID;
 import java.nio.file.Path;
 
@@ -17,6 +21,18 @@ import java.nio.file.Path;
 public class ImageService{
 
     protected static final Path IMAGES_FOLDER = Paths.get(System.getProperty("user.dir"), "images");
+
+    public Blob imageFileFromPath(String imagePath) throws IOException {
+        Path imageFullPath = IMAGES_FOLDER.resolve(imagePath);
+        File imageFile = imageFullPath.toFile();
+
+        if (!imageFile.exists()) {
+            throw new FileNotFoundException("No se encontró la imagen: " + imageFullPath.toString());
+        }
+
+        InputStream is = new FileInputStream(imageFile);
+        return BlobProxy.generateProxy(is, imageFile.length());
+    }
 
     public String createImage(MultipartFile multiPartFile) {
 

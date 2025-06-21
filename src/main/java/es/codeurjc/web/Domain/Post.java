@@ -14,7 +14,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long postid;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "userid")
+    @JoinColumn(name = "userid", nullable = false)
     private ClassUser creator;
     private String title;
     private String description;

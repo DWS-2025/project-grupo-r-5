@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Blob;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
@@ -33,6 +34,10 @@ public class BasicDataInitializer {
 
     @Autowired
     private PostRepository postRepository;
+
+    @Autowired
+    private ImageService imageService;
+
 
     @PostConstruct
     public void init() throws IOException {
@@ -90,8 +95,6 @@ public class BasicDataInitializer {
         ClassUser managedUser6 = userRepository.findById(user6.getUserid()).orElseThrow();
 
 
-
-
         //Then create posts:
         Post post1 = new Post(managedUser1, "Pedaleando al ritmo de la música", "¡Menuda clase de spinning!...");
         Post post2 = new Post(managedUser5, "Desconexión total en la clase de yoga", "Hoy probé la clase de yoga...");
@@ -99,7 +102,22 @@ public class BasicDataInitializer {
         Post post4 = new Post(managedUser5, "Bailar y entrenar al mismo tiempo", "Hoy fue mi primera clase de zumba y ¡me encantó!");
         Post post5 = new Post(managedUser1, "Energía al máximo", "No sabía que una clase de aerobics podía ser TAN intensa.");
         Post post6 = new Post(managedUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
-        //"/resources/images/example1.jpg"
+
+        //set images:
+        post1.setImagePath("example1.jpeg");
+        post2.setImagePath("example2.jpeg");
+        post3.setImagePath("example3.jpeg");
+        post4.setImagePath("example4.jpeg");
+
+        Blob image1 = imageService.imageFileFromPath(post1.getImagePath());
+        Blob image2 = imageService.imageFileFromPath(post2.getImagePath());
+        Blob image3 = imageService.imageFileFromPath(post3.getImagePath());
+        Blob image4 = imageService.imageFileFromPath(post4.getImagePath());
+
+        post1.setImageFile(image1);
+        post2.setImageFile(image2);
+        post3.setImageFile(image3);
+        post4.setImageFile(image4);
 
         postRepository.save(post1);
         postRepository.save(post2);
