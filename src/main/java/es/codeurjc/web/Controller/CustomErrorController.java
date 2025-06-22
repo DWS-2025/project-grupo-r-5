@@ -16,14 +16,16 @@ public class CustomErrorController implements ErrorController {
         Object status = request.getAttribute(RequestDispatcher.ERROR_STATUS_CODE);
 
         int statusCode = (status != null) ? Integer.parseInt(status.toString()) : 500;
-        String errorMessage = (message != null) ? message : "An unexpected error happened";
+        String errorMessage;
 
-        if (statusCode == HttpStatus.NOT_FOUND.value() && message == null) {
-            errorMessage = "La página que buscas no existe";
-        } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value() && message == null) {
-            errorMessage = "Se produjo un error en el servidor";
-        } else if (message != null) {
-            errorMessage = message;
+        if (message != null) {
+            errorMessage = message; // Prioritize the passed message
+        } else if (statusCode == HttpStatus.NOT_FOUND.value()) {
+            errorMessage = "The page you're searching doesn't exist";
+        } else if (statusCode == HttpStatus.INTERNAL_SERVER_ERROR.value()) {
+            errorMessage = "An error happened in the server";
+        } else {
+            errorMessage = "An unexpected error happened";
         }
 
         model.addAttribute("statusCode", statusCode);

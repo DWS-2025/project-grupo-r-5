@@ -81,8 +81,10 @@ public class BlogWebController {
         }
     }
 
+    ///////////////////////
+    //WE SHOULD CHANGE THIS METHOD FOR IT TO RETURN A STRING, SO IT GIVES BACK ERROR OR THE IMAGE VIEW HTML:
     @GetMapping("/blog/{id}/image")
-    public ResponseEntity<Object> downloadImage(@PathVariable long id) throws SQLException {
+    public ResponseEntity<Object> downloadImage(@PathVariable long id, RedirectAttributes redirectAttributes) throws SQLException {
         Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
         if (postOptional.isPresent() && postOptional.get().imagePath() != null) {
             try {
@@ -91,9 +93,12 @@ public class BlogWebController {
                 Resource file = new InputStreamResource(image.getBinaryStream());
                 return ResponseEntity.ok().header(HttpHeaders.CONTENT_TYPE, "image/jpeg").contentLength(image.length()).body(file);
             } catch (SQLException e) {
-                e.printStackTrace();
+                ResponseEntity.status(500).body("Error retrieving image");
+                redirectAttributes.addAttribute("message", "Error retrieving image");
+                //return "redirect:/error";
                 return ResponseEntity.status(500).body("Error retrieving image");
             } catch (IOException e) {
+                redirectAttributes.addAttribute("message", "Run time exception");
                 throw new RuntimeException(e);
             }
 
@@ -101,6 +106,7 @@ public class BlogWebController {
             return ResponseEntity.notFound().build();
         }
     }
+    /////////////////
 
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {

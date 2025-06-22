@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -71,7 +72,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin/groupClasses/delete-{id}")
-    public String deleteGroupClassConfirmed(@PathVariable long id) {
+    public String deleteGroupClassConfirmed(@PathVariable long id, RedirectAttributes redirectAttributes) {
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
 
         if (groupClass.isPresent()) {
@@ -85,6 +86,9 @@ public class AdminController {
             }
             // Now we eliminate the class
             groupClassService.delete(id);
+        } else {
+            redirectAttributes.addAttribute("message", "Error deleting class: Class not found.");
+            return "redirect:/error";
         }
         return "redirect:/admin/groupClasses";
     }
@@ -126,7 +130,7 @@ public class AdminController {
     }
 
     @PostMapping("/admin/users/delete-{id}")
-    public String deleteUserConfirmed(@PathVariable long id) {
+    public String deleteUserConfirmed(@PathVariable long id, RedirectAttributes redirectAttributes) {
         Optional<ClassUserDTO> user = userService.findById(id);
 
         if(user.isPresent()){
@@ -146,6 +150,10 @@ public class AdminController {
                     userService.removePost(postId, user.get().userid());
                 }
             }
+
+        } else {
+            redirectAttributes.addAttribute("message", "Error deleting user: User not found.");
+            return "redirect:/error";
         }
 
         userService.delete(id);

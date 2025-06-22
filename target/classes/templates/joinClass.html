@@ -17,14 +17,14 @@
     </tr>
     </thead>
     <tbody>
-    {{#GroupClass}}
+    {{#groupClass}}
     <tr>
         <td>{{day}}</td>
-        <td>{{time_init}}:{{time_fin}}</td>
+        <td>{{timeInit}}:{{timeFin}}</td>
         <td>{{instructor}}</td>
         <td>{{currentCapacity}}/{{maxCapacity}}</td>
     </tr>
-    {{/GroupClass}}
+    {{/groupClass}}
     <form action="/GroupClasses/Join-{{id}}" method="post" enctype="multipart/form-data">
         <h1>Enter username</h1>
         <div>
@@ -32,7 +32,7 @@
             <input name="username" placeholder="username" required/>
         </div>
         <div>
-            <input type="hidden" name="id" value="{{GroupClass.classid}}">
+            <input type="hidden" name="id" value="{{groupClass.classid}}">
         </div>
         <div>
             <button type="submit">Join</button>

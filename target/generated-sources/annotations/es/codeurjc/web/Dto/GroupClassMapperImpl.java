@@ -4,6 +4,7 @@ import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-16T18:19:18+0200",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.7 (Microsoft)"
+    date = "2025-06-22T13:07:20+0200",
+    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
 )
 @Component
 public class GroupClassMapperImpl implements GroupClassMapper {
@@ -28,6 +29,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         String classname = null;
         String instructor = null;
         String day = null;
+        LocalTime timeInit = null;
         int duration = 0;
         int maxCapacity = 0;
         int currentCapacity = 0;
@@ -38,13 +40,13 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         if ( groupClass.getDay() != null ) {
             day = groupClass.getDay().name();
         }
+        timeInit = groupClass.getTimeInit();
         duration = groupClass.getDuration();
         maxCapacity = groupClass.getMaxCapacity();
         currentCapacity = groupClass.getCurrentCapacity();
 
         List<ClassUserDTO> usersList = null;
-        String timeInit = null;
-        String timeFin = null;
+        LocalTime timeFin = groupClass.getTimeFin();
 
         GroupClassDTO groupClassDTO = new GroupClassDTO( classid, classname, instructor, day, timeInit, duration, timeFin, maxCapacity, currentCapacity, usersList );
 
@@ -61,7 +63,9 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         String classname = null;
         String instructor = null;
         String day = null;
+        LocalTime timeInit = null;
         int duration = 0;
+        LocalTime timeFin = null;
         int maxCapacity = 0;
         int currentCapacity = 0;
 
@@ -71,12 +75,11 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         if ( groupClass.getDay() != null ) {
             day = groupClass.getDay().name();
         }
+        timeInit = groupClass.getTimeInit();
         duration = groupClass.getDuration();
+        timeFin = groupClass.getTimeFin();
         maxCapacity = groupClass.getMaxCapacity();
         currentCapacity = groupClass.getCurrentCapacity();
-
-        String timeInit = null;
-        String timeFin = null;
 
         GroupClassBasicDTO groupClassBasicDTO = new GroupClassBasicDTO( classid, classname, instructor, day, timeInit, duration, timeFin, maxCapacity, currentCapacity );
 
@@ -111,6 +114,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         if ( groupClassDTO.day() != null ) {
             groupClass.setDay( Enum.valueOf( DayOfWeek.class, groupClassDTO.day() ) );
         }
+        groupClass.setTimeInit( groupClassDTO.timeInit() );
         groupClass.setDuration( groupClassDTO.duration() );
         groupClass.setMaxCapacity( groupClassDTO.maxCapacity() );
         groupClass.setCurrentCapacity( groupClassDTO.currentCapacity() );
@@ -132,6 +136,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         if ( groupClassDTO.day() != null ) {
             groupClass.setDay( Enum.valueOf( DayOfWeek.class, groupClassDTO.day() ) );
         }
+        groupClass.setTimeInit( groupClassDTO.timeInit() );
         groupClass.setDuration( groupClassDTO.duration() );
         groupClass.setMaxCapacity( groupClassDTO.maxCapacity() );
         groupClass.setCurrentCapacity( groupClassDTO.currentCapacity() );
@@ -153,6 +158,19 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         return list1;
     }
 
+    protected ClassUser classUserBasicDTOToClassUser(ClassUserBasicDTO classUserBasicDTO) {
+        if ( classUserBasicDTO == null ) {
+            return null;
+        }
+
+        ClassUser classUser = new ClassUser();
+
+        classUser.setUserid( classUserBasicDTO.userid() );
+        classUser.setName( classUserBasicDTO.name() );
+
+        return classUser;
+    }
+
     protected Post postDTOToPost(PostDTO postDTO) {
         if ( postDTO == null ) {
             return null;
@@ -161,7 +179,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         Post post = new Post();
 
         post.setPostid( postDTO.postid() );
-        post.setCreator( classUserDTOToClassUser( postDTO.creator() ) );
+        post.setCreator( classUserBasicDTOToClassUser( postDTO.creator() ) );
         post.setTitle( postDTO.title() );
         post.setDescription( postDTO.description() );
         post.setImagePath( postDTO.imagePath() );
