@@ -5,7 +5,7 @@ import es.codeurjc.web.Domain.ClassUser;
 
 public record PostDTO (
     long postid,
-    ClassUserDTO creator,
+    ClassUserBasicDTO creator,
     String title,
     String description,
     String imagePath){

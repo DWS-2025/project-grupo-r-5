@@ -67,7 +67,7 @@ public class GroupClassWebController {
     public String joinClass(Model model , @PathVariable long id) {
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
         if (groupClass.isPresent()) {
-            model.addAttribute("GroupClass", groupClass);
+            model.addAttribute("groupClass", groupClass.get());
             return "joinClass";
         } else{
             return "index";

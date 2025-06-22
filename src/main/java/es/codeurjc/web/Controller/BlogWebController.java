@@ -2,6 +2,7 @@ package es.codeurjc.web.Controller;
 
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.Post;
+import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.ClassUserDTO;
 import es.codeurjc.web.Dto.PostDTO;
 import es.codeurjc.web.Service.ImageService;
@@ -68,7 +69,9 @@ public class BlogWebController {
             PostDTO post = postOptional.get();
             model.addAttribute("Post", post);
             String imagefile = post.imagePath();
-            if(!imagefile.matches("no-image.png")){
+            if(imagefile == null || imagefile.matches("no-image.png")){
+                model.addAttribute("ImagePresented", false);
+            }else{
                 model.addAttribute("ImagePresented", true);
             }
             return "show_post";
@@ -245,11 +248,11 @@ public class BlogWebController {
         // Get the post
         PostDTO originalPost = op.get();
         // Check if the user is the creator of the post
-        ClassUserDTO classUser = originalPost.creator();
+        ClassUserBasicDTO classUser = originalPost.creator();
 
         if(classUser == null || !classUser.getClass().getName().equals(user)) {
-            classUser = userService.findByName(user).orElseThrow();
-            if (classUser == null) {
+            ClassUserDTO classUser2 = userService.findByName(user).orElseThrow();
+            if (classUser2 == null) {
                 redirectAttributes.addAttribute("message", "User not found");
                 return "redirect:/error";
             }
