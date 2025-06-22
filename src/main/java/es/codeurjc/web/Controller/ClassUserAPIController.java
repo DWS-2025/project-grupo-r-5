@@ -14,7 +14,7 @@ import java.net.URI;
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
 @RestController
-@RequestMapping("/classUser")
+@RequestMapping("/api/classUser")
 public class ClassUserAPIController {
 
     @Autowired

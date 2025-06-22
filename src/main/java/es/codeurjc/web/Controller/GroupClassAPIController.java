@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 
@@ -31,14 +32,18 @@ public class GroupClassAPIController {
     }
 
     @GetMapping("/{id}")
-    public GroupClassDTO getGroupClass(long id) {
+    public GroupClassDTO getGroupClass(@PathVariable Long id) {
         return groupClassService.findById(id).orElseThrow();
     }
 
     @PostMapping("/")
-    public GroupClassDTO createGroupClass(GroupClassDTO groupClassDTO) {
+    public GroupClassDTO createGroupClass(@RequestBody GroupClassDTO groupClassDTO) {
         groupClassDTO = groupClassService.save(groupClassDTO);
-        URI location = fromCurrentRequest().path("/{id}").buildAndExpand(groupClassDTO.classid()).toUri();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(groupClassDTO.classid())
+                .toUri();
         return ResponseEntity.created(location).body(groupClassDTO).getBody();
     }
 
