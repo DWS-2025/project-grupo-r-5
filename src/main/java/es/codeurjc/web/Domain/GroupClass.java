@@ -19,7 +19,7 @@ public class GroupClass {
     private DayOfWeek day;
     private LocalTime timeInit;
     private int duration;
-    private LocalTime time_fin;
+    private LocalTime timeFin;
     private int maxCapacity;
     private int currentCapacity;
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
@@ -28,12 +28,12 @@ public class GroupClass {
 
     //Constructor:
     public GroupClass() {}
-    public GroupClass(String name, DayOfWeek day, LocalTime time_init,int duration, String instructor, int maxCapacity) {
+    public GroupClass(String name, DayOfWeek day, LocalTime timeInit,int duration, String instructor, int maxCapacity) {
         this.classname = name;
         this.day = day;
-        this.timeInit = time_init;
+        this.timeInit = timeInit;
         this.duration = duration;
-        this.time_fin = this.getTimefin();
+        this.timeFin = this.getTimeFin();
         this.instructor = instructor;
         this.maxCapacity = maxCapacity;
         this.currentCapacity = 0;
@@ -99,13 +99,13 @@ public class GroupClass {
     }
 
     //Time_init
-    public LocalTime getTime_init() {
+    public LocalTime getTimeInit() {
         return timeInit;
     }
-    public void setTime_init(LocalTime time) {
-        this.timeInit = time;
+    public void setTimeInit(LocalTime timeInit) {
+        this.timeInit = timeInit;
     }
-    public String getTimeAsString() {
+    public String getTimeInitAsString() {
         return this.timeInit.toString();
     }
 
@@ -118,11 +118,12 @@ public class GroupClass {
     }
 
     //Time_fin
-    public LocalTime getTimefin() {
-        return timeInit.plusMinutes(this.duration);
+    public LocalTime getTimeFin() {
+        if(timeInit != null){return timeInit.plusMinutes(this.duration);}
+        return null;
     }
-    public String getTimefinAsString(){
-        return this.getTimefin().toString();
+    public String getTimeFinAsString(){
+        return this.getTimeFin().toString();
     }
 
     //MaxCapacity

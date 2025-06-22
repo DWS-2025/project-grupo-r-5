@@ -1,5 +1,6 @@
 package es.codeurjc.web.Dto;
 
+import java.time.LocalTime;
 import java.util.List;
 
 public record GroupClassBasicDTO(
@@ -7,9 +8,9 @@ public record GroupClassBasicDTO(
         String classname,
         String instructor,
         String day,
-        String timeInit,
+        LocalTime timeInit,
         int duration,
-        String timeFin,
+        LocalTime timeFin,
         int maxCapacity,
         int currentCapacity
 ) {

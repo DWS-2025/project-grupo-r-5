@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface GroupClassMapper {
     @Mapping(target = "usersList", ignore = true)
+    @Mapping(target = "timeFin", expression = "java(groupClass.getTimeFin())")
     GroupClassDTO toDTO(GroupClass groupClass);
 
     GroupClassBasicDTO toBasicDTO(GroupClass groupClass);

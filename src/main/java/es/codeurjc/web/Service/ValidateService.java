@@ -123,7 +123,7 @@ public class ValidateService {
         if(dayError != null){
             return dayError;
         }
-        String hourError = validateHour(groupClass.getTime_init().toString());
+        String hourError = validateHour(groupClass.getTimeInit().toString());
         if (hourError != null){
             return hourError;
         }
