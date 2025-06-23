@@ -42,6 +42,7 @@ public class BasicDataInitializer {
     @PostConstruct
     public void init() throws IOException {
         //create users first:
+        ClassUser user0 = new ClassUser("Example");
         ClassUser user1 = new ClassUser("Pepe");
         ClassUser user2 = new ClassUser("Juan");
         ClassUser user3 = new ClassUser("Yoshi");
@@ -49,6 +50,7 @@ public class BasicDataInitializer {
         ClassUser user5 = new ClassUser("Rufusberto");
         ClassUser user6 = new ClassUser("Kirby");
 
+        userRepository.save(user0);
         userRepository.save(user1);
         userRepository.save(user2);
         userRepository.save(user3);

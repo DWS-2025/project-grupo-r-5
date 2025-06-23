@@ -176,19 +176,15 @@ public class BlogWebController {
     @PostMapping("/blog/new")
     public String newPostProcess(Model model, @RequestParam("title") String title,
                                  @RequestParam("description") String description,
-                                 @RequestParam("user") String user,
                                  @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
                                  RedirectAttributes redirectAttributes) throws IOException {
 
         Post post = new Post();
 
 
-        ClassUserDTO classUserDTO = userService.findByName(user)
-                .orElseThrow(() -> new NoSuchElementException("User not found"));
+        ClassUserDTO user = userService.getLoggedUser();
 
-        ClassUser classUser = userService.toDomain(classUserDTO);
-
-        post.setCreator(classUser);
+        post.setCreator(userService.toDomain(user));
         post.setTitle(title);
         post.setDescription(Jsoup.parse(description).text());
 
@@ -228,12 +224,12 @@ public class BlogWebController {
 
         PostDTO postDTO = postService.toDTO(post);
 
-        postService.save(postDTO, imagefile);
-        userService.addPost(post.getPostid(), classUser.getUserid());
-        userService.save(userService.toDTO(classUser));
+        long postid = postService.save(postDTO, imagefile).postid();
+        userService.addPost(post.getPostid(), user.userid());
+        userService.save(user);
 
 
-        return "redirect:/blog/" + post.getPostid();
+        return "redirect:/blog/" + postid;
     }
 
 

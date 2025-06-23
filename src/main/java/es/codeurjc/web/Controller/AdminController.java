@@ -3,10 +3,7 @@ package es.codeurjc.web.Controller;
 import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
-import es.codeurjc.web.Dto.ClassUserDTO;
-import es.codeurjc.web.Dto.ClassUserMapper;
-import es.codeurjc.web.Dto.GroupClassBasicDTO;
-import es.codeurjc.web.Dto.GroupClassDTO;
+import es.codeurjc.web.Dto.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
@@ -76,10 +73,10 @@ public class AdminController {
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
 
         if (groupClass.isPresent()) {
-            List<ClassUserDTO> usersList = new ArrayList<>(groupClass.get().usersList());
+            List<ClassUserBasicDTO> usersList = new ArrayList<>(groupClass.get().usersList());
 
             if (!usersList.isEmpty()) {
-                for (ClassUserDTO user : usersList) {
+                for (ClassUserBasicDTO user : usersList) {
                     long userId = user.userid();
                     userService.removeGroupClass(id, userId);
                 }

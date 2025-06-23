@@ -15,7 +15,7 @@ public record GroupClassDTO(
         LocalTime timeFin,
         int maxCapacity,
         int currentCapacity,
-        List<ClassUserDTO> usersList
+        List<ClassUserBasicDTO> usersList
 ) {
 }
 

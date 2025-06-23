@@ -10,7 +10,7 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface GroupClassMapper {
-    @Mapping(target = "usersList", ignore = true)
+    //@Mapping(target = "usersList", source = "userList")
     @Mapping(target = "timeFin", expression = "java(groupClass.getTimeFin())")
     GroupClassDTO toDTO(GroupClass groupClass);
 
@@ -19,7 +19,7 @@ public interface GroupClassMapper {
     //Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses);
     List<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses);
 
-    @Mapping(target = "usersList" , ignore = true)
+    //@Mapping(target = "usersList" , ignore = true)
     GroupClass toDomain(GroupClassBasicDTO groupClassDTO);
 
     GroupClass toDomain(GroupClassDTO groupClassDTO);

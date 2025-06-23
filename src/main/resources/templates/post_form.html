@@ -12,9 +12,6 @@
       method="post" enctype="multipart/form-data">
     <input type="hidden" name="isEdit" value="{{isEdit}}">
 
-    <p><label>User: </label></p>
-    <p><input type="text" name="user" placeholder="Name" value="{{#isEdit}}{{post.creatorName}}{{/isEdit}}"></p>
-
     <p><label>Title: </label></p>
     <p><input type="text" name="title" placeholder="Title" value="{{#isEdit}}{{post.title}}{{/isEdit}}" required></p>
 

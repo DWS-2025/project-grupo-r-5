@@ -25,21 +25,17 @@
         <td>{{currentCapacity}}/{{maxCapacity}}</td>
     </tr>
     {{/groupClass}}
-    <form action="/GroupClasses/Join-{{id}}" method="post" enctype="multipart/form-data">
-        <h1>Enter username</h1>
-        <div>
-            <label>Username: </label>
-            <input name="username" placeholder="username" required/>
-        </div>
-        <div>
-            <input type="hidden" name="id" value="{{groupClass.classid}}">
-        </div>
-        <div>
-            <button type="submit">Join</button>
-        </div>
-        <button onclick="location.href='/';return false;">Back</button>
-    </form>
+
     </tbody>
 </table>
+<form action="/GroupClasses/Join-{{id}}" method="post" enctype="multipart/form-data">
+    <div>
+        <input type="hidden" name="id" value="{{groupClass.classid}}">
+    </div>
+    <div>
+        <button type="submit">Join</button>
+    </div>
+    <button onclick="location.href='/';return false;">Back</button>
+</form>
 </body>
 </html>

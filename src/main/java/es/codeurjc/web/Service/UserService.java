@@ -46,6 +46,9 @@ public class UserService {
         return classUserMapper.toDTOs(users.getContent());
     }*/
 
+    //This method will be changed on third phase
+    public ClassUserDTO getLoggedUser() {return classUserMapper.toDTO(userRepository.findAll().get(0));}
+
     public Page<ClassUserBasicDTO> findAll(Pageable page) {
         Page<ClassUser> users = userRepository.findAll(page);
         List<ClassUserBasicDTO> dtoList = users

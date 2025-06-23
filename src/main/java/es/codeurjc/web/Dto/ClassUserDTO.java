@@ -5,7 +5,7 @@ import java.util.List;
 public record ClassUserDTO(
         long userid,
         String name,
-        List<GroupClassDTO> listOfClasses,
+        List<GroupClassBasicDTO> listOfClasses,
         List<PostDTO> listOfPosts
 ) {
 }
