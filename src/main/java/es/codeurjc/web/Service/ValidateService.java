@@ -70,6 +70,16 @@ public class ValidateService {
         return Jsoup.clean(String.valueOf(day), CUSTOM_SAFE_LIST);
     }
 
+    public DayOfWeek parseDay(String day) {
+        if (day == null || day.isBlank() || day.equalsIgnoreCase("Any")) return null;
+        try {
+            return DayOfWeek.valueOf(day.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+
     public String validateInstructor(String instructor){
         String cleanedInstructor = cleanInput(instructor);
         if(cleanedInstructor.isEmpty()){

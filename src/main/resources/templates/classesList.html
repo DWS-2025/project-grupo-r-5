@@ -2,16 +2,64 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" type="text/css" href="joinClass.html">
+    <link rel="stylesheet" type="text/css" href="/css/joinClass.css">
     <title>GroupClasses List</title>
 </head>
 <body>
 <h1>Find Classes</h1>
 
+{{^searchPerformed}}
+<h1>No classes searched yet</h1>
+{{/searchPerformed}}
+
+{{#searchPerformed}}
+<div class="container">
+    <section class="section">
+        {{^classes}}
+        <p>No classes found</p>
+        {{/classes}}
+
+        {{#classes}}
+        <table>
+            <thead>
+            <tr>
+                <th>Día</th>
+                <th>Instructor</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{#classes}}
+            <tr>
+                <td>{{dayOfWeek}}</td>
+                <td>{{instructor}}</td>
+                <td>
+                    <a href="/GroupClasses/Join-{{classid}}" class="btn join-btn">Join</a>
+                </td>
+            </tr>
+            {{/classes}}
+            </tbody>
+        </table>
+        {{/classes}}
+
+    <!-- Pagination -->
+    <div class="pagination">
+        Page {{currentPage}} of {{totalPages}}
+        {{#previousPage}}
+        <a href="?page={{previousPage}}">Previous</a>
+        {{/previousPage}}
+        {{#nextPage}}
+        <a href="?page={{nextPage}}">Next</a>
+        {{/nextPage}}
+    </div>
+    </section>
+</div>
+{{/searchPerformed}}
+
 <form action="/GroupClasses" method="post" enctype="multipart/form-data">
         <!-- Filter by day of the week -->
         <label for="dayWeek">Day of the Week:</label>
-        <select id="dayWeek" name="dayWeek">
+        <select id="dayWeek" name="dayWeek" required>
             <option value="">Select a day</option>
             <option value="Monday">Monday</option>
             <option value="Tuesday">Tuesday</option>

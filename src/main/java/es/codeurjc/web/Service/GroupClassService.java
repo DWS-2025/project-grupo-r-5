@@ -100,7 +100,14 @@ public class GroupClassService {
         if (day != null) exampleClass.setDay(day);
         if (instructor != null && !instructor.isBlank()) exampleClass.setInstructor(instructor);
 
-        ExampleMatcher matcher = ExampleMatcher.matchingAll().withIgnoreNullValues();
+        ExampleMatcher matcher = ExampleMatcher.matchingAll()
+                .withIgnoreNullValues()
+                .withIgnorePaths(
+                        "duration", "maxCapacity", "currentCapacity",
+                        "timeInit", "timeFin", "className", "classid" //to not search by this
+                )
+                .withMatcher("instructor", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
         Example<GroupClass> example = Example.of(exampleClass, matcher);
 
         Page<GroupClass> page = groupClassRepository.findAll(example, pageable);
