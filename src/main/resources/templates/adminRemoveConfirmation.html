@@ -8,16 +8,16 @@
 </head>
 <body>
 <div class="container">
-    <h1>Are you sure you want to delete this group class?</h1>
+    <h1>Are you sure you want to delete this {{type}}?</h1>
 
-    <p>Class Name: {{groupClass.classname}}</p>
-    <p>Id: {{groupClass.classid}}</p>
+    <p>{{type}} Name: {{name}}</p>
+    <p>Id: {{id}}</p>
     <div class="btn-group">
-        <form action="/admin/groupClasses/delete-{{groupClass.classid}}" method="POST">
+        <form action="/admin/{{types}}/delete-{{id}}" method="POST">
             <button type="submit" class="btn delete-btn">Confirm Delete</button>
         </form>
 
-        <a href="/admin/groupClasses" class="btn">Go Back</a>
+        <a href="/admin/{{types}}" class="btn">Go Back</a>
     </div>
 </div>
 </body>

@@ -11,16 +11,12 @@ import java.util.List;
 @Mapper(componentModel = "spring", uses = {PostMapper.class, GroupClassMapper.class})
 public interface ClassUserMapper {
 
-    @Mapping(target = "listOfClasses", ignore = true)
-    @Mapping(target = "listOfPosts", ignore = true)
     ClassUserDTO toDTO(ClassUser classUser);
 
     ClassUserBasicDTO toBasicDTO(ClassUser classUser);
 
     List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);
 
-    @Mapping(target = "listOfClasses", ignore = true)
-    @Mapping(target = "listOfPosts", ignore = true)
     ClassUser toDomain(ClassUserDTO classUserDTO);
     ClassUser toDomain(ClassUserBasicDTO classUserBasicDTO);
 

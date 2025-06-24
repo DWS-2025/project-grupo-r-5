@@ -183,6 +183,7 @@ public class BlogWebController {
 
 
         ClassUserDTO user = userService.getLoggedUser();
+        ClassUser classUser = userService.findEntityById(user.userid()).orElseThrow();
 
         post.setCreator(userService.toDomain(user));
         post.setTitle(title);

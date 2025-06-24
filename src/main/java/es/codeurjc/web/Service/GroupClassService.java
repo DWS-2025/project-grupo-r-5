@@ -44,6 +44,16 @@ public class GroupClassService {
 
         return new PageImpl<>(dtoList, page, groupClasses.getTotalElements());
     }
+    public Page<GroupClassDTO> findAllFullClass(Pageable page) {
+        Page<GroupClass> groupClasses = groupClassRepository.findAll(page);
+        List<GroupClassDTO> dtoList = groupClasses
+                .getContent()
+                .stream()
+                .map(groupClassMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, page, groupClasses.getTotalElements());
+    }
 
     public Optional<GroupClassDTO> findById(long id) {
         return groupClassRepository.findById(id)

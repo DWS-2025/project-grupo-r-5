@@ -14,7 +14,7 @@ public class ClassUser {
 
     private String name;
 
-    @ManyToMany(mappedBy = "usersList", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "usersList", fetch = FetchType.LAZY)
     private List<GroupClass> listOfClasses = new ArrayList<>();
 
     @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)

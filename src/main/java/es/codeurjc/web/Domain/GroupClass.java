@@ -23,6 +23,11 @@ public class GroupClass {
     private int maxCapacity;
     private int currentCapacity;
     @ManyToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "groupclass_users",
+            joinColumns = @JoinColumn(name = "classid"),
+            inverseJoinColumns = @JoinColumn(name = "userid")
+    )
     private List<ClassUser> usersList = new ArrayList<>();
 
 

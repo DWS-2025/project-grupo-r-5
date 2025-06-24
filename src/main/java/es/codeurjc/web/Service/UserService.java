@@ -59,11 +59,25 @@ public class UserService {
 
         return new PageImpl<>(dtoList, page, users.getTotalElements());
     }
+    public Page<ClassUserDTO> findAllFullUser(Pageable page) {
+        Page<ClassUser> users = userRepository.findAll(page);
+        List<ClassUserDTO> dtoList = users
+                .getContent()
+                .stream()
+                .map(classUserMapper::toDTO)
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, page, users.getTotalElements());
+    }
 
 
     public Optional<ClassUserDTO> findById(long id) {
         return userRepository.findById(id)
                 .map(classUserMapper::toDTO);
+    }
+
+    public Optional<ClassUser> findEntityById(long id) {
+        return userRepository.findById(id);
     }
 
     public Optional<ClassUserDTO> findByName(String name) {
@@ -87,6 +101,16 @@ public class UserService {
         ClassUser classUser = userRepository.findById(id).orElseThrow();
         userRepository.deleteById(id);
         return toDTO(classUser);
+    }
+    public void deleteUserClasses(long id) {
+        ClassUser user = userRepository.findById(id).orElseThrow();
+
+        for (GroupClass groupClass : user.getListOfClasses()) {
+            groupClass.removeUser(user);
+        }
+
+        user.getListOfClasses().clear();
+
     }
 
     @Transactional

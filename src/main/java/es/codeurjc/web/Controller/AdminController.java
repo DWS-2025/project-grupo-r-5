@@ -1,10 +1,9 @@
 package es.codeurjc.web.Controller;
 
-import es.codeurjc.web.Domain.ClassUser;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Dto.*;
-import org.springframework.data.domain.Page;
+import es.codeurjc.web.Repositories.PostRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Service.GroupClassService;
@@ -35,6 +34,8 @@ public class AdminController {
     private UserService classUserService;
     @Autowired
     private GroupClassService groupClassService;
+    @Autowired
+    private PostRepository postRepository;
 
 
     @GetMapping("/admin")
@@ -51,21 +52,24 @@ public class AdminController {
     //Page it:
     @GetMapping("/admin/users")
     public String showUsers(Model model, Pageable page) {
-        model.addAttribute("users", classUserService.findAll(page));
+        model.addAttribute("users", classUserService.findAllFullUser(page));
         return "adminUsers";
     }
 
     //Page it:
     @GetMapping("/admin/groupClasses")
     public String showGroupClasses(Model model, Pageable page) {
-        model.addAttribute("GroupClasses", groupClassService.findAll(page));
+        model.addAttribute("GroupClasses", groupClassService.findAllFullClass(page));
         return "adminGroupClasses";
     }
 
     @GetMapping("/admin/groupClasses/delete-{id}")
     public String deleteGroupClass(@PathVariable long id, Model model) {
-        model.addAttribute("groupClass",groupClassService.findById(id));
-        return "adminRemoveClassConfirmation";
+        model.addAttribute("type","GroupClass");
+        model.addAttribute("types","groupClasses");
+        model.addAttribute("name",groupClassService.findById(id).get().classname());
+        model.addAttribute("id",groupClassService.findById(id).get().classid());
+        return "adminRemoveConfirmation";
     }
 
     @PostMapping("/admin/groupClasses/delete-{id}")
@@ -122,8 +126,11 @@ public class AdminController {
 
     @GetMapping("/admin/users/delete-{id}")
     public String deleteUser(@PathVariable long id, Model model) {
-        model.addAttribute("classuser",userService.findById(id));
-        return "adminRemoveUserConfirmation";
+        model.addAttribute("type","User");
+        model.addAttribute("types","users");
+        model.addAttribute("name",userService.findById(id).get().name());
+        model.addAttribute("id",userService.findById(id).get().userid());
+        return "adminRemoveConfirmation";
     }
 
     @PostMapping("/admin/users/delete-{id}")
@@ -131,22 +138,8 @@ public class AdminController {
         Optional<ClassUserDTO> user = userService.findById(id);
 
         if(user.isPresent()){
-            List<GroupClass> groupClassList = new ArrayList<>();
-            List<Post> postList = new ArrayList<>();
 
-            if(!groupClassList.isEmpty()){
-                for (GroupClass groupClass : groupClassList) {
-                    long groupClassId = groupClass.getClassid();
-                    userService.removeGroupClass(groupClassId, user.get().userid());
-                }
-            }
-
-            if(!postList.isEmpty()) {
-                for (Post post : postList) {
-                    long postId = post.getPostid();
-                    userService.removePost(postId, user.get().userid());
-                }
-            }
+            userService.deleteUserClasses(id);
 
         } else {
             redirectAttributes.addAttribute("message", "Error deleting user: User not found.");
@@ -156,5 +149,26 @@ public class AdminController {
         userService.delete(id);
 
         return "redirect:/admin/users";
+    }
+    @GetMapping("/admin/posts/delete-{id}")
+    public String deletePost(@PathVariable long id, Model model) {
+        model.addAttribute("type","Post");
+        model.addAttribute("types","posts");
+        model.addAttribute("name",postService.findById(id).get().title());
+        model.addAttribute("id",postService.findById(id).get().postid());
+        return "adminRemoveConfirmation";
+    }
+    @PostMapping("/admin/posts/delete-{id}")
+    public String deletePostConfirmed(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        Optional <PostDTO> post = postService.findById(id);
+
+        if (post.isPresent()) {
+            postService.delete(post.get().postid());
+        }
+        else {
+            redirectAttributes.addAttribute("message", "Error deleting post: Post not found.");
+            return "redirect:/error";
+        }
+        return "redirect:/admin/posts";
     }
 }
