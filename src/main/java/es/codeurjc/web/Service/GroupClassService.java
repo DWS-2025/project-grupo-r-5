@@ -97,8 +97,8 @@ public class GroupClassService {
     //Actual dynamic query with QBE and Spring Data JPA
     public Page<GroupClassDTO> findClassesByExample(DayOfWeek day, String instructor, Pageable pageable) {
         GroupClass exampleClass = new GroupClass();
-        if (day != null) exampleClass.setDay(day);
-        if (instructor != null && !instructor.isBlank()) exampleClass.setInstructor(instructor);
+        if (day != null && !day.name().equalsIgnoreCase("Any")) exampleClass.setDay(day);
+        if (instructor != null && !instructor.isBlank() && !instructor.equalsIgnoreCase("Any")) exampleClass.setInstructor(instructor);
 
         ExampleMatcher matcher = ExampleMatcher.matchingAll()
                 .withIgnoreNullValues()
@@ -110,7 +110,12 @@ public class GroupClassService {
 
         Example<GroupClass> example = Example.of(exampleClass, matcher);
 
+        System.out.println("Executing dynamic query with day=" + day + ", instructor=" + instructor);
+
         Page<GroupClass> page = groupClassRepository.findAll(example, pageable);
+
+        System.out.println("Query returned " + page.getTotalElements() + " results");
+
 
         return page.map(groupClassMapper::toDTO);
     }

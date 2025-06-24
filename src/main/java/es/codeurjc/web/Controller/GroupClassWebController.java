@@ -110,6 +110,7 @@ public class GroupClassWebController {
             String cleanedDay = validateService.cleanDay(rawDay);
             return validateService.parseDay(cleanedDay);
         } catch (IllegalArgumentException e) {
+            System.err.println("Invalid day provided: " + day);
             return null; // Invalid day, return null
         }
     }
@@ -138,8 +139,8 @@ public class GroupClassWebController {
         model.addAttribute("classes", page.getContent());
         model.addAttribute("currentPage", page.getNumber());
         model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("dayWeek", dayOfWeek);
-        model.addAttribute("instructor", instructor);
+        model.addAttribute("dayWeek", dayOfWeek != null ? dayOfWeek.name() : "Any");
+        model.addAttribute("instructor", instructor != null ? instructor : "Any");
 
         //For pagination:
         model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1 : null);

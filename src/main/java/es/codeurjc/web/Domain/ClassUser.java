@@ -17,7 +17,7 @@ public class ClassUser {
     @ManyToMany(mappedBy = "usersList", cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<GroupClass> listOfClasses = new ArrayList<>();
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY)
     private List<Post> listOfPosts = new ArrayList<>();
 
     //Constructor:

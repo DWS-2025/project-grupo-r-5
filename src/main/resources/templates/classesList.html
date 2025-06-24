@@ -20,6 +20,8 @@
         {{/classes}}
 
         {{#classes}}
+        <!--p>Classes filtered for day: {{../dayWeek}}</p>
+        <p>And instructor: {{../instructor}}</p-->
         <table>
             <thead>
             <tr>
@@ -31,7 +33,7 @@
             <tbody>
             {{#classes}}
             <tr>
-                <td>{{dayOfWeek}}</td>
+                <td>{{day}}</td>
                 <td>{{instructor}}</td>
                 <td>
                     <a href="/GroupClasses/Join-{{classid}}" class="btn join-btn">Join</a>
