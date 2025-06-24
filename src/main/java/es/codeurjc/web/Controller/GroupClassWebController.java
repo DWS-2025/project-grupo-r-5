@@ -12,6 +12,7 @@ import es.codeurjc.web.Service.GroupClassService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.time.DayOfWeek;
@@ -76,26 +77,43 @@ public class GroupClassWebController {
     }
 
     @PostMapping("/GroupClasses/Join-{id}")
-    public String joinClassProcess(Model model, @PathVariable Long id) throws IOException {
+    public String joinClassProcess(Model model, @PathVariable Long id, RedirectAttributes redirectAttributes) throws IOException {
 
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
+        Optional<GroupClassDTO> optionalGroupClass = groupClassService.findById(id);
+
+        if (optionalGroupClass.isEmpty()) {
+            redirectAttributes.addAttribute("message", "The class does not exist.");
+            return "redirect:/error";
+        }
+
         ClassUserDTO user = userService.getLoggedUser();
-        if (groupClass.isPresent() && !groupClass.get().usersList().contains(user)) {
-            GroupClassDTO groupClassDTO=  groupClass.get();
+        if(groupClass.isPresent() && groupClass.get().usersList().contains(user)){
+            redirectAttributes.addAttribute("message", "The user is already registered in this class.");
+            return "redirect:/error";
+        }
+        /*if (groupClass.isPresent() && !groupClass.get().usersList().contains(user)) {
+            GroupClassDTO groupClassDTO = groupClass.get();
 
             userService.addGroupClass(id,user.userid());
-        }
-        long classid = groupClass.get().classid();
-        return "redirect:/GroupClasses/Join-" + classid + "/successJoinClass";
+        }*/
+        userService.addGroupClass(id,user.userid());
+        //long classid = groupClass.get().classid();
+        return "redirect:/GroupClasses/Join-" + id + "/successJoinClass";
 
     }
 
     @GetMapping("/GroupClasses/Join-{id}/success")
-    public String joinClassSuccess(Model model, @PathVariable long id) {
+    public String joinClassSuccess(Model model, @PathVariable long id, RedirectAttributes redirectAttributes) {
 
         Optional<GroupClassDTO> groupClass = groupClassService.findById(id);
-        model.addAttribute("GroupClass", groupClass.get());
 
+        if(groupClass.isPresent()) {
+            model.addAttribute("GroupClass", groupClass.get());
+        } else {
+            redirectAttributes.addAttribute("message", "The class does not exist.");
+            return "redirect:/error";
+        }
         return "successJoinClass";
 
     }
@@ -143,8 +161,8 @@ public class GroupClassWebController {
         model.addAttribute("instructor", instructor != null ? instructor : "Any");
 
         //For pagination:
-        model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1 : null);
-        model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : null);
+        model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1: 0);
+        model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : 0);
 
         return "classesList";
     }
