@@ -148,6 +148,20 @@ public class ValidateService {
         return null;
     }
 
+    public DayOfWeek parseAndCleanDay(String day) {
+        if (day == null || day.isBlank() || day.equalsIgnoreCase("Any")) {
+            return null;
+        }
+        try {
+            DayOfWeek rawDay = DayOfWeek.valueOf(day.toUpperCase());
+            String cleanedDay = cleanDay(rawDay);
+            return parseDay(cleanedDay);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid day provided: " + day);
+            return null; // Invalid day, return null
+        }
+    }
+
 
     //Posts:
     public String validateUsername(String username){

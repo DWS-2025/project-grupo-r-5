@@ -9,6 +9,7 @@ import es.codeurjc.web.Dto.GroupClassMapper;
 import es.codeurjc.web.Repositories.GroupClassRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -27,12 +28,6 @@ public class GroupClassService {
     //private ConcurrentHashMap<Long, GroupClass> groupClasses = new ConcurrentHashMap<>();
 
     public GroupClassService() {}
-
-
-    /*public Page<GroupClassBasicDTO> findAll(Pageable page) {
-        Page<GroupClass> groupClasses = groupClassRepository.findAll(page);
-        return groupClassMapper.toDTOs(groupClasses.getContent());
-    }*/
 
     public Page<GroupClassBasicDTO> findAll(Pageable page) {
         Page<GroupClass> groupClasses = groupClassRepository.findAll(page);
@@ -58,6 +53,10 @@ public class GroupClassService {
     public Optional<GroupClassDTO> findById(long id) {
         return groupClassRepository.findById(id)
                 .map(groupClassMapper::toDTO);
+    }
+
+    public List<String> findAllInstructors() {
+        return groupClassRepository.findDistinctByInstructors();
     }
 
     public GroupClassDTO save(GroupClassBasicDTO groupClassDTO) {
@@ -143,10 +142,6 @@ public class GroupClassService {
         return groupClassMapper.toDomain(groupClassDTO);
     }
 
-    /*
-    public Page<GroupClassBasicDTO> toDTOs(Collection<GroupClass> groupClasses) {
-        return groupClassMapper.toDTOs(groupClasses);
-    } */
 
     public Page<GroupClassBasicDTO> toDTOs(Page<GroupClass> groupClassPage) {
         List<GroupClassBasicDTO> dtoList = groupClassPage

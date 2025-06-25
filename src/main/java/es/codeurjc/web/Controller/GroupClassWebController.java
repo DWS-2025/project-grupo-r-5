@@ -6,6 +6,7 @@ import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
@@ -55,12 +56,67 @@ public class GroupClassWebController {
     public String listFilteredClasses(
             @RequestParam(name = "dayWeek", required = false) String dayWeek,
             @RequestParam(required = false) String instructor,
-            Pageable pageable,
+            @RequestParam(required = false) Boolean search,
+            @PageableDefault(size = 5)Pageable pageable,
             Model model
     ) {
-        DayOfWeek dayOfWeek = parseAndCleanDay(dayWeek);
-        Page<GroupClassDTO> classes = groupClassService.findClassesByExample(dayOfWeek, instructor, pageable);
-        model.addAttribute("classes", classes);
+
+        if (search == null || !search) {
+            // No buscar, simplemente mostrar el formulario vacío
+            model.addAttribute("searchPerformed", false);
+            return "classesList";
+        }
+
+        instructor = Optional.ofNullable(validateService.cleanInstructor(instructor))
+                .filter(cleaned -> !cleaned.isBlank())
+                .orElse(null);
+
+        DayOfWeek dayOfWeek = validateService.parseAndCleanDay(dayWeek);
+
+        Page<GroupClassDTO> page = groupClassService.findClassesByExample(dayOfWeek, instructor, pageable);
+
+        model.addAttribute("searchPerformed", true);
+        model.addAttribute("classes", page.getContent());
+        model.addAttribute("currentPage", page.getNumber() + 1);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("dayWeek", dayOfWeek != null ? dayOfWeek.name() : "Any");
+        model.addAttribute("instructor", instructor != null ? instructor : "Any");
+        model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1 : 0);
+        model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : 0);
+
+
+        return "classesList";
+    }
+    @PostMapping("/GroupClasses")
+    public String findClassesPost(@RequestParam(name = "dayWeek", required = false) String dayWeek,
+                                  @RequestParam(required = false) String instructor,
+                                  @PageableDefault(size = 5)Pageable pageable,
+                                  Model model) {
+
+        // Clean and validate instructor
+        instructor = Optional.ofNullable(validateService.cleanInstructor(instructor))
+                .filter(cleaned -> !cleaned.isBlank())
+                .orElse(null);
+
+        // Parse and clean day
+        DayOfWeek dayOfWeek = validateService.parseAndCleanDay(dayWeek);
+
+        // Fetch filtered classes
+        Page<GroupClassDTO> page = groupClassService.findClassesByExample(dayOfWeek, instructor, pageable);
+
+
+        // Add attributes to the model
+        model.addAttribute("searchPerformed", true);
+        model.addAttribute("classes", page.getContent());
+        model.addAttribute("currentPage", page.getNumber() + 1);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("dayWeek", dayOfWeek != null ? dayOfWeek.name() : "Any");
+        model.addAttribute("instructor", instructor != null ? instructor : "Any");
+
+        //For pagination:
+        model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1: 0);
+        model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : 0);
+
         return "classesList";
     }
 
@@ -119,53 +175,7 @@ public class GroupClassWebController {
     }
 
 
-    private DayOfWeek parseAndCleanDay(String day) {
-        if (day == null || day.isBlank() || day.equalsIgnoreCase("Any")) {
-            return null;
-        }
-        try {
-            DayOfWeek rawDay = DayOfWeek.valueOf(day.toUpperCase());
-            String cleanedDay = validateService.cleanDay(rawDay);
-            return validateService.parseDay(cleanedDay);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Invalid day provided: " + day);
-            return null; // Invalid day, return null
-        }
-    }
 
-    @PostMapping("/GroupClasses")
-    public String findClassesPost(@RequestParam(name = "dayWeek", required = false) String dayWeek,
-                                  @RequestParam(required = false) String instructor,
-                                  Pageable pageable,
-                                  Model model) {
-
-        System.out.println("findClassesPost called with day=" + dayWeek + ", instructor=" + instructor + ", page=" + pageable.getPageNumber());
-
-        // Clean and validate instructor
-        instructor = Optional.ofNullable(validateService.cleanInstructor(instructor))
-                .filter(cleaned -> !cleaned.isBlank())
-                .orElse(null);
-
-        // Parse and clean day
-        DayOfWeek dayOfWeek = parseAndCleanDay(dayWeek);
-
-        // Fetch filtered classes
-        Page<GroupClassDTO> page = groupClassService.findClassesByExample(dayOfWeek, instructor, pageable);
-
-        // Add attributes to the model
-        model.addAttribute("searchPerformed", true);
-        model.addAttribute("classes", page.getContent());
-        model.addAttribute("currentPage", page.getNumber());
-        model.addAttribute("totalPages", page.getTotalPages());
-        model.addAttribute("dayWeek", dayOfWeek != null ? dayOfWeek.name() : "Any");
-        model.addAttribute("instructor", instructor != null ? instructor : "Any");
-
-        //For pagination:
-        model.addAttribute("previousPage", page.hasPrevious() ? page.getNumber() - 1: 0);
-        model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : 0);
-
-        return "classesList";
-    }
 
 }
 

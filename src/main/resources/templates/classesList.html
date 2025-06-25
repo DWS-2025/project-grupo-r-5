@@ -8,10 +8,6 @@
 <body>
 <h1>Find Classes</h1>
 
-{{^searchPerformed}}
-<h1>No classes searched yet</h1>
-{{/searchPerformed}}
-
 {{#searchPerformed}}
 <div class="container">
     <section class="section">
@@ -20,8 +16,6 @@
         {{/classes}}
 
         {{#classes}}
-        <!--p>Classes filtered for day: {{../dayWeek}}</p>
-        <p>And instructor: {{../instructor}}</p-->
         <table>
             <thead>
             <tr>
@@ -31,7 +25,6 @@
             </tr>
             </thead>
             <tbody>
-            {{#classes}}
             <tr>
                 <td>{{day}}</td>
                 <td>{{instructor}}</td>
@@ -39,7 +32,6 @@
                     <a href="/GroupClasses/Join-{{classid}}" class="btn join-btn">Join</a>
                 </td>
             </tr>
-            {{/classes}}
             </tbody>
         </table>
         {{/classes}}
@@ -48,10 +40,10 @@
     <div class="pagination">
         Page {{currentPage}} of {{totalPages}}
         {{#previousPage}}
-        <a href="?page={{previousPage}}">Previous</a>
+        <a href="?dayWeek={{dayWeek}}&instructor={{instructor}}&page={{previousPage}}&search=true">Previous</a>
         {{/previousPage}}
         {{#nextPage}}
-        <a href="?page={{nextPage}}">Next</a>
+        <a href="?dayWeek={{dayWeek}}&instructor={{instructor}}&page={{nextPage}}&search=true">Next</a>
         {{/nextPage}}
     </div>
     </section>
@@ -59,10 +51,11 @@
 {{/searchPerformed}}
 
 <form action="/GroupClasses" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="search" value="true" />
         <!-- Filter by day of the week -->
         <label for="dayWeek">Day of the Week:</label>
-        <select id="dayWeek" name="dayWeek" required>
-            <option value="">Select a day</option>
+        <select id="dayWeek" name="dayWeek">
+            <option value="Any">Select a day</option>
             <option value="Monday">Monday</option>
             <option value="Tuesday">Tuesday</option>
             <option value="Wednesday">Wednesday</option>
@@ -70,7 +63,6 @@
             <option value="Friday">Friday</option>
             <option value="Saturday">Saturday</option>
             <option value="Sunday">Sunday</option>
-            <option value="Any">Any</option>
         </select><br><br>
         <!-- Filter by instructor -->
         <label for="instructor">Instructor:</label>

@@ -11,6 +11,7 @@ import java.util.List;
 public interface GroupClassRepository extends JpaRepository <GroupClass, Long> {
     @Query("SELECT gc FROM GroupClass gc WHERE gc.day = :day AND gc.instructor = :instructor")
     List<GroupClass> findClassesByDayAndInstructor(@Param("day") DayOfWeek day, @Param("instructor") String instructor);
-
+    @Query("SELECT DISTINCT g.instructor FROM GroupClass g WHERE g.instructor IS NOT NULL")
+    List<String> findDistinctByInstructors();
 
 }
