@@ -1,5 +1,7 @@
 package es.codeurjc.web.Controller;
 
+import es.codeurjc.web.Dto.ClassUserBasicDTO;
+import es.codeurjc.web.Dto.ClassUserDTO;
 import es.codeurjc.web.Dto.GroupClassBasicDTO;
 import es.codeurjc.web.Dto.GroupClassDTO;
 import es.codeurjc.web.Service.GroupClassService;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
@@ -48,12 +52,43 @@ public class GroupClassAPIController {
     }
 
     @PutMapping("/{id}")
-    public GroupClassDTO replaceGroupClass(@PathVariable long id, @RequestBody GroupClassDTO updatedGroupClassDTO) {
-        return groupClassService.save(updatedGroupClassDTO);
+    public GroupClassDTO replaceGroupClass(@PathVariable long id, @RequestBody GroupClassDTO dto) {
+
+        Optional <GroupClassDTO> op = groupClassService.findById(id);
+        if(op.isPresent()) {
+            GroupClassDTO original = op.get();
+            int currentCapacity = original.currentCapacity();
+            List<ClassUserBasicDTO> userList = original.usersList();
+
+            GroupClassDTO updatedDto = new GroupClassDTO(
+                    id,
+                    dto.classname(),
+                    dto.instructor(),
+                    dto.day(),
+                    dto.timeInit(),
+                    dto.duration(),
+                    dto.timeFin(),
+                    dto.maxCapacity(),
+                    currentCapacity,
+                    userList
+            );
+            return groupClassService.save(updatedDto);
+        }
+        return null;
     }
 
     @DeleteMapping("/{id}")
     public GroupClassDTO deleteGroupClass(@PathVariable long id) {
-        return groupClassService.delete(id);
+        Optional <GroupClassDTO> op = groupClassService.findById(id);
+        if(op.isPresent()) {
+            GroupClassDTO original = op.get();
+            original.usersList().size();
+
+            groupClassService.delete(id);
+            return original;
+        }
+        else{
+            return null;
+        }
     }
 }
