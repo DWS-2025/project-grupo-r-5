@@ -41,6 +41,11 @@ public class BasicDataInitializer {
 
     @PostConstruct
     public void init() throws IOException {
+
+        if (userRepository.count() > 0 || groupClassRepository.count() > 0 || postRepository.count() > 0) {
+            return; // Ya hay datos, no hacer nada
+        }
+
         //create users first:
         ClassUser user0 = new ClassUser("Example");
         ClassUser user1 = new ClassUser("Pepe");
