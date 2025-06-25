@@ -40,7 +40,7 @@ public class BlogAPIController {
     }
 
     @GetMapping("/{id}")
-    public PostDTO getPost(long id) {
+    public PostDTO getPost(@PathVariable long id) {
         return postService.getPost(id);
     }
 
@@ -66,11 +66,12 @@ public class BlogAPIController {
     public ResponseEntity<Object> getPostImage(@PathVariable long id) throws SQLException, IOException {
 
         Blob postImage = postService.getBlobImage(id);
+        byte[] imageBytes = postImage.getBytes(1, (int) postImage.length());
 
         return ResponseEntity
                 .ok()
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
-                .body(postImage);
+                .body(imageBytes);
 
     }
 
@@ -78,14 +79,14 @@ public class BlogAPIController {
     public ResponseEntity<Object> createPostImage(@PathVariable long id, @RequestParam MultipartFile imageFile)
             throws IOException {
 
-        URI location = fromCurrentRequest().build().toUri();
         imageService.createImage(imageFile);
+        URI location = fromCurrentRequest().build().toUri();
         return ResponseEntity.created(location).build();
 
     }
 
     @PutMapping("/{id}/image")
-    public ResponseEntity<Object> replacePostImage(@PathVariable long id, @RequestParam MultipartFile imageFile)
+    public ResponseEntity<Void> replacePostImage(@PathVariable long id, @RequestParam MultipartFile imageFile)
             throws IOException {
 
         postService.updateImageForPost(id, imageFile);
@@ -94,7 +95,7 @@ public class BlogAPIController {
 
 
     @DeleteMapping("/{id}/image")
-    public ResponseEntity<Object> deletePostImage(@PathVariable long id) throws IOException {
+    public ResponseEntity<Void> deletePostImage(@PathVariable long id) throws IOException {
         postService.deleteImageByPostId(id);
         return ResponseEntity.noContent().build();
     }

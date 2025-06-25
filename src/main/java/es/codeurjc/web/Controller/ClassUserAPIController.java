@@ -2,6 +2,8 @@ package es.codeurjc.web.Controller;
 
 import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Service.GroupClassService;
+import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
@@ -19,6 +22,10 @@ public class ClassUserAPIController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PostService postService;
+    @Autowired
+    private GroupClassService groupClassService;
 
     @GetMapping("/")
     public Page<ClassUserBasicDTO> getClassUsers(Pageable page) {
@@ -26,7 +33,7 @@ public class ClassUserAPIController {
     }
 
     @GetMapping("/{id}")
-    public ClassUserDTO getClassUser(long id) {
+    public ClassUserDTO getClassUser(@PathVariable long id) {
         return userService.findById(id).orElseThrow();
     }
 
@@ -44,6 +51,11 @@ public class ClassUserAPIController {
 
     @DeleteMapping("/{id}")
     public ClassUserDTO deleteClassUser(@PathVariable long id) {
+        Optional<ClassUserDTO> classUser = userService.findById(id);
+        if(classUser.isPresent()){
+
+        }
+
         return userService.delete(id);
     }
 
