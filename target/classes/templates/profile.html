@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="/css/profile.css">
     <title>Perfil de {{user.username}}</title>
 </head>
 <body>
@@ -22,7 +23,7 @@
 <h2>Posts:</h2>
 <ul>
     {{#user.listOfPosts}}
-    <li><strong>{{title}}</strong>: {{description}}</li>
+    <li><strong>{{title}}</strong></li>
     {{/user.listOfPosts}}
     {{^user.listOfPosts}}
     <li>No has creado ningún post.</li>
