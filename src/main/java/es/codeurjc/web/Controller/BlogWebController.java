@@ -83,8 +83,6 @@ public class BlogWebController {
         }
     }
 
-    ///////////////////////
-    //WE SHOULD CHANGE THIS METHOD FOR IT TO RETURN A STRING, SO IT GIVES BACK ERROR OR THE IMAGE VIEW HTML:
     @GetMapping("/blog/{id}/image")
     public ResponseEntity<Object> downloadImage(@PathVariable long id, RedirectAttributes redirectAttributes) throws SQLException {
         Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
@@ -108,7 +106,6 @@ public class BlogWebController {
             return ResponseEntity.notFound().build();
         }
     }
-    /////////////////
 
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
@@ -144,7 +141,7 @@ public class BlogWebController {
                 }
 
                 model.addAttribute("DeletePost", true);
-                postService.delete(id);
+                postService.delete(postOptional.get().postid());
                 return "deleted_post";
             } else {
                 redirectAttributes.addAttribute("message", "Post not found");
@@ -163,18 +160,18 @@ public class BlogWebController {
             if (postOptional.isPresent()) {
                 PostDTO post = postOptional.get();
 
-                // Verificar que el usuario actual sea el creador del post
+                //Verify that the user is the creator
                 ClassUserDTO loggedUser = userService.getLoggedUser();
                 if (!canEditOrDeletePost(loggedUser, post)) {
                     redirectAttributes.addAttribute("message", "Unauthorized to delete image");
                     return "redirect:/error";
                 }
 
-                // Borrar imagen
+                //Delete image
                 model.addAttribute("DeleteImage", true);
                 imageService.deleteImage(validateService.cleanInput(imageName));
 
-                // Actualizar post sin imagen
+                //Post without image
                 PostDTO updatedPost = new PostDTO(post.postid(), post.creator(), post.title(), post.description(), "no-image.png");
                 postService.save(updatedPost);
 
@@ -253,7 +250,6 @@ public class BlogWebController {
     }
 
 
-    //////////////////////////////
     @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model,
                                   @RequestParam("title") String title,
@@ -276,12 +272,28 @@ public class BlogWebController {
             return "redirect:/error";
         }
 
+        String imagePath = originalPost.imagePath();
+
+        if (deleteImage && imagePath != null && !imagePath.isBlank()) {
+            imageService.deleteImage(validateService.cleanInput(imagePath));
+            imagePath = "no-image.png";
+        }
+
+        if (imagefile != null && !imagefile.isEmpty()) {
+            Path imagesDir = Paths.get("images");
+            if (!Files.exists(imagesDir)) {
+                Files.createDirectories(imagesDir);
+            }
+            String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
+            imagePath = imagesDir.resolve(imageName).normalize().toString();
+        }
+
         PostDTO updatedPost = new PostDTO(
                 originalPost.postid(),
                 originalPost.creator(),
                 validateService.cleanInput(title),
                 validateService.cleanInput(description),
-                validateService.cleanInput(originalPost.imagePath())
+                validateService.cleanInput(imagePath)
         );
 
         String validationError = validateService.validatePost(postService.toDomain(updatedPost));
@@ -296,7 +308,6 @@ public class BlogWebController {
 
         return "redirect:/blog/" + updatedPost.postid();
     }
-    /////////////////////
 
 
     private boolean canEditOrDeletePost(ClassUserDTO user, PostDTO post) {
