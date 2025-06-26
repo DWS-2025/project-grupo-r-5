@@ -172,7 +172,7 @@ public class BlogWebController {
 
                 // Borrar imagen
                 model.addAttribute("DeleteImage", true);
-                imageService.deleteImage(imageName);
+                imageService.deleteImage(validateService.cleanInput(imageName));
 
                 // Actualizar post sin imagen
                 PostDTO updatedPost = new PostDTO(post.postid(), post.creator(), post.title(), post.description(), "no-image.png");
@@ -207,9 +207,8 @@ public class BlogWebController {
         ClassUser classUser = userService.findEntityById(user.userid()).orElseThrow();
 
         post.setCreator(userService.toDomain(user));
-        post.setTitle(title);
-        //post.setDescription(Jsoup.parse(description).text());
-        post.setDescription(description);
+        post.setTitle(validateService.cleanInput(title));
+        post.setDescription(validateService.cleanInput(description));
 
         if(imagefile != null && !imagefile.isEmpty()){
             // Create directory if it doesn't exist
@@ -254,6 +253,7 @@ public class BlogWebController {
     }
 
 
+    //////////////////////////////
     @PostMapping("/blog/changePost/{id}")
     public String editPostProcess(@PathVariable long id, Model model,
                                   @RequestParam("title") String title,
@@ -279,9 +279,9 @@ public class BlogWebController {
         PostDTO updatedPost = new PostDTO(
                 originalPost.postid(),
                 originalPost.creator(),
-                title,
-                description,
-                originalPost.imagePath()
+                validateService.cleanInput(title),
+                validateService.cleanInput(description),
+                validateService.cleanInput(originalPost.imagePath())
         );
 
         String validationError = validateService.validatePost(postService.toDomain(updatedPost));
@@ -296,6 +296,9 @@ public class BlogWebController {
 
         return "redirect:/blog/" + updatedPost.postid();
     }
+    /////////////////////
+
+
     private boolean canEditOrDeletePost(ClassUserDTO user, PostDTO post) {
         if (user == null) return false;
 

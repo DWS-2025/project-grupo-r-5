@@ -15,15 +15,15 @@ public class ValidateService {
 
     //XSS protection implement with Jsoup:
     private static final Safelist CUSTOM_SAFE_LIST = Safelist.relaxed()
-            .addTags("time", "br", "p", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "b", "i")
-            .addAttributes("img", "src", "alt", "title")
+            .addTags("time", "br", "p", "span", "h1", "h2", "h3", "h4", "h5", "h6", "strong", "em", "b", "i")
+            .addAttributes("img", "src", "alt", "a", "href", "title")
             .addProtocols("img", "src", "http", "https")
             .addAttributes("a", "href", "title")
             .addProtocols("a", "href", "http", "https")
             .removeTags("script", "style", "iframe") //just in case, explicitly remove these tags
             .preserveRelativeLinks(true); //we accept relative paths
 
-    private String cleanInput(String input){
+    public String cleanInput(String input){
         return Jsoup.clean(input, CUSTOM_SAFE_LIST);
     }
 
@@ -245,7 +245,7 @@ public class ValidateService {
         if (textError != null){
             return textError;
         }
-        String imagePath = post.getImagePath();
+        String imagePath = cleanInput(post.getImagePath());
         if (imagePath == null || !isValidFileName(imagePath)) {
             return null;
         }
