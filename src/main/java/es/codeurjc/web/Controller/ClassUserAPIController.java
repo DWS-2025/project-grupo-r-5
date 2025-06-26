@@ -2,6 +2,8 @@ package es.codeurjc.web.Controller;
 
 import es.codeurjc.web.Dto.ClassUserBasicDTO;
 import es.codeurjc.web.Dto.ClassUserDTO;
+import es.codeurjc.web.Service.GroupClassService;
+import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static org.springframework.web.servlet.support.ServletUriComponentsBuilder.fromCurrentRequest;
 
@@ -26,7 +29,7 @@ public class ClassUserAPIController {
     }
 
     @GetMapping("/{id}")
-    public ClassUserDTO getClassUser(long id) {
+    public ClassUserDTO getClassUser(@PathVariable long id) {
         return userService.findById(id).orElseThrow();
     }
 

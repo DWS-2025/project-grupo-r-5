@@ -111,17 +111,17 @@ public class BasicDataInitializer {
         Post post6 = new Post(managedUser5, "Fortaleciendo el cuerpo con Pilates", "Hoy fui a mi primera clase de pilates y me sorprendió lo exigente que puede ser.");
 
         //set images:
-        post1.setImagePath("example1.jpeg");
+        //post1.setImagePath("example1.jpeg");
         post2.setImagePath("example2.jpeg");
         post3.setImagePath("example3.jpeg");
         post4.setImagePath("example4.jpeg");
 
-        Blob image1 = imageService.imageFileFromPath(post1.getImagePath());
+        //Blob image1 = imageService.imageFileFromPath(post1.getImagePath());
         Blob image2 = imageService.imageFileFromPath(post2.getImagePath());
         Blob image3 = imageService.imageFileFromPath(post3.getImagePath());
         Blob image4 = imageService.imageFileFromPath(post4.getImagePath());
 
-        post1.setImageFile(image1);
+        //post1.setImageFile(image1);
         post2.setImageFile(image2);
         post3.setImageFile(image3);
         post4.setImageFile(image4);

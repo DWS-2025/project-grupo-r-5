@@ -9,6 +9,7 @@ import es.codeurjc.web.Service.ImageService;
 import es.codeurjc.web.Service.PostService;
 import es.codeurjc.web.Service.UserService;
 import es.codeurjc.web.Service.ValidateService;
+import org.hibernate.engine.jdbc.BlobProxy;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.jsoup.Jsoup;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
@@ -181,7 +183,6 @@ public class BlogWebController {
 
         Post post = new Post();
 
-
         ClassUserDTO user = userService.getLoggedUser();
         ClassUser classUser = userService.findEntityById(user.userid()).orElseThrow();
 
@@ -190,16 +191,6 @@ public class BlogWebController {
         post.setDescription(Jsoup.parse(description).text());
 
         if(imagefile != null && !imagefile.isEmpty()){
-            //Validate image before uploading
-            String imageValidationError = validateService.validatePostWithImage(post);
-            if (imageValidationError != null && !imageValidationError.isEmpty()) {
-                model.addAttribute("error", imageValidationError);
-                model.addAttribute("Post", post);
-
-                redirectAttributes.addAttribute("message", imageValidationError);
-                return "redirect:/error";
-            }
-
             // Create directory if it doesn't exist
             Path imagesDir = Paths.get("images");
             if (!Files.exists(imagesDir)) {
@@ -211,6 +202,16 @@ public class BlogWebController {
             Path imagePath = imagesDir.resolve(imageName).normalize();
 
             post.setImagePath(imageName);
+
+            //Validate image before uploading
+            String imageValidationError = validateService.validatePostWithImage(post, imagefile);
+            if (imageValidationError != null && !imageValidationError.isEmpty()) {
+                model.addAttribute("error", imageValidationError);
+                model.addAttribute("Post", post);
+
+                redirectAttributes.addAttribute("message", imageValidationError);
+                return "redirect:/error";
+            }
         }
 
         String validationError = validateService.validatePost(post);
@@ -222,13 +223,11 @@ public class BlogWebController {
             return "redirect:/error";
         }
 
-
         PostDTO postDTO = postService.toDTO(post);
 
         long postid = postService.save(postDTO, imagefile).postid();
         userService.addPost(post.getPostid(), user.userid());
         userService.save(user);
-
 
         return "redirect:/blog/" + postid;
     }

@@ -232,7 +232,7 @@ public class ValidateService {
     }
 
 
-    public String validatePostWithImage(Post post){
+    public String validatePostWithImage(Post post, MultipartFile imagefile){
         String nameError = validateUsername(post.getCreatorName());
         if (nameError != null){
             return nameError;
@@ -245,11 +245,11 @@ public class ValidateService {
         if (textError != null){
             return textError;
         }
-        String imageNameError = String.valueOf(isValidFileName(post.getImagePath()));
-        if(imageNameError != null){
-            return imageNameError;
+        String imagePath = post.getImagePath();
+        if (imagePath == null || !isValidFileName(imagePath)) {
+            return null;
         }
-        String imageError = validateImage((MultipartFile) post.getImageFile());
+        String imageError = validateImage((MultipartFile) imagefile);
         if(imageError != null){
             return imageError;
         }
