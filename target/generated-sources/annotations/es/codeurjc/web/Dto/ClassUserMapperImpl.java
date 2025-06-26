@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-25T20:56:22+0200",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+    date = "2025-06-26T15:27:51+0200",
+    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.7 (Microsoft)"
 )
 @Component
 public class ClassUserMapperImpl implements ClassUserMapper {
@@ -29,19 +29,19 @@ public class ClassUserMapperImpl implements ClassUserMapper {
             return null;
         }
 
+        String username = null;
         long userid = 0L;
-        String name = null;
         List<GroupClassBasicDTO> listOfClasses = null;
         List<PostDTO> listOfPosts = null;
 
+        username = classUser.getUsername();
         if ( classUser.getUserid() != null ) {
             userid = classUser.getUserid();
         }
-        name = classUser.getName();
         listOfClasses = groupClassMapper.toDTOs( classUser.getListOfClasses() );
         listOfPosts = postMapper.toDTOs( classUser.getListOfPosts() );
 
-        ClassUserDTO classUserDTO = new ClassUserDTO( userid, name, listOfClasses, listOfPosts );
+        ClassUserDTO classUserDTO = new ClassUserDTO( userid, username, listOfClasses, listOfPosts );
 
         return classUserDTO;
     }
@@ -52,15 +52,15 @@ public class ClassUserMapperImpl implements ClassUserMapper {
             return null;
         }
 
+        String username = null;
         long userid = 0L;
-        String name = null;
 
+        username = classUser.getUsername();
         if ( classUser.getUserid() != null ) {
             userid = classUser.getUserid();
         }
-        name = classUser.getName();
 
-        ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, name );
+        ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, username );
 
         return classUserBasicDTO;
     }
@@ -88,7 +88,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
         ClassUser classUser = new ClassUser();
 
         classUser.setUserid( classUserDTO.userid() );
-        classUser.setName( classUserDTO.name() );
+        classUser.setUsername( classUserDTO.username() );
         classUser.setListOfClasses( groupClassBasicDTOListToGroupClassList( classUserDTO.listOfClasses() ) );
         classUser.setListOfPosts( postDTOListToPostList( classUserDTO.listOfPosts() ) );
 
@@ -104,7 +104,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
         ClassUser classUser = new ClassUser();
 
         classUser.setUserid( classUserBasicDTO.userid() );
-        classUser.setName( classUserBasicDTO.name() );
+        classUser.setUsername( classUserBasicDTO.username() );
 
         return classUser;
     }

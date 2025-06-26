@@ -7,9 +7,11 @@ import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Repositories.GroupClassRepository;
 import es.codeurjc.web.Repositories.PostRepository;
 import es.codeurjc.web.Repositories.UserRepository;
+import es.codeurjc.web.security.SecurityConfiguration;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -19,6 +21,7 @@ import java.nio.file.Paths;
 import java.sql.Blob;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.List;
 
 @Transactional
 @Service
@@ -38,6 +41,9 @@ public class BasicDataInitializer {
     @Autowired
     private ImageService imageService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     @PostConstruct
     public void init() throws IOException {
@@ -47,13 +53,14 @@ public class BasicDataInitializer {
         }
 
         //create users first:
-        ClassUser user0 = new ClassUser("Example");
-        ClassUser user1 = new ClassUser("Pepe");
-        ClassUser user2 = new ClassUser("Juan");
-        ClassUser user3 = new ClassUser("Yoshi");
-        ClassUser user4 = new ClassUser("Zelda");
-        ClassUser user5 = new ClassUser("Rufusberto");
-        ClassUser user6 = new ClassUser("Kirby");
+        // Crear usuarios con contraseñas y roles
+        ClassUser user0 = new ClassUser("Admin", passwordEncoder.encode("admin"), List.of("ADMIN","USER"));
+        ClassUser user1 = new ClassUser("Pepe", passwordEncoder.encode("password1"), List.of("USER"));
+        ClassUser user2 = new ClassUser("Juan", passwordEncoder.encode("password2"), List.of("USER"));
+        ClassUser user3 = new ClassUser("Yoshi", passwordEncoder.encode("password3"), List.of("USER"));
+        ClassUser user4 = new ClassUser("Zelda", passwordEncoder.encode("password4"), List.of("USER"));
+        ClassUser user5 = new ClassUser("Rufusberto", passwordEncoder.encode("password5"), List.of("USER"));
+        ClassUser user6 = new ClassUser("Kirby", passwordEncoder.encode("password6"), List.of("USER"));
 
         userRepository.save(user0);
         userRepository.save(user1);
@@ -114,7 +121,7 @@ public class BasicDataInitializer {
         //post1.setImagePath("example1.jpeg");
         post2.setImagePath("example2.jpeg");
         post3.setImagePath("example3.jpeg");
-        post4.setImagePath("example4.jpeg");
+        post4.setImagePath("example4.jpg");
 
         //Blob image1 = imageService.imageFileFromPath(post1.getImagePath());
         Blob image2 = imageService.imageFileFromPath(post2.getImagePath());

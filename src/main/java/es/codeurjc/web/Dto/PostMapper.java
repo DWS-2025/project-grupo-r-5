@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import java.util.Collection;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ClassUserMapper.class})
 public interface PostMapper {
 
     @Mapping(target = "creator", source = "creator")

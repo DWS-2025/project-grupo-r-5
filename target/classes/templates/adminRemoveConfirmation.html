@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Deletion</title>
+    <link rel="stylesheet" href="/css/adminTables.css">
+</head>
+<body>
+<div class="container">
+    <h1>Are you sure you want to delete this {{type}}?</h1>
+
+    <p>{{type}} Name: {{name}}</p>
+    <p>Id: {{id}}</p>
+    <div class="btn-group">
+        <form action="/admin/{{types}}/delete-{{id}}" method="POST">
+            <button type="submit" class="btn delete-btn">Confirm Delete</button>
+        </form>
+
+        <a href="/admin/{{types}}" class="btn">Go Back</a>
+    </div>
+</div>
+</body>
+</html>

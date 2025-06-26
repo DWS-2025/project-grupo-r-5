@@ -52,12 +52,12 @@ public class Post {
         return creator;
     }
     public String getCreatorName() {
-        return (creator != null) ? creator.getName() : "Unknown user";
+        return (creator != null) ? creator.getUsername() : "Unknown user";
     }
     public void setCreator(ClassUser creator) {
         this.creator = creator;
     }
-    public void setCreatorName(String username) {this.creator.setName(username);}
+    public void setCreatorName(String username) {this.creator.setUsername(username);}
 
         //Title
     public String getTitle() {

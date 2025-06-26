@@ -81,8 +81,11 @@ public class UserService {
     }
 
     public Optional<ClassUserDTO> findByName(String name) {
-        return userRepository.findByName(name)
+        return userRepository.findByUsername(name)
                 .map(classUserMapper::toDTO);
+    }
+    public Optional<ClassUser> findEntityByName(String username) {
+        return userRepository.findByUsername(username);
     }
 
     public ClassUserDTO save(ClassUserDTO classUserDTO){

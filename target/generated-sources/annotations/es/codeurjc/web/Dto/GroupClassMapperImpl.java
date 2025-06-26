@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-25T20:56:21+0200",
-    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.1 (Oracle Corporation)"
+    date = "2025-06-26T14:27:25+0200",
+    comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.7 (Microsoft)"
 )
 @Component
 public class GroupClassMapperImpl implements GroupClassMapper {
@@ -151,12 +151,12 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         }
 
         long userid = 0L;
-        String name = null;
 
         if ( classUser.getUserid() != null ) {
             userid = classUser.getUserid();
         }
-        name = classUser.getName();
+
+        String name = null;
 
         ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, name );
 
@@ -184,7 +184,6 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         ClassUser classUser = new ClassUser();
 
         classUser.setUserid( classUserBasicDTO.userid() );
-        classUser.setName( classUserBasicDTO.name() );
 
         return classUser;
     }

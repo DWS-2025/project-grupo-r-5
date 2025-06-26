@@ -12,7 +12,14 @@ public class ClassUser {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long userid;
 
-    private String name;
+    @Column(unique = true)
+    private String username;
+
+    private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles = new ArrayList<>();
+
 
     @ManyToMany(mappedBy = "usersList", fetch = FetchType.LAZY)
     private List<GroupClass> listOfClasses = new ArrayList<>();
@@ -22,10 +29,12 @@ public class ClassUser {
 
     //Constructor:
     public ClassUser() {}
-    public ClassUser(String name){
-        this.name = name;
-        listOfPosts = new ArrayList<>();
-        listOfClasses = new ArrayList<>();
+    public ClassUser(String username, String password, List<String> roles) {
+        this.username = username;
+        this.password = password;
+        this.roles = roles != null ? roles : new ArrayList<>();
+        this.listOfClasses = new ArrayList<>();
+        this.listOfPosts = new ArrayList<>();
     }
 
     //Methods:
@@ -59,25 +68,38 @@ public class ClassUser {
         this.userid = userid;
     }
         //Name
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return this.username;
     }
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String name) {
+        this.username = name;
     }
-
-        public List<GroupClass> getListOfClasses() {
+        //Password
+    public String getPassword() {
+        return this.password;
+    }
+    public void setPassword(String password) {this.password = password;}
+        //Roles
+    public List<String> getRoles() {
+        return roles;
+    }
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
+    public void addRole(String role) {
+        this.roles.add(role);
+    }
+        //Classes
+    public List<GroupClass> getListOfClasses() {
             return listOfClasses;
         }
-
     public void setListOfClasses(List<GroupClass> listOfClasses) {
         this.listOfClasses = listOfClasses;
     }
-
+        //Posts
     public List<Post> getListOfPosts() {
         return listOfPosts;
     }
-
     public void setListOfPosts(List<Post> listOfPosts) {
         this.listOfPosts = listOfPosts;
     }

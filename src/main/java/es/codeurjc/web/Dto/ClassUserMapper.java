@@ -10,9 +10,9 @@ import java.util.List;
 
 @Mapper(componentModel = "spring", uses = {PostMapper.class, GroupClassMapper.class})
 public interface ClassUserMapper {
-
+    @Mapping(source = "username", target = "username")
     ClassUserDTO toDTO(ClassUser classUser);
-
+    @Mapping(source = "username", target = "username")
     ClassUserBasicDTO toBasicDTO(ClassUser classUser);
 
     List<ClassUserBasicDTO> toDTOs(Collection<ClassUser> classUsers);

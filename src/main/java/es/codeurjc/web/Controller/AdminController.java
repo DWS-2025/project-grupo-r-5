@@ -128,7 +128,7 @@ public class AdminController {
     public String deleteUser(@PathVariable long id, Model model) {
         model.addAttribute("type","User");
         model.addAttribute("types","users");
-        model.addAttribute("name",userService.findById(id).get().name());
+        model.addAttribute("name",userService.findById(id).get().username());
         model.addAttribute("id",userService.findById(id).get().userid());
         return "adminRemoveConfirmation";
     }
