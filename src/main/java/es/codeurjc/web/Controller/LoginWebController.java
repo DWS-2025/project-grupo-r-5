@@ -63,20 +63,20 @@ public class LoginWebController {
                                  @RequestParam("password") String password,
                                  RedirectAttributes redirectAttributes) {
 
-        // Crear DTO o entidad
+        //Create DTO or entity
         username = username.trim();
         ClassUser newUser = new ClassUser();
-        newUser.setUsername(username);
-        newUser.setPassword(password);
+        newUser.setUsername(validateService.cleanInput(username));
+        newUser.setPassword(validateService.cleanInput(password));
 
-        // Validar que username no exista
+        //Validate existing username
         if (userService.usernameExists(username)) {
             model.addAttribute("error", "Ese nombre ya está en uso");
             model.addAttribute("userForm", newUser);
-            return "usercreateform"; // tu plantilla del formulario
+            return "usercreateform";
         }
 
-        // Validar usuario (puedes hacer validaciones extra en validateService si quieres)
+        //Validate user (you can do extra validations)
         String validationError = validateService.validateUsername(username);
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
@@ -84,7 +84,7 @@ public class LoginWebController {
             return "usercreateform"; // formulario con error
         }
 
-        // Guardar usuario
+        //Save user
         userService.save(newUser);
 
         return "redirect:/profile";

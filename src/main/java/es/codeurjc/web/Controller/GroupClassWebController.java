@@ -39,7 +39,7 @@ public class GroupClassWebController {
     public String showGroupClasses(@ModelAttribute("filter") GroupClass filter, Model model, Pageable page) {
         //Sorted by day and hour:
         Map<String, List<GroupClassDTO>> groupedMap = groupClassService.getGroupedClassesByExample(filter, page);
-        // Convertimos el Map en una lista de objetos GroupedEntry
+        //Change Map to a list of GroupedEntry
         List<GroupedEntry> groupedClasses = groupedMap.entrySet()
                 .stream()
                 .map(entry -> new GroupedEntry(entry.getKey(), entry.getValue()))
@@ -62,7 +62,7 @@ public class GroupClassWebController {
     ) {
 
         if (search == null || !search) {
-            // No buscar, simplemente mostrar el formulario vacío
+            //No search, show empty formulary
             model.addAttribute("searchPerformed", false);
             return "classesList";
         }

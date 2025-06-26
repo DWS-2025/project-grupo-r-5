@@ -4,6 +4,7 @@ import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Domain.Post;
 import es.codeurjc.web.Dto.*;
 import es.codeurjc.web.Repositories.PostRepository;
+import es.codeurjc.web.Service.ValidateService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Service.GroupClassService;
@@ -34,6 +35,8 @@ public class AdminController {
     private UserService classUserService;
     @Autowired
     private GroupClassService groupClassService;
+    @Autowired
+    private ValidateService validateService;
     @Autowired
     private PostRepository postRepository;
 
@@ -111,11 +114,11 @@ public class AdminController {
 
         // CCreate the new class using the constructor and its properties
         GroupClass newClass = new GroupClass(
-                classname,
+                validateService.cleanInput(classname),
                 DayOfWeek.valueOf(day.toUpperCase()),  // Convert the String a DayOfWeek
                 LocalTime.parse(time_init),             // Convert the String a LocalTime
                 duration,
-                instructor,
+                validateService.cleanInstructor(instructor),
                 maxCapacity
         );
         GroupClassBasicDTO newgpClassBasicDTO = groupClassService.toBasicDTO(newClass);
@@ -138,18 +141,17 @@ public class AdminController {
         Optional<ClassUserDTO> user = userService.findById(id);
 
         if(user.isPresent()){
-
             userService.deleteUserClasses(id);
-
         } else {
             redirectAttributes.addAttribute("message", "Error deleting user: User not found.");
             return "redirect:/error";
         }
-
         userService.delete(id);
 
         return "redirect:/admin/users";
     }
+
+
     @GetMapping("/admin/posts/delete-{id}")
     public String deletePost(@PathVariable long id, Model model) {
         model.addAttribute("type","Post");
@@ -158,6 +160,8 @@ public class AdminController {
         model.addAttribute("id",postService.findById(id).get().postid());
         return "adminRemoveConfirmation";
     }
+
+
     @PostMapping("/admin/posts/delete-{id}")
     public String deletePostConfirmed(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         Optional <PostDTO> post = postService.findById(id);
