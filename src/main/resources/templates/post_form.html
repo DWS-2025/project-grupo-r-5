@@ -11,6 +11,9 @@
 <form action="{{#isEdit}}/blog/changePost/{{post.postid}}{{/isEdit}}{{^isEdit}}/blog/new{{/isEdit}}"
       method="post" enctype="multipart/form-data">
     <input type="hidden" name="isEdit" value="{{isEdit}}">
+    {{#isEdit}}
+    <input type="hidden" name="user" value="{{post.creator.name}}">
+    {{/isEdit}}
 
     <p><label>Title: </label></p>
     <p><input type="text" name="title" placeholder="Title" value="{{#isEdit}}{{post.title}}{{/isEdit}}" required></p>

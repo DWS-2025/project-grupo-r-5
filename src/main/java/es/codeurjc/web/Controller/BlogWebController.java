@@ -188,7 +188,8 @@ public class BlogWebController {
 
         post.setCreator(userService.toDomain(user));
         post.setTitle(title);
-        post.setDescription(Jsoup.parse(description).text());
+        //post.setDescription(Jsoup.parse(description).text());
+        post.setDescription(description);
 
         if(imagefile != null && !imagefile.isEmpty()){
             // Create directory if it doesn't exist
@@ -264,7 +265,8 @@ public class BlogWebController {
                 originalPost.postid(),
                 classUser,
                 title,
-                Jsoup.parse(description).text(),
+                //Jsoup.parse(description).text(),
+                description,
                 originalPost.imagePath()
         );
         //Uncomment this in the 3rd phase
