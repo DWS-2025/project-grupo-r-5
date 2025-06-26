@@ -155,7 +155,7 @@ public class GroupClassWebController {
         }*/
         userService.addGroupClass(id,user.userid());
         //long classid = groupClass.get().classid();
-        return "redirect:/GroupClasses/Join-" + id + "/successJoinClass";
+        return "redirect:/GroupClasses/Join-" + id + "/success";
 
     }
 

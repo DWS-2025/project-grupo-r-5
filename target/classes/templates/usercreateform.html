@@ -22,7 +22,7 @@
 
     <label for="password">Contraseña:</label><br/>
     <input type="password" id="password" name="password" required /><br/><br/>
-
+    <input type="hidden" name="_csrf" value="{{token}}" />
     <button type="submit">Crear usuario</button>
 </form>
 

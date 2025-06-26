@@ -113,17 +113,18 @@ public class BlogWebController {
     @GetMapping("/blog/changePost/{id}")
     public String editPost(Model model, @PathVariable("id") long id, RedirectAttributes redirectAttributes) {
         Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
-        try {
-            if (postOptional.isPresent()){
-                PostDTO post = postService.getPost(id);
-                model.addAttribute("post", post);
-                model.addAttribute("isEdit", true);
-                return "post_form";
-            } else {
-                redirectAttributes.addAttribute("message", "Post not found");
+        if (postOptional.isPresent()) {
+            PostDTO post = postOptional.get();
+            ClassUserDTO user = userService.getLoggedUser();
+            if (!canEditOrDeletePost(user, post)) {
+                redirectAttributes.addAttribute("message", "Unauthorized to edit post");
                 return "redirect:/error";
             }
-        } catch (NoSuchElementException e) {
+            model.addAttribute("post", post);
+            model.addAttribute("isEdit", true);
+            return "post_form";
+        }
+        else {
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
@@ -134,6 +135,14 @@ public class BlogWebController {
         try {
             Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
             if (postOptional.isPresent()) {
+                PostDTO post = postOptional.get();
+                ClassUserDTO loggedUser = userService.getLoggedUser();
+
+                if (!canEditOrDeletePost(loggedUser, post)) {
+                    redirectAttributes.addAttribute("message", "Unauthorized to delete post");
+                    return "redirect:/error";
+                }
+
                 model.addAttribute("DeletePost", true);
                 postService.delete(id);
                 return "deleted_post";
@@ -150,25 +159,36 @@ public class BlogWebController {
     @GetMapping("/blog/{id}/deleteImage/{imageName}")
     public String deleteImage(Model model, @PathVariable String imageName, @PathVariable long id, RedirectAttributes redirectAttributes) {
         try {
-            model.addAttribute("DeleteImage", true);
-            imageService.deleteImage(imageName);
-
             Optional<PostDTO> postOptional = Optional.ofNullable(postService.getPost(id));
             if (postOptional.isPresent()) {
                 PostDTO post = postOptional.get();
+
+                // Verificar que el usuario actual sea el creador del post
+                ClassUserDTO loggedUser = userService.getLoggedUser();
+                if (!canEditOrDeletePost(loggedUser, post)) {
+                    redirectAttributes.addAttribute("message", "Unauthorized to delete image");
+                    return "redirect:/error";
+                }
+
+                // Borrar imagen
+                model.addAttribute("DeleteImage", true);
+                imageService.deleteImage(imageName);
+
+                // Actualizar post sin imagen
                 PostDTO updatedPost = new PostDTO(post.postid(), post.creator(), post.title(), post.description(), "no-image.png");
                 postService.save(updatedPost);
+
                 model.addAttribute("postid", id);
                 return "deleted_post";
             } else {
-                redirectAttributes.addAttribute("message", "Post not found");
+                redirectAttributes.addAttribute("message", "Post no encontrado.");
                 return "redirect:/error";
             }
         } catch (IOException e) {
-            redirectAttributes.addAttribute("message", "Error saving post after deleting image");
+            redirectAttributes.addAttribute("message", "Error al guardar el post tras eliminar la imagen.");
             return "redirect:/error";
         } catch (Exception e) {
-            redirectAttributes.addAttribute("message", "Error deleting image");
+            redirectAttributes.addAttribute("message", "Error eliminando la imagen.");
             return "redirect:/error";
         }
     }
@@ -235,41 +255,35 @@ public class BlogWebController {
 
 
     @PostMapping("/blog/changePost/{id}")
-    public String editPostProcess(@PathVariable long id, Model model, @RequestParam("title") String title,
+    public String editPostProcess(@PathVariable long id, Model model,
+                                  @RequestParam("title") String title,
                                   @RequestParam("description") String description,
-                                  @RequestParam("user") String user,
                                   @RequestParam(value = "imagefile", required = false) MultipartFile imagefile,
                                   @RequestParam(value = "deleteImage", defaultValue = "false") boolean deleteImage,
                                   RedirectAttributes redirectAttributes) throws IOException {
 
-        // Check if the post exists
-        Optional <PostDTO> op = Optional.ofNullable(postService.getPost(id));
-        if(op.isEmpty()){
+        Optional<PostDTO> op = Optional.ofNullable(postService.getPost(id));
+        if (op.isEmpty()) {
             redirectAttributes.addAttribute("message", "Post not found");
             return "redirect:/error";
         }
-        // Get the post
-        PostDTO originalPost = op.get();
-        // Check if the user is the creator of the post
-        ClassUserBasicDTO classUser = originalPost.creator();
 
-        if(classUser == null || !classUser.getClass().getName().equals(user)) {
-            ClassUserDTO classUser2 = userService.findByName(user).orElseThrow();
-            if (classUser2 == null) {
-                redirectAttributes.addAttribute("message", "User not found");
-                return "redirect:/error";
-            }
+        PostDTO originalPost = op.get();
+        ClassUserDTO loggedUser = userService.getLoggedUser();
+
+        if (!canEditOrDeletePost(loggedUser, originalPost)) {
+            redirectAttributes.addAttribute("message", "Unauthorized to edit post");
+            return "redirect:/error";
         }
 
         PostDTO updatedPost = new PostDTO(
                 originalPost.postid(),
-                classUser,
+                originalPost.creator(),
                 title,
-                //Jsoup.parse(description).text(),
                 description,
                 originalPost.imagePath()
         );
-        //Uncomment this in the 3rd phase
+
         String validationError = validateService.validatePost(postService.toDomain(updatedPost));
         if (validationError != null && !validationError.isEmpty()) {
             model.addAttribute("error", validationError);
@@ -277,9 +291,17 @@ public class BlogWebController {
             redirectAttributes.addAttribute("message", validationError);
             return "redirect:/error";
         }
+
         postService.edit(updatedPost, imagefile, id);
 
         return "redirect:/blog/" + updatedPost.postid();
     }
+    private boolean canEditOrDeletePost(ClassUserDTO user, PostDTO post) {
+        if (user == null) return false;
 
+        boolean isOwner = user.userid() == post.creator().userid();
+        boolean isAdmin = user.roles() != null && user.roles().contains("ADMIN");
+
+        return isOwner || isAdmin;
+    }
 }

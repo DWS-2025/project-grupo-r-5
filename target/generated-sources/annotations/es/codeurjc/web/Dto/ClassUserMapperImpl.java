@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-26T19:05:45+0200",
+    date = "2025-06-26T20:32:31+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.7 (Microsoft)"
 )
 @Component
@@ -31,6 +31,7 @@ public class ClassUserMapperImpl implements ClassUserMapper {
 
         String username = null;
         long userid = 0L;
+        List<String> roles = null;
         List<GroupClassBasicDTO> listOfClasses = null;
         List<PostDTO> listOfPosts = null;
 
@@ -38,10 +39,14 @@ public class ClassUserMapperImpl implements ClassUserMapper {
         if ( classUser.getUserid() != null ) {
             userid = classUser.getUserid();
         }
+        List<String> list = classUser.getRoles();
+        if ( list != null ) {
+            roles = new ArrayList<String>( list );
+        }
         listOfClasses = groupClassMapper.toDTOs( classUser.getListOfClasses() );
         listOfPosts = postMapper.toDTOs( classUser.getListOfPosts() );
 
-        ClassUserDTO classUserDTO = new ClassUserDTO( userid, username, listOfClasses, listOfPosts );
+        ClassUserDTO classUserDTO = new ClassUserDTO( userid, username, roles, listOfClasses, listOfPosts );
 
         return classUserDTO;
     }
@@ -89,6 +94,10 @@ public class ClassUserMapperImpl implements ClassUserMapper {
 
         classUser.setUserid( classUserDTO.userid() );
         classUser.setUsername( classUserDTO.username() );
+        List<String> list = classUserDTO.roles();
+        if ( list != null ) {
+            classUser.setRoles( new ArrayList<String>( list ) );
+        }
         classUser.setListOfClasses( groupClassBasicDTOListToGroupClassList( classUserDTO.listOfClasses() ) );
         classUser.setListOfPosts( postDTOListToPostList( classUserDTO.listOfPosts() ) );
 

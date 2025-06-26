@@ -14,9 +14,10 @@
     <p>Id: {{id}}</p>
     <div class="btn-group">
         <form action="/admin/{{types}}/delete-{{id}}" method="POST">
+            <input type="hidden" name="_csrf" value="{{token}}" />
             <button type="submit" class="btn delete-btn">Confirm Delete</button>
         </form>
-
+        <input type="hidden" name="_csrf" value="{{token}}" />
         <a href="/admin/{{types}}" class="btn">Go Back</a>
     </div>
 </div>

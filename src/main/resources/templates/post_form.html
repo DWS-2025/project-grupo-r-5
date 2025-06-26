@@ -12,7 +12,7 @@
       method="post" enctype="multipart/form-data">
     <input type="hidden" name="isEdit" value="{{isEdit}}">
     {{#isEdit}}
-    <input type="hidden" name="user" value="{{post.creator.name}}">
+    <input type="hidden" name="user" value="{{post.creator.username}}">
     {{/isEdit}}
 
     <p><label>Title: </label></p>
@@ -25,9 +25,9 @@
     <p>Image file:</p>
     <input type='file' name='imagefile' accept=".jpg, .jpeg"/>
 
-
+    <input type="hidden" name="_csrf" value="{{token}}" />
     <input type='submit' value='Save'/>
-
+    <input type="hidden" name="_csrf" value="{{token}}" />
 </form>
 
 <a href="/blog">Back</a>
