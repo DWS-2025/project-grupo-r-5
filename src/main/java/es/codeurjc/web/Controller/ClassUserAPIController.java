@@ -22,6 +22,10 @@ public class ClassUserAPIController {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private PostService postService;
+    @Autowired
+    private GroupClassService groupClassService;
 
     @GetMapping("/")
     public Page<ClassUserBasicDTO> getClassUsers(Pageable page) {
@@ -47,6 +51,11 @@ public class ClassUserAPIController {
 
     @DeleteMapping("/{id}")
     public ClassUserDTO deleteClassUser(@PathVariable long id) {
+        Optional<ClassUserDTO> classUser = userService.findById(id);
+        if(classUser.isPresent()){
+
+        }
+
         return userService.delete(id);
     }
 
