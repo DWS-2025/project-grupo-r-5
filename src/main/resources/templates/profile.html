@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <title>Perfil de {{user.username}}</title>
+</head>
+<body>
+
+<h1>Perfil de {{user.username}}</h1>
+<p><strong>ID:</strong> {{user.userid}}</p>
+
+<h2>Clases inscritas:</h2>
+<ul>
+    {{#user.listOfClasses}}
+    <li>{{classname}}</li>
+    {{/user.listOfClasses}}
+    {{^user.listOfClasses}}
+    <li>No estás inscrito en ninguna clase.</li>
+    {{/user.listOfClasses}}
+</ul>
+
+<h2>Posts:</h2>
+<ul>
+    {{#user.listOfPosts}}
+    <li><strong>{{title}}</strong>: {{description}}</li>
+    {{/user.listOfPosts}}
+    {{^user.listOfPosts}}
+    <li>No has creado ningún post.</li>
+    {{/user.listOfPosts}}
+</ul>
+
+<button type="button" onclick="window.location.href='/'">Volver atrás</button>
+
+<form method="post" action="/logout" style="display:inline;">
+    <input type="hidden" name="_csrf" value="{{token}}"/>
+    <input type="submit" value="Sign Out" />
+</form>
+
+</body>
+</html>

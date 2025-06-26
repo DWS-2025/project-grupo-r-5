@@ -8,15 +8,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.processing.Generated;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-06-26T14:27:25+0200",
+    date = "2025-06-26T19:05:45+0200",
     comments = "version: 1.6.3, compiler: javac, environment: Java 21.0.7 (Microsoft)"
 )
 @Component
 public class GroupClassMapperImpl implements GroupClassMapper {
+
+    @Autowired
+    private ClassUserMapper classUserMapper;
 
     @Override
     public GroupClassDTO toDTO(GroupClass groupClass) {
@@ -44,7 +48,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         duration = groupClass.getDuration();
         maxCapacity = groupClass.getMaxCapacity();
         currentCapacity = groupClass.getCurrentCapacity();
-        usersList = classUserListToClassUserBasicDTOList( groupClass.getUsersList() );
+        usersList = classUserMapper.toDTOs( groupClass.getUsersList() );
 
         LocalTime timeFin = groupClass.getTimeFin();
 
@@ -145,49 +149,6 @@ public class GroupClassMapperImpl implements GroupClassMapper {
         return groupClass;
     }
 
-    protected ClassUserBasicDTO classUserToClassUserBasicDTO(ClassUser classUser) {
-        if ( classUser == null ) {
-            return null;
-        }
-
-        long userid = 0L;
-
-        if ( classUser.getUserid() != null ) {
-            userid = classUser.getUserid();
-        }
-
-        String name = null;
-
-        ClassUserBasicDTO classUserBasicDTO = new ClassUserBasicDTO( userid, name );
-
-        return classUserBasicDTO;
-    }
-
-    protected List<ClassUserBasicDTO> classUserListToClassUserBasicDTOList(List<ClassUser> list) {
-        if ( list == null ) {
-            return null;
-        }
-
-        List<ClassUserBasicDTO> list1 = new ArrayList<ClassUserBasicDTO>( list.size() );
-        for ( ClassUser classUser : list ) {
-            list1.add( classUserToClassUserBasicDTO( classUser ) );
-        }
-
-        return list1;
-    }
-
-    protected ClassUser classUserBasicDTOToClassUser(ClassUserBasicDTO classUserBasicDTO) {
-        if ( classUserBasicDTO == null ) {
-            return null;
-        }
-
-        ClassUser classUser = new ClassUser();
-
-        classUser.setUserid( classUserBasicDTO.userid() );
-
-        return classUser;
-    }
-
     protected List<ClassUser> classUserBasicDTOListToClassUserList(List<ClassUserBasicDTO> list) {
         if ( list == null ) {
             return null;
@@ -195,7 +156,7 @@ public class GroupClassMapperImpl implements GroupClassMapper {
 
         List<ClassUser> list1 = new ArrayList<ClassUser>( list.size() );
         for ( ClassUserBasicDTO classUserBasicDTO : list ) {
-            list1.add( classUserBasicDTOToClassUser( classUserBasicDTO ) );
+            list1.add( classUserMapper.toDomain( classUserBasicDTO ) );
         }
 
         return list1;

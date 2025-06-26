@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -35,10 +38,14 @@ public class UserService {
 
     @Autowired
     private ClassUserMapper classUserMapper;
+
     @Autowired
     private GroupClassRepository groupClassRepository;
+
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     /*public Page<ClassUserBasicDTO> findAll(Pageable page) {
@@ -47,7 +54,10 @@ public class UserService {
     }*/
 
     //This method will be changed on third phase
-    public ClassUserDTO getLoggedUser() {return classUserMapper.toDTO(userRepository.findAll().get(0));}
+    public ClassUserDTO getLoggedUser() {    String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        ClassUser user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return classUserMapper.toDTO(user);}
 
     public Page<ClassUserBasicDTO> findAll(Pageable page) {
         Page<ClassUser> users = userRepository.findAll(page);
@@ -81,11 +91,11 @@ public class UserService {
     }
 
     public Optional<ClassUserDTO> findByName(String name) {
-        return userRepository.findByUsername(name)
+        return userRepository.findByUsernameIgnoreCase(name)
                 .map(classUserMapper::toDTO);
     }
     public Optional<ClassUser> findEntityByName(String username) {
-        return userRepository.findByUsername(username);
+        return userRepository.findByUsernameIgnoreCase(username);
     }
 
     public ClassUserDTO save(ClassUserDTO classUserDTO){
@@ -97,6 +107,11 @@ public class UserService {
     public ClassUserDTO save(ClassUserBasicDTO classUserBasicDTO){
         ClassUser classUser = classUserMapper.toDomain(classUserBasicDTO);
         ClassUser saved = userRepository.save(classUser);
+        return classUserMapper.toDTO(saved);
+    }
+    public ClassUserDTO save(ClassUser classUser){
+        ClassUser newUser = new ClassUser(classUser.getUsername(),passwordEncoder.encode(classUser.getPassword()),List.of("USER"));
+        ClassUser saved = userRepository.save(newUser);
         return classUserMapper.toDTO(saved);
     }
 
@@ -115,6 +130,11 @@ public class UserService {
         user.getListOfClasses().clear();
 
     }
+    public boolean usernameExists(String username) {
+        Optional <ClassUser> op =  userRepository.findByUsernameIgnoreCase(username);
+        return userRepository.findByUsernameIgnoreCase(username).isPresent();
+    }
+
 
     @Transactional
     public Optional<ClassUserDTO> addGroupClass(long classId, long userId) {

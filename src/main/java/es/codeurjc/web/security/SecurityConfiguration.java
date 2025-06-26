@@ -71,15 +71,19 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         // PUBLIC PAGES
                         .requestMatchers("/").permitAll()
+                        .requestMatchers("/newUser").permitAll()
                         .requestMatchers("/css/**").permitAll()
-                        .requestMatchers("/images").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
                         // PRIVATE PAGES
+                        .requestMatchers("/groupClasses/**").hasRole("USER")
+                        .requestMatchers("/blog/**").hasRole("USER")
+                        .requestMatchers("/images").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin
                         .loginPage("/login")
                         .failureUrl("/loginerror")
-                        .defaultSuccessUrl("/private")
+                        .defaultSuccessUrl("/profile")
                         .permitAll()
                 )
                 .logout(logout -> logout
@@ -90,10 +94,8 @@ public class SecurityConfiguration {
                         .accessDeniedPage("/error")
                 );
 
-        http.csrf(csrf -> csrf.disable())
-                .headers(headers -> headers
-                        .frameOptions(config -> config.sameOrigin())
-                );
+        http.headers(headers -> headers
+                        .frameOptions(config -> config.sameOrigin()));
 
         return http.build();
     }

@@ -8,7 +8,7 @@ import org.springframework.data.domain.Page;
 import java.util.Collection;
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = {ClassUserMapper.class})
 public interface GroupClassMapper {
 
     @Mapping(target = "timeFin", expression = "java(groupClass.getTimeFin())")

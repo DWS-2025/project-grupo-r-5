@@ -55,8 +55,8 @@ public class BasicDataInitializer {
         //create users first:
         // Crear usuarios con contraseñas y roles
         ClassUser user0 = new ClassUser("Admin", passwordEncoder.encode("admin"), List.of("ADMIN","USER"));
-        ClassUser user1 = new ClassUser("Pepe", passwordEncoder.encode("password1"), List.of("USER"));
-        ClassUser user2 = new ClassUser("Juan", passwordEncoder.encode("password2"), List.of("USER"));
+        ClassUser user1 = new ClassUser("Pepe", passwordEncoder.encode("pepe"), List.of("USER"));
+        ClassUser user2 = new ClassUser("Juan", passwordEncoder.encode("juan"), List.of("USER"));
         ClassUser user3 = new ClassUser("Yoshi", passwordEncoder.encode("password3"), List.of("USER"));
         ClassUser user4 = new ClassUser("Zelda", passwordEncoder.encode("password4"), List.of("USER"));
         ClassUser user5 = new ClassUser("Rufusberto", passwordEncoder.encode("password5"), List.of("USER"));

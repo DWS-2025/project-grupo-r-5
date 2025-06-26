@@ -6,10 +6,14 @@
 	<form action="/login" method="post">
 		<label>Username:</label><input type="text" name="username" /><br/>
 		<label>Password:</label><input type="password" name="password" /><br/>
+		<input type="hidden" name="_csrf" value="{{token}}"/>
 		<input type="submit" value="Sign In"/>
 	</form>
 	<div class="btn-group">
 		<a href="/" class="btn back-btn">Back</a>
+	</div>
+	<div class="btn-group">
+		<a href="/newUser" class="btn back-btn">Create an account</a>
 	</div>
 </body>
 </html>
