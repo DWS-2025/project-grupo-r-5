@@ -1,12 +1,15 @@
 package es.codeurjc.web.Domain;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 public class ClassUser {
+
     //Properties:
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -24,6 +24,9 @@ public class ValidateService {
             .preserveRelativeLinks(true); //we accept relative paths
 
     public String cleanInput(String input){
+        if (input == null) {
+            return null;
+        }
         return Jsoup.clean(input, CUSTOM_SAFE_LIST);
     }
 
@@ -232,29 +235,36 @@ public class ValidateService {
     }
 
 
-    public String validatePostWithImage(Post post, MultipartFile imagefile){
+    public String validatePostWithImage(Post post, MultipartFile imagefile) {
         String nameError = validateUsername(post.getCreatorName());
-        if (nameError != null){
+        if (nameError != null) {
             return nameError;
         }
-        String tittleError = validateTitle(post.getTitle());
-        if (tittleError != null){
-            return tittleError;
+
+        String titleError = validateTitle(post.getTitle());
+        if (titleError != null) {
+            return titleError;
         }
+
         String textError = validateText(post.getDescription());
-        if (textError != null){
+        if (textError != null) {
             return textError;
         }
-        String imagePath = cleanInput(post.getImagePath());
-        if (imagePath == null || !isValidFileName(imagePath)) {
-            return null;
+
+        // Aquí validamos el nombre original del archivo que llega
+        String newImageName = imagefile.getOriginalFilename();
+        if (newImageName == null || newImageName.isBlank() || !isValidFileName(newImageName)) {
+            return "Invalid image file name.";
         }
-        String imageError = validateImage((MultipartFile) imagefile);
-        if(imageError != null){
+
+        String imageError = validateImage(imagefile);
+        if (imageError != null) {
             return imageError;
         }
-        return null;
 
+        return null;  // No hay errores
     }
+
+
 
 }

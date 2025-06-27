@@ -44,6 +44,7 @@ public class UserService {
 
     @Autowired
     private PostRepository postRepository;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -114,6 +115,7 @@ public class UserService {
         ClassUser saved = userRepository.save(newUser);
         return classUserMapper.toDTO(saved);
     }
+    public String getEncodedPassword(ClassUser classUser) {return passwordEncoder.encode(classUser.getPassword());}
 
     public ClassUserDTO delete(long id) {
         ClassUser classUser = userRepository.findById(id).orElseThrow();
