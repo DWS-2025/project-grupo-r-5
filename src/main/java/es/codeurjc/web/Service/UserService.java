@@ -20,8 +20,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,14 +149,21 @@ public class UserService {
             ClassUser classUser = op_classUser.get();
             GroupClass groupClass = op_groupClass.get();
 
+            // ❗ Verificar si ya está unido
+            if (classUser.getListOfClasses().contains(groupClass)) {
+                return Optional.of(classUserMapper.toDTO(classUser)); // No hacer nada
+            }
+
             classUser.addClass(groupClass);
             groupClass.addUser(classUser);
 
             ClassUser updated = userRepository.save(classUser);
             return Optional.of(classUserMapper.toDTO(updated));
         }
+
         return Optional.empty();
     }
+
 
     @Transactional
     public Optional<ClassUserDTO> removeGroupClass(long classId, long userId) {
@@ -162,19 +171,24 @@ public class UserService {
         Optional<GroupClass> op_groupClass = groupClassRepository.findById(classId);
 
         if (op_classUser.isPresent() && op_groupClass.isPresent()) {
-
-            GroupClass groupClass = op_groupClass.get();
             ClassUser classUser = op_classUser.get();
+            GroupClass groupClass = op_groupClass.get();
+
+            // ❗ Solo se elimina si el usuario está en la clase
+            if (!classUser.getListOfClasses().contains(groupClass)) {
+                return Optional.of(classUserMapper.toDTO(classUser)); // No hacer nada
+            }
 
             classUser.removeClass(groupClass);
             groupClass.removeUser(classUser);
 
             ClassUser updated = userRepository.save(classUser);
-
             return Optional.of(classUserMapper.toDTO(updated));
         }
+
         return Optional.empty();
     }
+
 
     @Transactional
     public Optional<ClassUserDTO> addPost(long postId, long userId) throws IOException {
@@ -239,6 +253,15 @@ public class UserService {
         //If you want to reverse the order:
         //Collections.reverse(dtoList);
         return new PageImpl<>(dtoList, classUsersPage.getPageable(), classUsersPage.getTotalElements());
+    }
+
+    public Set<Long> getJoinedClassIds(Long userId) {
+        return userRepository.findById(userId)
+                .map(ClassUser::getListOfClasses) // Esto debe devolver List<GroupClass>
+                .orElse(Collections.emptyList())  // 👈 usamos emptyList en vez de emptySet
+                .stream()
+                .map(GroupClass::getClassid)
+                .collect(Collectors.toSet());
     }
 
 

@@ -93,35 +93,32 @@ public class PostService {
 
     public PostDTO save(String user, String title, String description, MultipartFile imageFile) throws Exception {
 
-        Optional <ClassUserDTO> classUserDTO = userService.findByName(user);
+        Optional<ClassUserDTO> classUserDTO = userService.findByName(user);
 
-        if(classUserDTO.isPresent()){
+        if (classUserDTO.isPresent()) {
 
             ClassUser classUser = classUserMapper.toDomain(classUserDTO.get());
 
             String imagePath;
+            MultipartFile fileToUse = imageFile;
 
             if (!imageFile.isEmpty()) {
-
+                // Guarda primero una copia del archivo
                 imagePath = imageService.createImage(imageFile);
-
-            } else{
-
+            } else {
                 imagePath = "no-image.png";
-
             }
 
-
+            // Aquí usamos siempre el mismo MultipartFile (imageFile)
             Post newpost = new Post(classUser, title, description, imagePath, imageFile);
             postRepository.save(newpost);
 
             return toDTO(newpost);
-
         }
 
         return null;
-
     }
+
 
     public boolean checkCreator(PostDTO postDTO, ClassUserDTO classUserDTO) {
         return postDTO.creator().userid() == classUserDTO.userid();

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -169,7 +170,7 @@ public class BlogAPIController {
                 .body(imageBytes);
     }
 
-    @PostMapping("/{id}/image")
+    @PostMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadPostImage(@PathVariable long id,
                                                   @RequestParam("imagefile") MultipartFile imagefile) throws IOException {
         PostDTO postDTO = postService.getPost(id);
@@ -192,9 +193,9 @@ public class BlogAPIController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha proporcionado una imagen válida");
         }
 
-        // Crear un objeto Post temporal con el nuevo nombre de la imagen (original)
+        // Crear Post temporal para validación
         Post postDomain = postService.toDomain(postDTO);
-        ClassUser creatorDomain = postDomain.getCreator(); // suponiendo que tienes este método
+        ClassUser creatorDomain = postDomain.getCreator();
         Post postForValidation;
         try {
             postForValidation = new Post(
@@ -202,7 +203,7 @@ public class BlogAPIController {
                     postDomain.getTitle(),
                     postDomain.getDescription(),
                     imagefile.getOriginalFilename(),
-                    imagefile
+                    null
             );
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Error al crear el objeto Post para validación", e);
@@ -213,16 +214,8 @@ public class BlogAPIController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, imageValidationError);
         }
 
-        // Guardar imagen y actualizar path
-        Path imagesDir = Paths.get("images");
-        if (!Files.exists(imagesDir)) {
-            Files.createDirectories(imagesDir);
-        }
-
-        String imageName = UUID.randomUUID() + "_" + imagefile.getOriginalFilename();
-        Path imagePath = imagesDir.resolve(imageName).normalize();
-
-        imagefile.transferTo(imagePath);
+        // Guardar imagen usando imageService (genera nombre único y valida extensión)
+        String imageName = imageService.createImage(imagefile);
 
         // Borrar imagen anterior si no es la genérica
         if (postDTO.imagePath() != null && !postDTO.imagePath().isBlank() && !"no-image.png".equals(postDTO.imagePath())) {

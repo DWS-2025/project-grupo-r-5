@@ -7,6 +7,8 @@ import es.codeurjc.web.Service.ValidateService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.ui.Model;
 import es.codeurjc.web.Domain.GroupClass;
 import es.codeurjc.web.Service.GroupClassService;
@@ -20,6 +22,7 @@ import java.time.DayOfWeek;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 public class GroupClassWebController {
@@ -118,6 +121,18 @@ public class GroupClassWebController {
         model.addAttribute("nextPage", page.hasNext() ? page.getNumber() + 1 : 0);
 
         return "classesList";
+    }
+    @PostMapping("/Leave-{classid}")
+    public String leaveClass(@PathVariable Long classid) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName(); // Usuario logueado
+
+        // Obtener userId desde tu servicio usando username
+        Long userId = userService.getLoggedUser().userid();
+
+        userService.removeGroupClass(userId, classid);
+
+        return "redirect:/profile";
     }
 
 

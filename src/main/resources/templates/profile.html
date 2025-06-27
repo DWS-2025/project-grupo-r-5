@@ -13,7 +13,13 @@
 <h2>Clases inscritas:</h2>
 <ul>
     {{#user.listOfClasses}}
-    <li>{{classname}}</li>
+    <li>{{classname}}
+        <form method="post" action="/Leave-{{classid}}" style="display:inline">
+            <input type="hidden" name="classid" value="{{classid}}">
+            <input type="hidden" name="_csrf" value="{{token}}" />
+            <button type="submit" class="btn back-btn">Salir</button>
+        </form>
+    </li>
     {{/user.listOfClasses}}
     {{^user.listOfClasses}}
     <li>No estás inscrito en ninguna clase.</li>
